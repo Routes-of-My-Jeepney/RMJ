@@ -1,8 +1,8 @@
 ## 開発環境
 
-Laravel Framework:9.52.7
-npm:9.5.1
-node.js:v18.16.0
+-Laravel Framework:9.52.7
+-npm:9.5.1
+-node.js:v18.16.0
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
