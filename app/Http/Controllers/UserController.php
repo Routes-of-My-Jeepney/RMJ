@@ -48,7 +48,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = Auth::user();
         $profileImage = $user->profile_img ? asset($user->profile_img) : asset('images/' . User::DEFAULT_PROFILE_IMAGE);
         return response()->view('users.show', compact('user', 'profileImage'));
     }
@@ -114,17 +114,18 @@ class UserController extends Controller
         $user->delete();
         return response()->view('welcome', compact('user'));
     }
-    public function deleteProfileImage($id)
+    public function deleteProfileImage()
     {
-        $user=User::find($id);
-        if ($user->profile_img !== null) {                        
+        $user = Auth::user();
+        if ($user->profile_img !== null) {
             Storage::delete('public/profiles' . $user->profile_img); // ファイルをストレージから削除
             $user->profile_img = null; // プロフィール画像のパスをnullに更新
             $user->save(); // ユーザーモデルを保存
-            return redirect()->review('home')->with('success', 'プロフィール画像を削除しました。');
+            return redirect()->route('users.show',compact('user'))->with('success', 'プロフィール画像を削除しました。');
         } else {
             return redirect()->back()->with('error', 'プロフィール画像が存在しません。');
         }
+
     }
 
 }

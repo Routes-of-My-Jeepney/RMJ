@@ -13,7 +13,7 @@
                                 <label for="profile-img" class="d-flex justify-content-around align-items-center">
                                     @if ($user->profile_img === null)
                                         <div class="col justify-content-between">
-                                            <img class="rounded-circle" src="{{ asset('user-icon.png') }}" alt="プロフィール画像"
+                                            <img class="rounded-circle" style="object-fit: cover;" src="{{ asset('user-icon.png') }}" alt="プロフィール画像"
                                             width="100" height="100" id="preview-profile-img">
                                         </div>
                                         <div class="col">
@@ -22,14 +22,13 @@
                                         </div>
                                     @else
                                         <div class="col">
-                                            <img class="rounded-circle" src="{{ Storage::url($user->profile_img) }}"
+                                            <img class="rounded-circle" style="object-fit: cover;" src="{{ Storage::url($user->profile_img) }}"
                                                 alt="プロフィール画像" width="100" height="100" id="preview-profile-img">
                                         </div>
                                         <div class="col">
                                             <a class="btn btn-primary mb-3" type="button"
                                                 id="profile-img-change-btn">プロフィール画像の変更</a>
-                                            <a href="{{ route('delete-profile-image') }}" class="btn btn-outline-primary" type="button"
-                                                id="delete-profile-image-btn" name="delete-profile-img">プロフィール画像の削除</a>
+                                            
 
                                         </div>
                                     @endif
@@ -52,6 +51,10 @@
                             <div class="form-group mb-4">
                                 <button type="submit" class="btn btn-primary px-5">プロフィール情報を変更</button>
                             </div>
+                        </form>
+                        <form method="POST" action="{{ route('delete-profile-image', $user->id) }}">
+                            @csrf                            
+                            <button class="btn btn-outline-primary" type="submit" id="delete-profile-image-btn" name="delete-profile-img">プロフィール画像の削除</button>
                         </form>
                     </div>
                 </div>
