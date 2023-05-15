@@ -14,9 +14,9 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // $table->string('profile_img');
-            $table->string('password');
-            $table->string('email')->unique();
+            $table->string('profile_img')->nullable()->comment('プロフィール画像を追加');
+            $table->string('password',255);
+            $table->string('email',255)->unique();
             $table->rememberToken();
             $table->timestamps();
         });

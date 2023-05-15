@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    const DEFAULT_PROFILE_IMAGE = 'user-icon.png';
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -18,9 +19,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'profile_img',
         'email',
         'password',
+        
     ];
 
     /**
