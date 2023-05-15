@@ -5,24 +5,23 @@
         <div class="row justify-content-center align-items-center vh-100">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Reset Password') }}</div>
+                    <div class="card-header">{{ __('パスワード変更') }}</div>
 
-                    <div class="card-body  mx-5 my-4">
-                        <form method="POST" action="{{ route('password.update') }}">
+                    <div class="card-body mx-5 my-4">
+                        <form method="POST" action="{{ route('current_password.update') }}">
                             @csrf
+                            @method('PUT')
 
-                            <input type="hidden" name="token" value="{{ $token }}">
-
-                            <div class="row mb-4">
-                                <label for="email"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                            <div class="form-group row mb-4">
+                                <label for="current-password"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('現在のパスワード') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email"
-                                        class="form-control @error('email') is-invalid @enderror" name="email"
-                                        value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
+                                    <input id="current-password" type="password"
+                                        class="form-control @error('current-password') is-invalid @enderror"
+                                        name="current-password" required autocomplete="current-password" autofocus>
 
-                                    @error('email')
+                                    @error('current-password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -30,9 +29,9 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-4">
+                            <div class="form-group row mb-4">
                                 <label for="password"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
+                                    class="col-md-4 col-form-label text-md-right">{{ __('新しいパスワード') }}</label>
 
                                 <div class="col-md-6">
                                     <input id="password" type="password"
@@ -47,9 +46,9 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-4">
+                            <div class="form-group row mb-4">
                                 <label for="password-confirm"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
+                                    class="col-md-4 col-form-label text-md-right">{{ __('確認用パスワード') }}</label>
 
                                 <div class="col-md-6">
                                     <input id="password-confirm" type="password" class="form-control"
@@ -57,10 +56,10 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-0">
+                            <div class="form-group row mb-0 py-3">
                                 <div class="col-md-6 offset-md-4">
                                     <button type="submit" class="btn btn-primary">
-                                        {{ __('Reset Password') }}
+                                        {{ __('パスワードを変更する') }}
                                     </button>
                                 </div>
                             </div>

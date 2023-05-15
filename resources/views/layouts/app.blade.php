@@ -13,6 +13,8 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -61,15 +63,15 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="#"> {{ __('履歴') }}</a>
-                                    <a class="dropdown-item" href="#"> {{ __('アカウント情報変更') }}</a>
-                                    <a class="dropdown-item" href="#"> {{ __('パスワード再設定') }}</a>
+                                    <a class="dropdown-item" href="{{ route('users.show', $user->id) }}"> {{ __('アカウント情報変更') }}</a>
+                                    <a class="dropdown-item" href="{{ route('password.edit',['id' => Auth::id()]) }}"> {{ __('パスワード再設定') }}</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('ログアウト') }}
                                     </a>
                 
-                                        <a class="dropdown-item" href="{{ route('users.destroy', $user->id) }}"
+                                        <a class="dropdown-item" href="{{ route('delete-account', $user->id) }}"
                                             onclick="event.preventDefault();
                                     document.getElementById('delete-form').submit();">
                                             {{ __('アカウント削除') }}</a>
@@ -78,7 +80,7 @@
                                             @csrf
                                         </form>
 
-                                        <form id="delete-form" action="{{ route('users.destroy', $user->id) }}"
+                                        <form id="delete-form" action="{{ route('delete-account', $user->id) }}"
                                             method="POST" class="d-none">
                                             @csrf
                                             @method('DELETE')
@@ -91,7 +93,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main>
             @yield('content')
         </main>
     </div>
