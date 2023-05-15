@@ -1,6 +1,5 @@
 import React , {useState, useEffect, useRef } from 'react';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
-import { map } from 'lodash';
 
 const containerStyle = {
   width: '100%',
@@ -42,17 +41,21 @@ function MapContainer() {
     
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap 
-      ref={mapRef}
-      mapContainerStyle={containerStyle} 
-      center={center} 
-      zoom={10}
-      onLoad={onLoad}
-      >
-        <MarkerF position={MarkerPosition}/>
-      </GoogleMap>
-    </LoadScript>
+    <>
+      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={['places']}>
+        <PlacesAutoComplete/>
+        <GoogleMap 
+        ref={mapRef}
+        mapContainerStyle={containerStyle} 
+        center={center} 
+        zoom={10}
+        onLoad={onLoad}
+        >
+
+          <MarkerF position={MarkerPosition}/>
+        </GoogleMap>
+      </LoadScript>
+    </>
   );
 }
 
