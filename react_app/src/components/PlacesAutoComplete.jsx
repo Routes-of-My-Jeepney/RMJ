@@ -1,12 +1,17 @@
 import { Input } from "postcss";
 import React, { useRef, useEffect, useState } from "react";
+import { TextField } from "@mui/material";
 import usePlacesAutocomplete, {
     getGeocode,
     getLatLng,
 } from "use-places-autocomplete";
 
-
-
+// const useStyles = makeStyles({
+//    myComponent: {
+//      position: 'relative', // or 'absolute', 'fixed', 'sticky'
+//      zIndex: 1, // Set the z-index here
+//    },
+//  });
 
 const PlacesAutoComplete = () => {
  const autoCompleteRef = useRef();
@@ -18,6 +23,7 @@ const PlacesAutoComplete = () => {
   fields: ["address_components", "geometry", "icon", "name"],
   types: ["establishment"]
  };
+
  const [inputValue1,setInputValue1]= useState(" ");
  const [inputValue2,setInputValue2]= useState(" ");
  const handleChange1 = (event) => {
@@ -41,15 +47,18 @@ const PlacesAutoComplete = () => {
     //  const place = await autoCompleteRef.current.getPlace();
     //  console.log({ place });
     // });
+
+
+
    }, []);
 
  return (
   <div>
    <label>出発地 :</label>
-   <input ref={originRef} onChange={handleChange1}/>
+   <TextField color='secondary' variant="filled" inputRef={originRef} onChange={handleChange1}/>
    <br />
    <label>目的地 :</label>
-   <input ref={destRef} onChange={handleChange2}/>
+   <TextField color='success' variant="outlined" inputRef={destRef} onChange={handleChange2}/>
 
   </div>
  );
