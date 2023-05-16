@@ -1,5 +1,6 @@
 import React , {useState, useEffect, useRef } from 'react';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import PlacesAutoComplete from './PlacesAutoComplete';
 
 const containerStyle = {
   width: '100%',
@@ -38,7 +39,6 @@ function MapContainer() {
 
   const onLoad = React.useCallback(map => (mapRef.current = map), []);
 
-    
 
   return (
     <>

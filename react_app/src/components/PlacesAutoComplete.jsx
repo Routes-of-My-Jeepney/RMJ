@@ -1,43 +1,56 @@
-import { useRef, useEffect } from "react";
+import { Input } from "postcss";
+import React, { useRef, useEffect, useState } from "react";
 import usePlacesAutocomplete, {
     getGeocode,
     getLatLng,
 } from "use-places-autocomplete";
 
 
-// const PlacesAutocomplete = ({ setSlected }) => {
-//     const {
-//         ready,
-//         value,
-//         suggestions: { status, data },
-//         setValue,
-//         clearSuggestions,
-//     } = usePlacesAutocomplete({
-//         requestOptions: {
-//             location: { lat: () => 14.599512, lng: () => 120.984222 },
-//             radius: 200 * 1000,
-//         },
-//     });
 
 
 const PlacesAutoComplete = () => {
  const autoCompleteRef = useRef();
- const inputRef = useRef();
+ const autoCompleteRef2 = useRef();
+ const originRef = useRef();
+ const destRef = useRef();
  const options = {
   componentRestrictions: { country: "ng" },
   fields: ["address_components", "geometry", "icon", "name"],
   types: ["establishment"]
  };
+ const [inputValue1,setInputValue1]= useState(" ");
+ const [inputValue2,setInputValue2]= useState(" ");
+ const handleChange1 = (event) => {
+    setInputValue1(event.target.value);
+    console.log(inputValue1);
+ };
+ const handleChange2 = (event) => {
+    setInputValue2(event.target.value);
+    console.log(inputValue2);
+ };
  useEffect(() => {
-  autoCompleteRef.current = new window.google.maps.places.Autocomplete(
-   inputRef.current,
-   options
-  );
- }, []);
+     autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+     originRef.current,
+     options
+    );
+     autoCompleteRef2.current = new window.google.maps.places.Autocomplete(
+     destRef.current,
+     options
+    );
+    // autoCompleteRef.current.addListener("place_changed", async function () {
+    //  const place = await autoCompleteRef.current.getPlace();
+    //  console.log({ place });
+    // });
+   }, []);
+
  return (
   <div>
-   <label>enter address :</label>
-   <input ref={inputRef} />
+   <label>出発地 :</label>
+   <input ref={originRef} onChange={handleChange1}/>
+   <br />
+   <label>目的地 :</label>
+   <input ref={destRef} onChange={handleChange2}/>
+
   </div>
  );
 };
