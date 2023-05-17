@@ -1,6 +1,7 @@
-import React , {useState, useEffect, useRef } from 'react';
-import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
-import PlacesAutoComplete from './PlacesAutoComplete';
+import React, { useState, useEffect, useRef } from 'react';
+import { GoogleMap, LoadScript, MarkerF,DirectionsRenderer } from '@react-google-maps/api';
+import  PlacesAutoComplete  from './PlacesAutoComplete';
+
 
 const containerStyle = {
   width: '100%',
@@ -11,9 +12,10 @@ function MapContainer() {
   const mapRef = useRef();
   const [center, setCenter] = useState();
   const [MarkerPosition, setMarkerPosition] = React.useState();
+  const [directions, setDirections] = useState(null);
 
   React.useEffect(() => {
-    if (navigator.geolocation){
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const coords = {
@@ -31,28 +33,39 @@ function MapContainer() {
     } else {
       console.log('Geolocation is not supported by this browser.');
     }
-      }, []);
-  
-  useEffect(() => {
-    console.log('MarkerPosition updated:', MarkerPosition);
-  }, [MarkerPosition])
+  }, []);
+
+
+  // useEffect(() => {
+  //   console.log('MarkerPosition updated:', MarkerPosition);
+  // }, [MarkerPosition])
 
   const onLoad = React.useCallback(map => (mapRef.current = map), []);
-
-
+  
   return (
     <>
       <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={['places']}>
-        <PlacesAutoComplete/>
-        <GoogleMap 
-        ref={mapRef}
-        mapContainerStyle={containerStyle} 
-        center={center} 
-        zoom={10}
-        onLoad={onLoad}
-        >
-
-          <MarkerF position={MarkerPosition}/>
+        <PlacesAutoComplete />
+        <GoogleMap
+          id='map'
+          ref={mapRef}
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={10}
+          onLoad={onLoad}>
+          {directions && (
+            <DirectionsRenderer
+              directions={directions}
+              options={{
+                polylineOptions: {
+                  strokeColor: 'blue',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 4,
+                },
+              }}
+            />
+          )}
+          <MarkerF position={MarkerPosition} />
         </GoogleMap>
       </LoadScript>
     </>
