@@ -80,9 +80,11 @@ function PlacesAutoComplete() {
 
          var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 7,
-            center: { lat: 41.85, lng: -87.65 }
+            // center: { lat: 41.85, lng: -87.65 }
          });
-         directionsRenderer.setMap(map);
+         var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
+         var directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+         // directionsRenderer.setMap(map);
          var request = {
             origin: { placeId: placeOriginId },
             destination: { placeId: placeDestinationId },
@@ -100,10 +102,31 @@ function PlacesAutoComplete() {
                destinations: [{ placeId: destinationPlaceId }], // 目的地
                travelMode: request.travelMode, // 移動手段
             }, timeRequired)
-
+            var directionsService = new google.maps.DirectionsService();
             directionsService.route(request, function (result, status) {
                if (status == "OK") {
                   directionsRenderer.setDirections(result);
+                  var bounds = new google.maps.LatLngBounds();
+                  var legs = result.routes[0].legs;
+                  for (var i = 0; i < legs.length; i++) {
+                     var steps = legs[i].steps;
+                     for (var j = 0; j < steps.length; j++) {
+                        var path = steps[j].path;
+                        for (var k = 0; k < path.length; k++) {
+                           bounds.extend(path[k]);
+                        }
+                     }
+                  }
+                  map.fitBounds(bounds);
+                  var distance = legs[0].distance.text;
+                  var duration = legs[0].duration.text;
+
+                  // 吹き出しの内容を更新
+                  infoWindow.setContent("距離：" + distance + "<br>所要時間：" + duration);
+                  // ルートの中心座標に吹き出しを表示
+                  infoWindow.setPosition(result.routes[0].overview_path[Math.floor(result.routes[0].overview_path.length / 2)]);
+                  // 吹き出しを開く
+                  infoWindow.open(map);
                }
             });
          }
@@ -127,12 +150,8 @@ function PlacesAutoComplete() {
                         // console.log("距離と所要時間の取得に失敗しました。");
                      }
                   }
-               }
-               var routeDistance = document.getElementById("route-distance");
-               routeDistance.innerHTML = "距離：" + distance
-
-               var routeTime = document.getElementById("route-time");
-               routeTime.innerHTML = "およそ" + duration + "で着きます"
+               }      
+               infoWindow.open(map);
             } else {
                // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
             }
