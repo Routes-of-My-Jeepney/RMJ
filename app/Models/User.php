@@ -13,6 +13,11 @@ class User extends Authenticatable
     const DEFAULT_PROFILE_IMAGE = 'user-icon.png';
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function routes()
+    {
+        return $this->belongsToMany(Route::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,7 +27,7 @@ class User extends Authenticatable
         'profile_img',
         'email',
         'password',
-        
+
     ];
 
     /**
