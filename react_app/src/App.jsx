@@ -19,7 +19,7 @@ function App() {
               <Route path="/login" element={ <Login /> } />
               <Route path="/signup" element={ <Singup /> } />
           </Routes>
-      <MapContainer />
+          <MapContainer />
     </div>
   );
 }
