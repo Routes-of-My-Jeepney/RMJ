@@ -1,10 +1,12 @@
 import React from "react";
-
+import Button from "@mui/material/Button";
+import MapContainer from "../components/MapContainer";
+import { Box, Container } from "@mui/material";
 const Routes = () => {
     return (
-        <div>
-            <h1>Routes</h1>
-        </div>
+        <Container maxWidth="xl">
+                <Button>Routes</Button>
+        </Container>
     );
 }
 

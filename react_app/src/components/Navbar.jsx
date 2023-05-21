@@ -1,25 +1,22 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import * as React from "react";
+import { AppBar, Typography, Toolbar, Avatar } from "@mui/material";
+import { styled } from "@mui/material/styles";
+const pages = ["Home", "HowtoRide", "Routes"];
+const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export  default function Navbar() {
+const StyledToolbar = styled(Toolbar)({
+    display: "flex",
+    justifyContent: "space-between",
+});
+
+function Navbar() {
     return (
-    <nav className="nav">
-        <div className="nav__logo">
-            <Link  to="/" className="site-title">Site Name</Link>
-        </div>
-        <div className="nav__menu">
-            <ul className="menu">
-                <li className="menu__item">
-                    <Link to="/" className="menu__link">Home</Link>
-                </li>
-                <li className="menu__item"> 
-                    <Link to="/routes" className="menu__link">Routes</Link>
-                </li>
-                <li className="menu__item">
-                    <Link to="/how-to-ride" className="menu__link">How To Ride</Link>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        <AppBar>
+            <StyledToolbar>
+                <Typography variant="h6">RMJ</Typography>
+                <Avatar></Avatar>
+            </StyledToolbar>
+        </AppBar>
     );
 }
+export default Navbar;
