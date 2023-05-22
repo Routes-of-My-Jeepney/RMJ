@@ -1,10 +1,12 @@
 import React from "react";
+import MapContainer from "../components/MapContainer";
+import { Box } from "@mui/material";
 
 const Home = () => {
     return (
-        <div>
-            <h1>Home</h1>
-        </div>
+        <Box>
+            <MapContainer />
+        </Box>
     );
 };
 
