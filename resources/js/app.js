@@ -1,4 +1,6 @@
 import './bootstrap';
+import React,{ useEffect } from 'react';
+import axios from "axios";
 
 // プロフィール画像のプレビュー表示
 $('#profile-img-change-btn, #profile-img-set-btn').click(function (event) {
@@ -22,6 +24,7 @@ $('#profile-img').on('change', function () {
         reader.readAsDataURL(input.files[0]);
     }
 });
+
 
 // プロフィール画像の削除
 // プロフィール画像の削除ボタンがクリックされたときに、確認メッセージを表示する

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             RoutesTableSeeder::class,
+            HistoryTableSeeder::class,
         ]);
 
         // \App\Models\User::factory()->create([

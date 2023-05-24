@@ -8,21 +8,26 @@ import HowToRide from "./pages/HowToRide";
 import Login from "./pages/Login";
 import Singup from "./pages/Signup";
 import { BottomNav } from "./components/BottomNav";
+import History from "./pages/history";
+import HistorySample from "./pages/HistorySample";
 
 function App() {
-    return (
-        <div className="App">
-            <Navbar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/routes" element={<Jeepney_Routes />} />
-                <Route path="/how-to-ride" element={<HowToRide />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Singup />} />
-            </Routes>
-            <BottomNav />
-        </div>
-    );
+  return (
+    <div className="App">
+      <Navbar />
+          <Routes>
+              <Route path="/" element={ <Home /> } />
+              <Route path="/routes" element={ <Jeepney_Routes /> } />
+              <Route path="/how-to-ride" element={ <HowToRide /> } />
+              <Route path="/login" element={ <Login /> } />
+              <Route path="/signup" element={ <Singup /> } />
+              <Route path="/history" element={ <History/>} />
+              <Route path="/history-sample" element={ <HistorySample/>} />
+          </Routes>
+    </div>
+  );
 }
+
+
 
 export default App;
