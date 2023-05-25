@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Route;
+use App\Models\Jeepney;
 
-class RoutesTableSeeder extends Seeder
+class JeepneyTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +16,7 @@ class RoutesTableSeeder extends Seeder
     public function run()
     {
         //
-        Route::factory()
+        Jeepney::factory()
             ->count(50)
             ->create();
     }
