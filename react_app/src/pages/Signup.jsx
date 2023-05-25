@@ -1,33 +1,50 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
 
-export default function Signup() {
+export default function SignupPage() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const Submit = (e) => {
-        e.preventDefault();
+    const signup = async () => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/register`,
+                {
+                    name: name,
+                    email: email,
+                    password: password,
+                    password_confirmation: password,
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
-    
+
     return (
         <div>
-        <h1>Signup</h1>
-        <div className="login">
-            <form className="login__form" onSubmit={Submit}>
-                <div className="login__form-group">
-                    <label htmlFor="username">Username</label>
-                    <input type="text" name="username" id="username" className="login__form-input" />
-                    <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" className="login__form-input" />
-                    <label htmlFor="password">Password</label>
-                    <input type="password" name="password" id="password" className="login__form-input" />
-                    <label htmlFor="password confirmation">Password confirmation</label>
-                    <input type="password" name="password confirmation" id="password confirmation" className="login__form-input" />
-                    <button type="submit" className="login__form-button">Singup</button>
-                    <p>
-                        Already Registered?
-                        <Link to="/login">Sign in</Link></p>
-                </div>
-            </form>
+            <h2>Sign Up</h2>
+            <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={signup}>Sign Up</button>
         </div>
-    </div>
     );
 }
