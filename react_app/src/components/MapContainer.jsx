@@ -13,14 +13,11 @@ const containerStyle = {
     height: "100vh",
 };
 
-// 地名や住所の自動補完などの機能を使用するために、Google Maps JavaScript APIに places ライブラリを読み込むように指示するために必要な実装
-const libraries = ["places"]; // Define libraries as a constant variable outside the component
-
 function MapContainer() {
     const mapRef = useRef();
     const [center, setCenter] = useState();
     const [MarkerPosition, setMarkerPosition] = React.useState();
-    const [directions, setDirections] = useState();
+    const [directions, setDirections] = useState(null);
 
     React.useEffect(() => {
         if (navigator.geolocation) {
@@ -30,7 +27,6 @@ function MapContainer() {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
                     };
-                    // console.log("Current Position (getCurrentPosition):", coords);                    
                     setCenter(coords);
                     setMarkerPosition(coords);
                     mapRef.current.panTo(coords);
@@ -44,6 +40,9 @@ function MapContainer() {
         }
     }, []);
 
+    // useEffect(() => {
+    //   console.log('MarkerPosition updated:', MarkerPosition);
+    // }, [MarkerPosition])
 
     const onLoad = React.useCallback((map) => (mapRef.current = map), []);
 
@@ -51,9 +50,9 @@ function MapContainer() {
         <>
             <LoadScript
                 googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                libraries={libraries}
+                libraries={["places"]}
             >
-                <Box sx={{ position: "relative", height: "100vh" }}>
+                <Box sx={{ position: "relative", height: "500px" }}>
                     <GoogleMap
                         id="map"
                         ref={mapRef}
