@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Route;
+use App\Models\Jeepney;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -19,7 +19,7 @@ class UsersTableSeeder extends Seeder
         //
         User::factory()
             ->count(50)
-            ->has(Route::factory()->count(3))
+            ->hasAttached(Jeepney::factory()->count(3))
             ->create();
     }
 }

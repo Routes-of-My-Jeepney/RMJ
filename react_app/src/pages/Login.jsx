@@ -1,28 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
 
-export default function Login() {
+export default function LoginPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const Submit = (e) => {
-        e.preventDefault();
-
+    const login = async () => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/login`,
+                {
+                    email: email,
+                    password: password,
+                }
+            );
+            localStorage.setItem("authToken", response.data.token);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
         <div>
-            <h1>Login</h1>
-            <div className="login">
-                <form className="login__form" onSubmit={Submit}>
-                    <div className="login__form-group">
-                        <label htmlFor="username">Username</label>
-                        <input type="text" name="username" id="username" className="login__form-input" />
-                        <label htmlFor="password">Password</label>
-                        <input type="password" name="password" id="password" className="login__form-input" />
-                        <button type="submit" className="login__form-button">Login</button>
-                        <p>Don't have an account? <Link to="/signup">Register</Link></p>
-                    </div>
-                </form>
-            </div>
+            <h2>Login</h2>
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={login}>Log In</button>
         </div>
     );
 }

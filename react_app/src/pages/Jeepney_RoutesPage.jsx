@@ -2,12 +2,16 @@ import React from "react";
 import Button from "@mui/material/Button";
 import MapContainer from "../components/MapContainer";
 import { Box, Container } from "@mui/material";
-const Routes = () => {
+import JeepRoutes from "../components/Jeepneylist";
+
+const jeepneys = () => {
     return (
         <Container maxWidth="xl">
-                <Button>Routes</Button>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <JeepRoutes userId={null} />
+            </Box>
         </Container>
     );
-}
+};
 
-export default Routes;
+export default jeepneys;
