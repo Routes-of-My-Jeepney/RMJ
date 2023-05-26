@@ -23,6 +23,7 @@ function App() {
                 <Route path="/how-to-ride" element={<HowToRide />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Singup />} />
+                <Route path="/history" element={<History />}></Route>
             </Routes>
             <BottomNav />
         </div>
