@@ -1,33 +1,82 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 
-export default function Signup() {
+axios.defaults.withCredentials = true;
 
-    const Submit = (e) => {
-        e.preventDefault();
+export default function SignupPage() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+    const register = async () => {
+        try {
+            await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/sanctum/csrf-cookie`
+            );
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/register`,
+                {
+                    name: name,
+                    email: email,
+                    password: password,
+                    password_confirmation: passwordConfirmation,
+                }
+            );
+
+            // Handle successful registration
+            console.log(response.data);
+        } catch (error) {
+            // Handle error during registration
+            if (error.response && error.response.status === 422) {
+                console.error(error.response.data.errors);
+            } else {
+                console.error(error);
+            }
+        }
     };
-    
+
     return (
-        <div>
-        <h1>Signup</h1>
-        <div className="login">
-            <form className="login__form" onSubmit={Submit}>
-                <div className="login__form-group">
-                    <label htmlFor="username">Username</label>
-                    <input type="text" name="username" id="username" className="login__form-input" />
-                    <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" className="login__form-input" />
-                    <label htmlFor="password">Password</label>
-                    <input type="password" name="password" id="password" className="login__form-input" />
-                    <label htmlFor="password confirmation">Password confirmation</label>
-                    <input type="password" name="password confirmation" id="password confirmation" className="login__form-input" />
-                    <button type="submit" className="login__form-button">Singup</button>
-                    <p>
-                        Already Registered?
-                        <Link to="/login">Sign in</Link></p>
-                </div>
-            </form>
-        </div>
-    </div>
+        <Grid container justify="center" style={{ paddingTop: "40%" }}>
+            <Paper style={{ padding: 16 }}>
+                <Typography variant="h4">Sign Up</Typography>
+                <form onSubmit={register}>
+                    <TextField
+                        type="text"
+                        placeholder="Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <TextField
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <TextField
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={passwordConfirmation}
+                        onChange={(e) =>
+                            setPasswordConfirmation(e.target.value)
+                        }
+                    />
+                    <Button
+                        onClick={register}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Sign Up
+                    </Button>
+                </form>
+            </Paper>
+        </Grid>
     );
 }

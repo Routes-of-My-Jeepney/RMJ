@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             RoutesTableSeeder::class,
             HistoryTableSeeder::class,
+            // JeepneyTableSeeder::class,
         ]);
 
         // \App\Models\User::factory()->create([

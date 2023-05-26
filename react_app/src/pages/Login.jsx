@@ -1,28 +1,54 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 
-export default function Login() {
+export default function LoginPage() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const Submit = (e) => {
-        e.preventDefault();
-
+    const navigate = useNavigate();
+    const login = async () => {
+        try {
+            await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/sanctum/csrf-cookie`
+            );
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/api/login`,
+                {
+                    email: email,
+                    password: password,
+                }
+            );
+            localStorage.setItem("authToken", response.data.token);
+            navigate("/");
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            <div className="login">
-                <form className="login__form" onSubmit={Submit}>
-                    <div className="login__form-group">
-                        <label htmlFor="username">Username</label>
-                        <input type="text" name="username" id="username" className="login__form-input" />
-                        <label htmlFor="password">Password</label>
-                        <input type="password" name="password" id="password" className="login__form-input" />
-                        <button type="submit" className="login__form-button">Login</button>
-                        <p>Don't have an account? <Link to="/signup">Register</Link></p>
-                    </div>
+        <Grid container justify="center" style={{ paddingTop: "40%" }}>
+            <Paper style={{ padding: 16 }}>
+                <Typography variant="h4">Login</Typography>
+                <form onSubmit={login}>
+                    <TextField
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Button onClick={login} variant="contained" color="primary">
+                        Log In
+                    </Button>
                 </form>
-            </div>
-        </div>
+            </Paper>
+        </Grid>
     );
 }
