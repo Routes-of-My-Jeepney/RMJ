@@ -158,6 +158,9 @@ function PlacesAutoComplete({ mapRef }) {
             },
             (error) => {
                console.log("Geolocation error", error);
+            }, {
+               enableHighAccuracy: true,
+               maximumAge: 10000, // maximumAgeの値を設定（ミリ秒単位）
             }
          );
       } else {
@@ -232,3 +235,4 @@ function PlacesAutoComplete({ mapRef }) {
 }
 
 export default PlacesAutoComplete;
+
