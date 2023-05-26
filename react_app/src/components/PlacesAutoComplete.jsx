@@ -192,3 +192,49 @@ function PlacesAutoComplete({ mapRef }) {
 }
 
 export default PlacesAutoComplete;
+
+
+//ここで入力された地名を保存する変数を作成
+//作成者：濱田
+
+//async function getUserId() {
+//    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/get-user-id`)
+//    .then(response =>{
+//       console.log(response.data);
+//       userId = response.data;
+//    })
+//    .catch(error =>{
+//       console.log(error);
+//    })
+//    return userId;
+// };
+
+
+       //ログインしていたら履歴をaxios.postで送る処理を行う。
+
+       //まずはif文でログインしているかを確認する。
+       // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+       // ログイン処理などでisLoggedInの値を変更する関数
+       // const handleLogin = () => {
+       //  setIsLoggedIn(true);
+       // };
+
+       //if文がtrueならDBに履歴機能が送られる。
+        
+  //     getUserId();
+  //     const res = axios.post(`${import.meta.env.VITE_API_BASE_URL}/history`, {
+  //        user_id: userId,
+  //        origin: originName,  
+  //        destination: destinationName,
+  //     }).then(response=>{
+  //        console.log('Null?'+response.data);
+  //     }).catch(error=>{
+  //        console.log(error);
+  //     });
+
+    //   if (res) {
+    //      console.log("履歴の保存に成功しました！");
+    //   } else {
+    //      console.log("履歴を保存できませんでした");
+    // }
