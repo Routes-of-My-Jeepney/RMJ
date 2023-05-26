@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Jeepney;
 use App\Models\User;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+Route::get('/sanctum/csrf-cookie', function (Request $request) {
+    return response('CSRF cookie set')->withCookie(cookie('XSRF-TOKEN', $request->session()->token()));
+});
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -45,14 +49,22 @@ Route::delete('/favorites/{user}/{jeepney}', function ($userId, $jeepneyId) {
     return response()->json(['message' => 'Jeepney removed from favorites']);
 });
 
-// Jeepney::get('/routes', function () {
-//     $user = auth()->user();  // assumes user is authenticated
 
-//     $routes = Jeepney::all()->map(function ($jeepney) use ($user) {
-//         $jeepney->isFavorite = $user->routes->contains($jeepney);
 
-//         return $jeepney;
-//     });
+Route::post('/login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
 
-//     return $routes;
-// });
+    if (Auth::attempt($credentials)) {
+        return response()->json(Auth::user(), 200);
+    }
+
+    return response()->json(['error' => 'Invalid email or password.'], 401);
+});
+
+Route::post('/logout', function () {
+    Auth::logout();
+
+    return response()->json('Logged out successfully', 200);
+});
+
+Route::post('/register', [AuthController::class, 'register']);

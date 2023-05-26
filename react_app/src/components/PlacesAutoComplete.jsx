@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Box, Stack, TextField, Slide, Button } from "@mui/material";
+import { Box, Stack, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 // Styled Components for TextField and Map
 const StyledStack = styled(Stack)({
    position: "absolute",
    left: "50%",
-   top: "100px",
+   top: "70px",
    zIndex: 100,
    transform: "translateX(-50%)",
 });
@@ -16,11 +16,10 @@ const StyledTextField = styled(TextField)({
    width: "300px",
    borderRadius: "5px",
 });
-const RouteDrawButton = styled(Stack)({});
-const RouteStartButton = styled(Stack)({
+const StartButton = styled(Stack)({
    position: "absolute",
    left: "50%",
-   bottom: "100px",
+   bottom: "70px",
    zIndex: 100,
    transform: "translateX(-50%)",
 });
@@ -31,14 +30,11 @@ function PlacesAutoComplete({ mapRef }) {
 
    const [originId, setoriginId] = useState(null);
    const [destinationId, setdestinationId] = useState(null);
-   const [center, setCenter] = useState();
-   const [MarkerPosition, setMarkerPosition] = React.useState();
-   const [showObject, setShowObject] = useState(true);
    const [showRoute, setShowRoute] = useState(false);
-
 
    const drawRoute = () => {
       var directionsService = new google.maps.DirectionsService();
+      var directionsRenderer = new google.maps.DirectionsRenderer();
       var distanceMatrixservice = new google.maps.DistanceMatrixService();
 
       var map = mapRef.current;
@@ -47,7 +43,7 @@ function PlacesAutoComplete({ mapRef }) {
       var directionsRenderer = new google.maps.DirectionsRenderer({
          map: map,
       });
-      // directionsRenderer.setDirections(null);
+
       var request = {
          origin: { placeId: originId },
          destination: { placeId: destinationId },
@@ -71,7 +67,6 @@ function PlacesAutoComplete({ mapRef }) {
          var directionsService = new google.maps.DirectionsService();
          directionsService.route(request, function (result, status) {
             if (status == "OK") {
-               console.log(result);
                directionsRenderer.setDirections(result);
                var bounds = new google.maps.LatLngBounds();
                var legs = result.routes[0].legs;
@@ -102,11 +97,13 @@ function PlacesAutoComplete({ mapRef }) {
                );
                // 吹き出しを開く
                infoWindow.open(map);
-               setShowObject(false);
                setShowRoute(true);
             }
          });
       }
+
+   
+
 
       function timeRequired(response, status) {
          if (status == "OK") {
@@ -123,21 +120,17 @@ function PlacesAutoComplete({ mapRef }) {
                      var to = destinations[j];
                      // console.log("距離: " + distance);
                      // console.log("所要時間: " + duration);
-
                   } else {
                      // console.log("距離と所要時間の取得に失敗しました。");
                   }
                }
             }
-            {
-               infoWindow.open(map);
-            };
+            infoWindow.open(map);
          } else {
             // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
          }
       }
       // };
-
    };
 
    const startRoute = () => {
@@ -169,10 +162,8 @@ function PlacesAutoComplete({ mapRef }) {
 
 
       console.log('Hello');
-      // startRouteが実行された後にshowRouteをtrueに設定    
-      setShowObject(false);
-      setShowRoute(false);
-
+      // startRouteが実行された後にshowRouteをtrueに設定
+      setShowRoute(true);
    };
 
    useEffect(() => {
@@ -195,40 +186,32 @@ function PlacesAutoComplete({ mapRef }) {
 
    return (
       <>
-         {showObject && (
-            <StyledStack>
-               <Slide direction="down" in={showObject} mountOnEnter unmountOnExit>
-                  <Box>
-                     <StyledTextField
-                        id="origin-input"
-                        label="出発地"
-                        variant="outlined"
-                        inputRef={originRef}
-                     />
-                     <br />
-                     <StyledTextField
-                        id="destination-input"
-                        label="目的地"
-                        variant="outlined"
-                        inputRef={destRef}                  
-                     />
-                     <RouteDrawButton>
-                        <Button variant="contained" onClick={drawRoute}>
-                           ルートを表示
-                        </Button>
-                     </RouteDrawButton>
-                  </Box>
-               </Slide>
-            </StyledStack>
-         )}
+         <StyledStack>
+            <StyledTextField
+               id="outlined-basic"
+               label="出発地"
+               variant="outlined"
+               inputRef={originRef}
+            />
+            <br />
+            <StyledTextField
+               id="outlined-basic"
+               label="目的地"
+               variant="outlined"
+               inputRef={destRef}
+            />
+            <input type="submit" value="ルートを表示" onClick={drawRoute} />
+            <div>
+               <p id="route-distance"></p>
+            </div>
+            <div>
+               <p id="route-time"></p>
+            </div>
+         </StyledStack>
          {showRoute && (
-            <RouteStartButton>
-               <Slide direction="up" in={showRoute} mountOnEnter unmountOnExit>
-                  <Button variant="contained" onClick={startRoute}>
-                     ルートを開始
-                  </Button>
-               </Slide>
-            </RouteStartButton>
+            <StartButton>
+               <button className="btn btn-primary" onClick={startRoute}>ルートを開始</button> 
+            </StartButton>
          )}
       </>
    );
