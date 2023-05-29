@@ -52,18 +52,6 @@ Route::delete('/favorites/{user}/{jeepney}', function ($userId, $jeepneyId) {
     return response()->json(['message' => 'Jeepney removed from favorites']);
 });
 
-
-
-Route::post('/login', function (Request $request) {
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        return response()->json(Auth::user(), 200);
-    }
-
-    return response()->json(['error' => 'Invalid email or password.'], 401);
-});
-
 Route::post('/logout', function () {
     Auth::logout();
 
@@ -71,7 +59,7 @@ Route::post('/logout', function () {
 });
 
 Route::post('/register', [AuthController::class, 'register']);
-
+Route::post('/login', [AuthController::class, 'login']);
 Route::get('/routes',[RouteController::class, 'index']);
 Route::get('/history',[HistoryController::class, 'index']);
 Route::get('/get-user-id',[UserController::class, 'getUserId']);

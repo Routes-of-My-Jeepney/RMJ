@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
+import UserContext from "../contexts/UserContext";
 
 axios.defaults.withCredentials = true;
 
@@ -9,39 +10,18 @@ export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const { register } = useContext(UserContext);
 
-    const register = async () => {
-        try {
-            await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/sanctum/csrf-cookie`
-            );
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/register`,
-                {
-                    name: name,
-                    email: email,
-                    password: password,
-                    password_confirmation: passwordConfirmation,
-                }
-            );
-
-            // Handle successful registration
-            console.log(response.data);
-        } catch (error) {
-            // Handle error during registration
-            if (error.response && error.response.status === 422) {
-                console.error(error.response.data.errors);
-            } else {
-                console.error(error);
-            }
-        }
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        await register(name, email, password, passwordConfirmation);
     };
 
     return (
         <Grid container justify="center" style={{ paddingTop: "40%" }}>
             <Paper style={{ padding: 16 }}>
                 <Typography variant="h4">Sign Up</Typography>
-                <form onSubmit={register}>
+                <form onSubmit={handleRegister}>
                     <TextField
                         type="text"
                         placeholder="Name"
@@ -69,7 +49,7 @@ export default function SignupPage() {
                         }
                     />
                     <Button
-                        onClick={register}
+                        onClick={handleRegister}
                         variant="contained"
                         color="primary"
                     >
