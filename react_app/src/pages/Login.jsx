@@ -1,30 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
+import getCSRFToken from "../utils/getCSRFToken";
+import UserContext from "../contexts/UserContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useContext(UserContext);
 
-    const navigate = useNavigate();
-    const login = async () => {
-        try {
-            await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/sanctum/csrf-cookie`
-            );
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/login`,
-                {
-                    email: email,
-                    password: password,
-                }
-            );
-            localStorage.setItem("authToken", response.data.token);
-            navigate("/");
-        } catch (error) {
-            console.error(error);
-        }
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        await login(email, password);
     };
 
     return (
@@ -44,7 +31,11 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <Button onClick={login} variant="contained" color="primary">
+                    <Button
+                        onClick={handleLogin}
+                        variant="contained"
+                        color="primary"
+                    >
                         Log In
                     </Button>
                 </form>
