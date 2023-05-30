@@ -25,7 +25,7 @@ use App\Http\Controllers\HistoryController;
 Route::get('/sanctum/csrf-cookie', function (Request $request) {
     return response('CSRF cookie set')->withCookie(cookie('XSRF-TOKEN', $request->session()->token()));
 });
-Route::apiResource('history', 'HistorySample');
+Route::apiResource('/history', 'HistorySample');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -74,13 +74,15 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/routes',[RouteController::class, 'index']);
 Route::get('/history',[HistoryController::class, 'index']);
-Route::get('/get-user-id',[UserController::class, 'getUserId']);
+Route::get('/get-user-id', function () {
+    return Auth::user();})->middleware('auth:sanctum');
 
 // ① postメソッドで、Historyのcreateメソッドを呼び出す
 
 Route::post('/history',[HistoryController::class, 'create']);
 
 // ② post or delete メソッドで、Historyのdeleteメソッドを呼び出す
+Route::delete('/history', [HistoryController::class, 'delete']);
 
 // ③ post or delete メソッドで、HistoryのallDeleteメソッドを呼びだす
 
