@@ -10,7 +10,9 @@ class JeepneyController extends Controller
 {
     public function index()
     {
-        return Jeepney::all();
+        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        return response()->json($jeepneys);
     }
 
     public function show($id)
@@ -28,4 +30,43 @@ class JeepneyController extends Controller
         // If a jeepney was found, return it as a JSON response
         return response()->json($jeepney, 200);
     }
+
+    public function likeJeepney(Request $request, Jeepney $jeepneyId)
+    {
+        $user = $request->user();
+        $jeepney = Jeepney::find($jeepneyId);
+        $user->likedJeepneys()->attach($jeepney);
+        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        return response()->json([
+            'message' => 'Jeepney added to favorites',
+            'jeepneys' => $jeepneys,
+        ], 200);
+    }
+    
+    public function dislikeJeepney(Request $request, Jeepney $jeepneyId)
+    {
+        $user = $request->user();
+        $jeepney = Jeepney::find($jeepneyId);
+        $user->likedJeepneys()->detach($jeepney);
+        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        return response()->json([
+            'message' => 'Jeepney removed from favorites',
+            'jeepneys' => $jeepneys,
+        ], 200);
+    }
+
+    public function showLikedJeepneys(Request $request)
+{
+    $user = $request->user(); // Get the currently authenticated user
+
+    $likedJeepneys = $user->likedJeepneys; // Get the liked jeepneys
+
+    // Return a view or JSON response with the liked jeepneys...
+    return response()->json([
+        'message' => 'Liked jeepneys fetched successfully',
+        'data' => $likedJeepneys,
+    ], 200);
+}
 }
