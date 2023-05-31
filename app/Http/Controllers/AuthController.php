@@ -28,7 +28,8 @@ class AuthController extends Controller
         Auth::login($user);
     
         return response()->json([
-            'message' => 'Successfully registered!'
+            'message' => 'Successfully registered!',
+            'user' => $user,
         ], 201);
     }
     
@@ -69,11 +70,13 @@ class AuthController extends Controller
 
         // attempt to authenticate the user
         if (Auth::attempt($credentials)) {
-            // generate a token for the userb
+            // generate a token for the user
             $request->session()->regenerate();
+            $user = $request->user();
 
             return response()->json([
                 'message' => 'Logged in successfully',
+                'user' => $user,
             ], 200);
         }
 

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "../axios";
 import LikeButton from "./LikeButton";
 import MapJeepRoutes from "./MapJeepRoutes";
+import UserContext from "../contexts/UserContext";
+import getCSRFToken from "../utils/getCSRFToken";
 import {
     Grid,
     Box,
@@ -16,10 +18,12 @@ import {
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import InboxIcon from "@mui/icons-material/Inbox";
 
-function JeepRoutes({ userId }) {
+function JeepRoutes() {
     const [jeepneys, setJeepneys] = useState([]);
     const [selectedJeepney, setSelectedJeepney] = useState(null);
     const [open, setOpen] = useState(false);
+    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+    const { user } = useContext(UserContext);
 
     const handleClick = () => {
         setOpen(!open);
@@ -28,17 +32,25 @@ function JeepRoutes({ userId }) {
     const handleJeepneyClick = (selectedJeepney) => {
         setSelectedJeepney(selectedJeepney);
     };
+    const toggleFavorites = () => {
+        setShowOnlyFavorites(!showOnlyFavorites);
+    };
 
-    useEffect(() => {
-        axios
-            .get(`${import.meta.env.VITE_API_BASE_URL}/api/jeepneys`)
-            .then((response) => {
-                setJeepneys(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, []);
+    useEffect(
+        () => async () => {
+            await getCSRFToken();
+            axios
+                .get(`/api/jeepneys`)
+                .then((response) => {
+                    setJeepneys(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        []
+    );
+    useEffect(() => {}, [jeepneys]);
 
     return (
         <>
@@ -67,6 +79,9 @@ function JeepRoutes({ userId }) {
                                 </ListSubheader>
                             }
                         >
+                            <button onClick={toggleFavorites}>
+                                Toggle Favorites
+                            </button>
                             <ListItemButton onClick={handleClick}>
                                 <ListItemIcon>
                                     <InboxIcon />
@@ -80,26 +95,41 @@ function JeepRoutes({ userId }) {
                                 unmountOnExit
                             ></Collapse>
 
-                            {jeepneys.map((jeepney) => (
-                                <List component="div" disablePadding>
-                                    <ListItemButton
-                                        variant="contained"
-                                        key={jeepney.id}
-                                        onClick={() =>
-                                            handleJeepneyClick(jeepney)
-                                        }
+                            {jeepneys
+                                .filter(
+                                    (jeepney) =>
+                                        !showOnlyFavorites || jeepney.isLiked
+                                )
+                                .map((jeepney) => (
+                                    <List
+                                        component="div"
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                        }}
+                                        disablePadding
                                     >
-                                        {jeepney.name}
-                                    </ListItemButton>
-                                </List>
-                            ))}
+                                        <ListItemButton
+                                            variant="contained"
+                                            key={jeepney.id}
+                                            onClick={() =>
+                                                handleJeepneyClick(jeepney)
+                                            }
+                                        >
+                                            {jeepney.name}
+                                        </ListItemButton>
+                                        <LikeButton
+                                            jeepney={jeepney}
+                                            // userId={user.id}
+                                            // initialIsFavorite={
+                                            //     jeepney.isFavorite
+                                            // }
+                                            jeepneys={jeepneys}
+                                            setJeepneys={setJeepneys}
+                                        />
+                                    </List>
+                                ))}
                         </List>
-
-                        {/* <LikeButton
-                        selectedJeepney={jeepney.id}
-                        userId={userId}
-                        initialIsFavorite={jeepney.isFavorite}
-                    /> */}
                     </Box>
                 </Grid>
                 <Grid item xs={10}>

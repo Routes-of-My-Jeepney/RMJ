@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserContext from "./UserContext";
 import axios from "../axios";
 import getCSRFToken from "../utils/getCSRFToken";
@@ -73,6 +73,21 @@ function UserProvider({ children }) {
         logout,
         register,
     };
+
+    useEffect(
+        () => async () => {
+            await getCSRFToken();
+            axios
+                .get("/api/user") // Make sure this URL is correct
+                .then((response) => {
+                    setUser(response.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        []
+    );
 
     return (
         <UserContext.Provider value={value}>{children}</UserContext.Provider>

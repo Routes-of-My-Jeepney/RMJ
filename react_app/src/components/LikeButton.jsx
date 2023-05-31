@@ -2,59 +2,71 @@ import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import axios from "axios";
+import axios from "../axios";
+import UserContext from "../contexts/UserContext";
+import { useContext } from "react";
+import getCSRFToken from "../utils/getCSRFToken";
 
-function LikeButton({ routeId, userId, initialIsFavorite }) {
-    const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+function LikeButton({ jeepney, setJeepneys, jeepneys }) {
+    // function LikeButton({ jeepneyId, userId, initialIsFavorite }) {
+    // const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+    const { user } = useContext(UserContext);
 
-    const handleLike = () => {
-        setIsFavorite(true);
+    const handleLike = async (jeepney) => {
+        await getCSRFToken();
         axios
-            .post(`${import.meta.env.VITE_API_BASE_URL}/api/favorites`, {
-                route_id: routeId,
-                user_id: userId,
-            })
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-                setIsFavorite(false); // rollback on error
-            });
-    };
+            .post(
+                `/api/jeepney/${jeepney.id}/like`,
 
-    const handleUnlike = () => {
-        setIsFavorite(false);
-        axios
-            .delete(
-                `http://your-laravel-api-url/api/favorites/${userId}/${routeId}`
+                {
+                    jeepney_id: jeepney.id,
+                    // user_id: user.id,
+                }
             )
             .then((response) => {
                 console.log(response.data);
+                setJeepneys(response.data.jeepneys);
             })
             .catch((error) => {
                 console.error(error);
-                setIsFavorite(true); // rollback on error
             });
     };
 
-    useEffect(() => {
-        // fetch the favorite status from the API when the component mounts
+    const handleUnlike = async (jeepney) => {
+        await getCSRFToken();
         axios
-            .get(
-                `http://your-laravel-api-url/api/favorites/${userId}/${routeId}`
-            )
+            .delete(`/api/jeepney/${jeepney.id}/dislike`, {
+                jeepney_id: jeepney.id,
+            })
             .then((response) => {
-                setIsFavorite(response.data.isFavorite);
+                console.log(response.data);
+                setJeepneys(response.data.jeepneys);
             })
             .catch((error) => {
                 console.error(error);
             });
-    }, [routeId, userId]);
+    };
+
+    // useEffect(() => {
+    //     // fetch the favorite status from the API when the component mounts
+    //     axios
+    //         .get(`/user/liked-jeepneys`)
+
+    //         .then((response) => {
+    //             setIsFavorite(response.data.isFavorite);
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //         });
+    // }, [jeepney]);
 
     return (
-        <IconButton onClick={isFavorite ? handleUnlike : handleLike}>
-            {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        <IconButton
+            onClick={() => {
+                jeepney.isLiked ? handleUnlike(jeepney) : handleLike(jeepney);
+            }}
+        >
+            {jeepney.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
     );
 }
