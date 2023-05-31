@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     AppBar,
     Typography,
@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import UserContext from "../contexts/UserContext";
 
 const pages = ["Home", "HowtoRide", "Routes"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -17,6 +18,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function Navbar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const open = Boolean(anchorElUser);
+    const { user, deleteUser } = useContext(UserContext);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -73,6 +75,15 @@ function Navbar() {
                         >
                             Signup
                         </MenuItem>
+                        {user && (
+                            <MenuItem
+                                onClick={() => {
+                                    deleteUser(user.id);
+                                }}
+                            >
+                                Delete
+                            </MenuItem>
+                        )}
                     </Menu>
                 </Box>
             </Toolbar>

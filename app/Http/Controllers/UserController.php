@@ -115,7 +115,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function deleteAccount(User $user)
+    public function delete(User $user)
     {
         $user->delete();
         return response()->json(null,204);

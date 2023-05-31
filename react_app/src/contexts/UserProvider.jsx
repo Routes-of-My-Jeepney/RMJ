@@ -73,6 +73,7 @@ function UserProvider({ children }) {
             .delete(`/api/users/${userId}`)
             .then((response) => {
                 console.log(response.data);
+                setUser(null);
             })
             .catch((error) => {
                 // Something went wrong. Handle the error here.
