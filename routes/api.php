@@ -36,6 +36,7 @@ Route::delete('/jeepney/{jeepneyId}/dislike', [JeepneyController::class, 'dislik
 Route::get('/user/liked-jeepneys', 'JeepneyController@showLikedJeepneys');
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
+Route::delete('users/{user}', [UserController::class, 'destroy']);
 
 Route::post('/favorites', function (Request $request) {
     $user = User::find($request->user_id);
