@@ -38,6 +38,7 @@ Route::get('/user/liked-jeepneys', 'JeepneyController@showLikedJeepneys');
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
 Route::delete('users/{user}', [UserController::class, 'delete']);
+Route::post('users/logout', [AuthController::class, 'logout']);
 
 Route::post('/favorites', function (Request $request) {
     $user = User::find($request->user_id);
