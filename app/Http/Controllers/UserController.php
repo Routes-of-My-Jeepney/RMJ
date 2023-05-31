@@ -29,6 +29,13 @@ class UserController extends Controller
         //
     }
 
+    public function likedJeepneys(Request $request)
+{
+    $jeepneys = $request->user()->likedJeepneys();
+
+    return response()->json($jeepneys, 200);
+}
+
     /**
      * Store a newly created resource in storage.
      *
