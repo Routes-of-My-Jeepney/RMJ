@@ -8,8 +8,10 @@ import Singup from "./pages/Signup";
 import { BottomNav } from "./components/BottomNav";
 import JeepRoutes from "./components/Jeepneylist";
 import History from "./pages/history";
-import HistorySample from "./pages/HistorySample";
-import UserProvider from "./contexts/UserProvider";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+
 
 function App() {
     return (
@@ -23,10 +25,6 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Singup />} />
                     <Route path="/history" element={<History />}>
-                        <Route
-                            path="/history-sample"
-                            element={<HistorySample />}
-                        />
                     </Route>
                 </Routes>
                 <BottomNav />

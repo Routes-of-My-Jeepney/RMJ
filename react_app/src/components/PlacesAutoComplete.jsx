@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Box, Stack, TextField, Slide, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import axios from "axios";
 
 // Styled Components for TextField and Map
 const StyledStack = styled(Stack)({
+
    position: "absolute",
    left: "50%",
    top: "100px",
@@ -12,10 +14,11 @@ const StyledStack = styled(Stack)({
 });
 
 const StyledTextField = styled(TextField)({
-   backgroundColor: "#ffffff",
-   width: "300px",
-   borderRadius: "5px",
+    backgroundColor: "#ffffff",
+    width: "300px",
+    borderRadius: "5px",
 });
+
 const RouteDrawButton = styled(Stack)({});
 const RouteStartButton = styled(Stack)({
    position: "absolute",
@@ -37,7 +40,9 @@ function PlacesAutoComplete({ mapRef }) {
 
 
    const drawRoute = () => {
+      postHistory();
       var directionsService = new google.maps.DirectionsService();
+      var directionsRenderer = new google.maps.DirectionsRenderer();
       var distanceMatrixservice = new google.maps.DistanceMatrixService();
 
       var map = mapRef.current;
@@ -203,6 +208,25 @@ function PlacesAutoComplete({ mapRef }) {
          setdestinationId(place_destination.place_id);
       });
    }, []);
+  
+  //検索窓に入力された値を履歴用にuseRefで保存する
+
+    const url = "http://localhost:8000/api/";
+
+    async function postHistory() {
+        try {
+            const res = await axios.post(url + "history", {
+                user_id: 1,
+                origin: originRef.current.value,
+                destination: destRef.current.value,
+            });
+            console.log("よし");
+        } catch (e) {
+            console.log(e);
+            console.log("エラーが起きました！");
+            return;
+        }
+    }
 
    return (
       <>
@@ -246,6 +270,3 @@ function PlacesAutoComplete({ mapRef }) {
 }
 
 export default PlacesAutoComplete;
-
-
-
