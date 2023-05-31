@@ -1,25 +1,29 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Box, Stack, TextField } from "@mui/material";
+import { Box, Stack, TextField, Slide, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import axios from "axios";
 
 // Styled Components for TextField and Map
 const StyledStack = styled(Stack)({
+
    position: "absolute",
    left: "50%",
-   top: "70px",
+   top: "100px",
    zIndex: 100,
    transform: "translateX(-50%)",
 });
 
 const StyledTextField = styled(TextField)({
-   backgroundColor: "#ffffff",
-   width: "300px",
-   borderRadius: "5px",
+    backgroundColor: "#ffffff",
+    width: "300px",
+    borderRadius: "5px",
 });
-const StartButton = styled(Stack)({
+
+const RouteDrawButton = styled(Stack)({});
+const RouteStartButton = styled(Stack)({
    position: "absolute",
    left: "50%",
-   bottom: "70px",
+   bottom: "100px",
    zIndex: 100,
    transform: "translateX(-50%)",
 });
@@ -27,12 +31,16 @@ const StartButton = styled(Stack)({
 function PlacesAutoComplete({ mapRef }) {
    const originRef = useRef();
    const destRef = useRef();
-
    const [originId, setoriginId] = useState(null);
    const [destinationId, setdestinationId] = useState(null);
+   const [center, setCenter] = useState();
+   const [MarkerPosition, setMarkerPosition] = React.useState();
+   const [showObject, setShowObject] = useState(true);
    const [showRoute, setShowRoute] = useState(false);
 
+
    const drawRoute = () => {
+      postHistory();
       var directionsService = new google.maps.DirectionsService();
       var directionsRenderer = new google.maps.DirectionsRenderer();
       var distanceMatrixservice = new google.maps.DistanceMatrixService();
@@ -43,7 +51,7 @@ function PlacesAutoComplete({ mapRef }) {
       var directionsRenderer = new google.maps.DirectionsRenderer({
          map: map,
       });
-
+      // directionsRenderer.setDirections(null);
       var request = {
          origin: { placeId: originId },
          destination: { placeId: destinationId },
@@ -67,6 +75,7 @@ function PlacesAutoComplete({ mapRef }) {
          var directionsService = new google.maps.DirectionsService();
          directionsService.route(request, function (result, status) {
             if (status == "OK") {
+               console.log(result);
                directionsRenderer.setDirections(result);
                var bounds = new google.maps.LatLngBounds();
                var legs = result.routes[0].legs;
@@ -97,13 +106,11 @@ function PlacesAutoComplete({ mapRef }) {
                );
                // 吹き出しを開く
                infoWindow.open(map);
+               setShowObject(false);
                setShowRoute(true);
             }
          });
       }
-
-   
-
 
       function timeRequired(response, status) {
          if (status == "OK") {
@@ -120,24 +127,68 @@ function PlacesAutoComplete({ mapRef }) {
                      var to = destinations[j];
                      // console.log("距離: " + distance);
                      // console.log("所要時間: " + duration);
+
                   } else {
                      // console.log("距離と所要時間の取得に失敗しました。");
                   }
                }
             }
-            infoWindow.open(map);
+            {
+               infoWindow.open(map);
+            };
          } else {
             // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
          }
       }
       // };
-   };
 
+   };
+   const destinationLat = 10.3142109;
+   const destinationLng = 123.9054164;
    const startRoute = () => {
       // startRoute関数の内容をここに記述
+      if (navigator.geolocation) {
+        var watchId= navigator.geolocation.watchPosition(
+            (position) => {
+               const coords = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude,
+                  acr: position.coords.accuracy,
+                  spd: position.coords.speed
+               };
+               console.log("Current Position (WatchPosition):", coords);
+               setCenter(coords);
+               setMarkerPosition(coords);
+               mapRef.current.panTo(coords);
+               const distanceToDestination = google.maps.geometry.spherical.computeDistanceBetween(
+                  new google.maps.LatLng(coords.lat, coords.lng),
+                  new google.maps.LatLng(destinationLat, destinationLng)
+               );
+   
+               // 距離が一定の範囲内にあればナビゲーションを停止し、アラートを表示
+               const distanceThreshold = 100; // 単位: メートル
+               if (distanceToDestination <= distanceThreshold) {
+                  navigator.geolocation.clearWatch(watchId); // ナビゲーションを停止
+                  alert("目的地に到着しました！");
+               }
+            },
+            (error) => {
+               console.log("Geolocation error", error);
+            }, {
+               enableHighAccuracy: true,
+               maximumAge: 10000, // maximumAgeの値を設定（ミリ秒単位）
+            }
+         );
+      } else {
+         console.log("Geolocation is not supported by this browser.");
+      }
+
+
       console.log('Hello');
-      // startRouteが実行された後にshowRouteをtrueに設定
-      setShowRoute(true);
+      // startRouteが実行された後にshowRouteをtrueに設定    
+      setShowObject(false);
+      setShowRoute(false);
+
    };
 
    useEffect(() => {
@@ -157,84 +208,65 @@ function PlacesAutoComplete({ mapRef }) {
          setdestinationId(place_destination.place_id);
       });
    }, []);
+  
+  //検索窓に入力された値を履歴用にuseRefで保存する
+
+    const url = "http://localhost:8000/api/";
+
+    async function postHistory() {
+        try {
+            const res = await axios.post(url + "history", {
+                user_id: 1,
+                origin: originRef.current.value,
+                destination: destRef.current.value,
+            });
+            console.log("よし");
+        } catch (e) {
+            console.log(e);
+            console.log("エラーが起きました！");
+            return;
+        }
+    }
 
    return (
       <>
-         <StyledStack>
-            <StyledTextField
-               id="outlined-basic"
-               label="出発地"
-               variant="outlined"
-               inputRef={originRef}
-            />
-            <br />
-            <StyledTextField
-               id="outlined-basic"
-               label="目的地"
-               variant="outlined"
-               inputRef={destRef}
-            />
-            <input type="submit" value="ルートを表示" onClick={drawRoute} />
-            <div>
-               <p id="route-distance"></p>
-            </div>
-            <div>
-               <p id="route-time"></p>
-            </div>
-         </StyledStack>
+         {showObject && (
+            <StyledStack>
+               <Slide direction="down" in={showObject} mountOnEnter unmountOnExit>
+                  <Box>
+                     <StyledTextField
+                        id="origin-input"
+                        label="出発地"
+                        variant="outlined"
+                        inputRef={originRef}
+                     />
+                     <br />
+                     <StyledTextField
+                        id="destination-input"
+                        label="目的地"
+                        variant="outlined"
+                        inputRef={destRef}                  
+                     />
+                     <RouteDrawButton>
+                        <Button variant="contained" onClick={drawRoute}>
+                           ルートを表示
+                        </Button>
+                     </RouteDrawButton>
+                  </Box>
+               </Slide>
+            </StyledStack>
+         )}
          {showRoute && (
-            <StartButton>
-               <button className="btn btn-primary" onClick={startRoute}>ルートを開始</button> 
-            </StartButton>
+            <RouteStartButton>
+               <Slide direction="up" in={showRoute} mountOnEnter unmountOnExit>
+                  <Button variant="contained" onClick={startRoute}>
+                     ルートを開始
+                  </Button>
+               </Slide>
+            </RouteStartButton>
          )}
       </>
    );
 }
 
 export default PlacesAutoComplete;
-
-
-//ここで入力された地名を保存する変数を作成
-//作成者：濱田
-
-//async function getUserId() {
-//    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/get-user-id`)
-//    .then(response =>{
-//       console.log(response.data);
-//       userId = response.data;
-//    })
-//    .catch(error =>{
-//       console.log(error);
-//    })
-//    return userId;
-// };
-
-
-       //ログインしていたら履歴をaxios.postで送る処理を行う。
-
-       //まずはif文でログインしているかを確認する。
-       // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-       // ログイン処理などでisLoggedInの値を変更する関数
-       // const handleLogin = () => {
-       //  setIsLoggedIn(true);
-       // };
-
-       //if文がtrueならDBに履歴機能が送られる。
-        
-  //     getUserId();
-  //     const res = axios.post(`${import.meta.env.VITE_API_BASE_URL}/history`, {
-  //        user_id: userId,
-  //        origin: originName,  
-  //        destination: destinationName,
-  //     }).then(response=>{
-  //        console.log('Null?'+response.data);
-  //     }).catch(error=>{
-  //        console.log(error);
-  //     });
-
-    //   if (res) {
-    //      console.log("履歴の保存に成功しました！");
-    //   } else {
-    //      console.log("履歴を保存できませんでした");
-    // }

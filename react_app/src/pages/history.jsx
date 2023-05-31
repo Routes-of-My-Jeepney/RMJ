@@ -1,72 +1,135 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { DataGrid, useGridApiContext } from "@mui/x-data-grid";
+import {} from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { blue } from "@mui/material/colors";
 
-const History=() => {
-  return (
-    <>
-        <h1>YES</h1>
-        <p>このページでは履歴を作っていきます！！</p>
-        <p>ヘッドにはこの遷移ボタンはつかないので後で消しておきますね！！！！！</p>
+function History() {
+    const [rows, setRows] = useState([]);
+    const url = "http://localhost:8000/api/";
 
-        <table>
-            <td>ルート閲覧履歴</td>
-            <td><button>すべて削除</button></td>
-        </table>
-        <hr />
-        <table>
-            <td>2Quad - La Guard Flats 2</td>
-            <button>ゴミ箱</button>
-            <br />
-            2023.05.17
-        </table>
-        <hr />
-        <table>
-            <td>2Quad - La Guard Flats 2</td>
-            <button>ゴミ箱</button>
-            <br />
-            2023.05.17
-        </table>
-        <hr />
-        <table>
-            <td>2Quad - La Guard Flats 2</td>
-            <button>ゴミ箱</button>
-            <br />
-            2023.05.17
-        </table>
-        <hr />
-        <table>
-            <td>2Quad - La Guard Flats 2</td>
-            <button>ゴミ箱</button>
-            <br />
-            2023.05.17
-        </table>
-        <hr />
+    const columns = [
+        { field: "id", headerName: "ID", width: 0 },
+        { field: "origin", headerName: "出発地", width: 300 },
+        { field: "destination", headerName: "到着地", width: 300 },
+        {
+            field: "created_at",
+            headerName: "時間",
+            width: 150,
+        },
+    ];
 
-        <div className="content_detail__pagination cdp" actpage="1">
-			<a href="#!-1" class="cdp_i">prev</a>
-			<a href="#!1" class="cdp_i">1 </a>
-			<a href="#!2" class="cdp_i">2 </a>
-			<a href="#!3" class="cdp_i">3 </a>
-			<a href="#!4" class="cdp_i">4 </a>
-			<a href="#!5" class="cdp_i">5 </a>
-			<a href="#!6" class="cdp_i">6 </a>
-			<a href="#!7" class="cdp_i">7 </a>
-			<a href="#!8" class="cdp_i">8 </a>
-			<a href="#!9" class="cdp_i">9 </a>
-			<a href="#!10" class="cdp_i">10 </a>
-			<a href="#!11" class="cdp_i">11 </a>
-			<a href="#!12" class="cdp_i">12 </a>
-			<a href="#!13" class="cdp_i">13 </a>
-			<a href="#!14" class="cdp_i">14 </a>
-			<a href="#!15" class="cdp_i">15 </a>
-      <a href="#!16" class="cdp_i">16 </a>
-			<a href="#!17" class="cdp_i">17 </a>
-			<a href="#!18" class="cdp_i">18 </a>
-			<a href="#!19" class="cdp_i">19 </a>
-			<a href="#!+1" class="cdp_i">next </a>
-		</div>
+    async function getHistory() {
+        try {
+            let historyRes = await axios.get(url + "history", {
+                paramas: {
+                    user_id: 1,
+                },
+            });
 
-    </>
-  );
+            console.log(historyRes);
+
+            const historyData = historyRes.data;
+
+            let data = [];
+
+            for (let i = 0; i < historyData.length; i++) {
+                let id = historyRes.data[i].id;
+                let origin = historyRes.data[i].origin;
+                let destination = historyRes.data[i].destination;
+                let createTime = historyRes.data[i].created_at;
+
+                let row = {
+                    id: id,
+                    origin: origin,
+                    destination: destination,
+                    created_at: createTime,
+                };
+                data.push(row);
+            }
+            setRows(data);
+            console.log("===============");
+            console.log("成功しました！！！");
+            console.log("===============");
+        } catch (e) {
+            console.log(e);
+            console.log("エラーが起きました！");
+        }
+    }
+
+    // ③ 一部のHistoryのデータを削除するリクエストを投げる関数を作る
+
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const refreshPage = () => {
+        window.location.reload();
+    };
+
+    const handleRowSelect = (newSelection) => {
+        setSelectedRows(newSelection.selectionModel);
+    };
+
+    // useEffect(() => {
+    //     const selectedIds = selectedRows.map((row) => row.id);
+    //     console.log(selectedIds);
+    // }, [selectedRows]);
+
+    const deleteSelectedRows = async () => {
+        console.log(selectedRows);
+        for (const id of selectedRows) {
+            try {
+                const response = await axios.delete(url + "history", {
+                    params: { id: id },
+                });
+                console.log(response.data);
+                refreshPage();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
+    const selectDelete = useGridApiContext;
+
+    useEffect(() => {
+        getHistory();
+    }, []);
+
+    return (
+        <>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+
+            <DeleteIcon
+                color="primary"
+                style={{ fontSize: 30, marginLeft: 11 }}
+                onClick={deleteSelectedRows}
+            />
+
+            <div style={{ height: 700, width: "100%" }}>
+                <DataGrid
+                    rows={rows}
+                    checkboxSelection
+                    onRowSelectionModelChange={(newSelectionModel) => {
+                        console.log(newSelectionModel);
+                        setSelectedRows(newSelectionModel);
+                    }}
+                    selectionModel={selectedRows}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 20 },
+                        },
+                    }}
+                    pageSizeOptions={[5, 10]}
+                />
+            </div>
+        </>
+    );
 }
 
-export default History
+export default History;
