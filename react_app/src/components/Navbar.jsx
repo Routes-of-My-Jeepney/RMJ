@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useContext, useState } from "react";
 import {
     AppBar,
     Typography,
@@ -10,6 +11,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import UserContext from "../contexts/UserContext";
 
 const pages = ["Home", "HowtoRide", "Routes"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -17,6 +19,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function Navbar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const open = Boolean(anchorElUser);
+    const { user, deleteUser, logout } = useContext(UserContext);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -59,20 +62,45 @@ function Navbar() {
                             vertical: "bottom",
                         }}
                     >
-                        <MenuItem
-                            onClick={handleCloseUserMenu}
-                            component={Link}
-                            to="/login"
-                        >
-                            Login
-                        </MenuItem>
-                        <MenuItem
-                            onClick={handleCloseUserMenu}
-                            component={Link}
-                            to="/signup"
-                        >
-                            Signup
-                        </MenuItem>
+                        {user ? (
+                            <MenuItem
+                                key="delete"
+                                onClick={() => {
+                                    deleteUser(user.id);
+                                }}
+                            >
+                                Delete
+                            </MenuItem>
+                        ) : (
+                            <MenuItem
+                                key="signup"
+                                onClick={handleCloseUserMenu}
+                                component={Link}
+                                to="/signup"
+                            >
+                                Signup
+                            </MenuItem>
+                        )}
+
+                        {user ? (
+                            <MenuItem
+                                key="logout"
+                                onClick={() => {
+                                    logout();
+                                }}
+                            >
+                                Logout
+                            </MenuItem>
+                        ) : (
+                            <MenuItem
+                                key="login"
+                                onClick={handleCloseUserMenu}
+                                component={Link}
+                                to="/login"
+                            >
+                                Login
+                            </MenuItem>
+                        )}
                     </Menu>
                 </Box>
             </Toolbar>

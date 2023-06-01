@@ -115,11 +115,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function deleteAccount($id)
+    public function delete(User $user)
     {
-        $user = User::find($id);
         $user->delete();
-        return response()->view('welcome', compact('user'));
+        return response()->json(null,204);
     }
     public function deleteProfileImage()
     {

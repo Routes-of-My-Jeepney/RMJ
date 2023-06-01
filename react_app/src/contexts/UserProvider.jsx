@@ -67,11 +67,26 @@ function UserProvider({ children }) {
         }
     };
 
+    const deleteUser = async (userId) => {
+        await getCSRFToken();
+        axios
+            .delete(`/api/users/${userId}`)
+            .then((response) => {
+                console.log(response.data);
+                setUser(null);
+            })
+            .catch((error) => {
+                // Something went wrong. Handle the error here.
+                console.error(error);
+            });
+    };
+
     const value = {
         user,
         login,
         logout,
         register,
+        deleteUser,
     };
 
     useEffect(
