@@ -15,7 +15,7 @@ class HistoryController extends Controller
     // dieS();
 
     //maked by Sir Kynt
-    $x = History::where('user_id', 1)->get();
+    $x = History::where('user_id', 1)->orderBy("id", "desc")->get();
 
     if ($x) {
       $x = $x->toArray();
@@ -45,9 +45,8 @@ class HistoryController extends Controller
     $history->user_id = $request->input('user_id');
     $history->origin = $request->input('origin');
     $history->destination = $request->input('destination');
-
+    //$history->id = $request->input('id');
     $history->save();
-
 
     return response()->json(['messege'=>'OKOKOKOKOKOKOKOKOKOKOKKOK']);
   }

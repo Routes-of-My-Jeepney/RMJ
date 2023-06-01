@@ -12,7 +12,10 @@ class History extends Model
     public function setDateAttribute( $value ) {
         $this->attributes['created_at'] = Carbon::createFromFormat('m/d/Y', $this->created_at)->diffForHumans();
       }
-    // public function getDateDiffForHumans(){
-    //     return Carbon::createFromFormat('m/d/Y', $this->created_at)->diffForHumans();
+
+    // public function getData (){
+    //   return $this->orderBy('id', 'desc')->get();
     // }
+
+    
 }
