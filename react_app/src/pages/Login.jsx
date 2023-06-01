@@ -4,6 +4,8 @@ import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import getCSRFToken from "../utils/getCSRFToken";
 import UserContext from "../contexts/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
+import AlertPopup from "../components/AlertPopup";
+
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -11,6 +13,8 @@ export default function LoginPage() {
     const { login } = useContext(UserContext);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [status, setStatus] = useState();
+    const [message, setMessage] = useState("");
 
     const handleLogin = async (e) => {
         try {
@@ -30,10 +34,10 @@ export default function LoginPage() {
 
     return (
         <>
+            //<AlertPopup status={status} message={message}></AlertPopup>
             <Grid container justify="center" style={{ paddingTop: "40%" }}>
                 <Paper style={{ padding: 16 }}>
                     <Typography variant="h4">Login</Typography>
-
                     <form onSubmit={login}>
                         <TextField
                             type="email"
