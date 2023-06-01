@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Box, Stack, TextField, Slide, Button } from "@mui/material";
+import { Box, Stack, TextField, Slide, Button, Grid, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 // Styled Components for TextField and Map
-const StyledStack = styled(Stack)({
+const SearchBox = styled(Stack)({
    position: "absolute",
    left: "50%",
    top: "100px",
@@ -17,6 +17,7 @@ const StyledTextField = styled(TextField)({
    borderRadius: "5px",
 });
 const RouteDrawButton = styled(Stack)({});
+
 const RouteStartButton = styled(Stack)({
    position: "absolute",
    left: "50%",
@@ -25,27 +26,60 @@ const RouteStartButton = styled(Stack)({
    transform: "translateX(-50%)",
 });
 
-function PlacesAutoComplete({ mapRef }) {
+const RouteFinishBox = styled(Stack)({
+   padding: "10px 0",
+   position: "absolute",
+   bottom: 0,
+   zIndex: 100,
+   transform: "translateX(-50%)",
+   width: "100vw",
+   height: "20vh",
+   backgroundColor: "white",
+   textAlign: "center",
+   display: "flex", // 縦に要素を並べるために追加
+   flexDirection: "column",
+   justifyContent: "center", // 要素を中央揃えにするために追加
+   alignItems: "center",
+});
+
+
+const refreshPage = () => {
+   window.location.reload();
+}
+
+function PlacesAutoComplete({ mapRef, setIcon }) {
    const originRef = useRef();
    const destRef = useRef();
-   const [originId, setoriginId] = useState(null);
-   const [destinationId, setdestinationId] = useState(null);
+   const [originId, setOriginId] = useState(null);
+   const [destinationId, setDestinationId] = useState(null);
    const [center, setCenter] = useState();
    const [MarkerPosition, setMarkerPosition] = React.useState();
    const [showObject, setShowObject] = useState(true);
    const [showRoute, setShowRoute] = useState(false);
-
+   const [finishRoute, setFinishRoute] = useState(false);
+   const [researchRoute, setResearchRoute] = useState(false);
+   const [returnRoute, setReturnRoute] = useState(false);
+   const [searchOrigin, setSearchOrigin] = useState('');
+   const [searchDest, setSearchDest] = useState('');
+   const [placeDestination, setPlaceDestination] = useState('');
+   const [markerDesign, setMarkerDesign] = useState(null);
 
    const drawRoute = () => {
-      var directionsService = new google.maps.DirectionsService();
       var distanceMatrixservice = new google.maps.DistanceMatrixService();
-
       var map = mapRef.current;
-
       var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
       var directionsRenderer = new google.maps.DirectionsRenderer({
          map: map,
+         suppressMarkers: true,
+         // markerOptions: {
+         //    icon: {
+         //       path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+         //       scale: 4,
+         //       strokeWeight: 2,
+         //    },
+         // },
       });
+
       // directionsRenderer.setDirections(null);
       var request = {
          origin: { placeId: originId },
@@ -70,7 +104,6 @@ function PlacesAutoComplete({ mapRef }) {
          var directionsService = new google.maps.DirectionsService();
          directionsService.route(request, function (result, status) {
             if (status == "OK") {
-               console.log(result);
                directionsRenderer.setDirections(result);
                var bounds = new google.maps.LatLngBounds();
                var legs = result.routes[0].legs;
@@ -103,9 +136,13 @@ function PlacesAutoComplete({ mapRef }) {
                infoWindow.open(map);
                setShowObject(false);
                setShowRoute(true);
+               setResearchRoute(true);
             }
          });
       }
+
+      // setSearchOrigin(originRef.current.value);
+      // setSearchDest(destRef.current.value);
 
       function timeRequired(response, status) {
          if (status == "OK") {
@@ -122,7 +159,6 @@ function PlacesAutoComplete({ mapRef }) {
                      var to = destinations[j];
                      // console.log("距離: " + distance);
                      // console.log("所要時間: " + duration);
-
                   } else {
                      // console.log("距離と所要時間の取得に失敗しました。");
                   }
@@ -136,14 +172,34 @@ function PlacesAutoComplete({ mapRef }) {
          }
       }
       // };
-
+      console.log(originRef.current.value);
+      console.log(destRef.current.value);
    };
-   const destinationLat = 10.3142109;
-   const destinationLng = 123.9054164;
+
+
+   const clearRoute = (watchId) => {
+      if (watchId) {
+         navigator.geolocation.clearWatch(watchId);
+      }
+      setShowObject(true); // 検索入力を再表示
+      setShowRoute(false);
+      setFinishRoute(false);
+      refreshPage();
+   };
+
+   const backToSearch = () => {
+      setShowObject(true);
+      setShowRoute(false);
+      setResearchRoute(false);
+      refreshPage();
+   }
+
    const startRoute = () => {
+      setShowRoute(false);
+      setResearchRoute(false);
       // startRoute関数の内容をここに記述
       if (navigator.geolocation) {
-        var watchId= navigator.geolocation.watchPosition(
+         let watchId = navigator.geolocation.watchPosition(
             (position) => {
                const coords = {
                   lat: position.coords.latitude,
@@ -154,36 +210,32 @@ function PlacesAutoComplete({ mapRef }) {
                console.log("Current Position (WatchPosition):", coords);
                setCenter(coords);
                setMarkerPosition(coords);
+               setIcon(true);
                mapRef.current.panTo(coords);
                const distanceToDestination = google.maps.geometry.spherical.computeDistanceBetween(
                   new google.maps.LatLng(coords.lat, coords.lng),
-                  new google.maps.LatLng(destinationLat, destinationLng)
-               );
-   
+                  new google.maps.LatLng(placeDestination.geometry.location));
+               console.log(placeDestination);
+               console.log(distanceToDestination);
                // 距離が一定の範囲内にあればナビゲーションを停止し、アラートを表示
-               const distanceThreshold = 100; // 単位: メートル
-               if (distanceToDestination <= distanceThreshold) {
-                  navigator.geolocation.clearWatch(watchId); // ナビゲーションを停止
-                  alert("目的地に到着しました！");
+               if (distanceToDestination <= 100) {
+                  setReturnRoute(true);
+                  setFinishRoute(true);
+               }
+               else {
+                  setResearchRoute(true);
                }
             },
             (error) => {
                console.log("Geolocation error", error);
             }, {
-               enableHighAccuracy: true,
-               maximumAge: 10000, // maximumAgeの値を設定（ミリ秒単位）
-            }
+            enableHighAccuracy: true,
+            maximumAge: 10000, // maximumAgeの値を設定（ミリ秒単位）
+         }
          );
       } else {
          console.log("Geolocation is not supported by this browser.");
       }
-
-
-      console.log('Hello');
-      // startRouteが実行された後にshowRouteをtrueに設定    
-      setShowObject(false);
-      setShowRoute(false);
-
    };
 
    useEffect(() => {
@@ -195,19 +247,31 @@ function PlacesAutoComplete({ mapRef }) {
 
       autoCompleteOrigin.addListener("place_changed", async function () {
          const place_origin = await autoCompleteOrigin.getPlace();
-         setoriginId(place_origin.place_id);
+         setOriginId(place_origin.place_id);
+         setSearchOrigin(place_origin.name);
       });
 
       autoCompleteDestination.addListener("place_changed", async function () {
          const place_destination = await autoCompleteDestination.getPlace();
-         setdestinationId(place_destination.place_id);
+         console.log(place_destination);
+         setPlaceDestination(place_destination);
+         setDestinationId(place_destination.place_id);
+         setSearchDest(place_destination.name);
       });
-   }, []);
+   }, [searchOrigin, searchDest]);
+
+   const handleOrigin = () => {
+      setSearchOrigin(originRef.current.value);
+   }
+
+   const handleDest = () => {
+      setSearchDest(destRef.current.value);
+   }
 
    return (
       <>
          {showObject && (
-            <StyledStack>
+            <SearchBox>
                <Slide direction="down" in={showObject} mountOnEnter unmountOnExit>
                   <Box>
                      <StyledTextField
@@ -215,13 +279,17 @@ function PlacesAutoComplete({ mapRef }) {
                         label="出発地"
                         variant="outlined"
                         inputRef={originRef}
+                        value={searchOrigin}
+                        onChange={handleOrigin}
                      />
                      <br />
                      <StyledTextField
                         id="destination-input"
                         label="目的地"
                         variant="outlined"
-                        inputRef={destRef}                  
+                        inputRef={destRef}
+                        value={searchDest}
+                        onChange={handleDest}
                      />
                      <RouteDrawButton>
                         <Button variant="contained" onClick={drawRoute}>
@@ -230,17 +298,40 @@ function PlacesAutoComplete({ mapRef }) {
                      </RouteDrawButton>
                   </Box>
                </Slide>
-            </StyledStack>
+            </SearchBox>
          )}
-         {showRoute && (
-            <RouteStartButton>
-               <Slide direction="up" in={showRoute} mountOnEnter unmountOnExit>
-                  <Button variant="contained" onClick={startRoute}>
-                     ルートを開始
-                  </Button>
+         <RouteStartButton >
+            <Grid container sx={{ display: "flex"}}>
+               {researchRoute && (
+                  <Slide direction="up" in={researchRoute} mountOnEnter unmountOnExit>
+                     <Button variant="outlined" size="medium" sx={{ fontSize: "12px", backgroundColor: "white", margin:"0 5px" }} onClick={backToSearch}>
+                        再検索
+                     </Button>
+                  </Slide>
+               )}
+               {showRoute && (
+                  <Slide direction="up" in={showRoute} mountOnEnter unmountOnExit>
+                     <Button variant="contained" size="medium" sx={{ fontSize: "12px", margin:"0 5px"}} onClick={startRoute}>
+                        ルート開始
+                     </Button>
+                  </Slide>
+               )}
+            </Grid>
+         </RouteStartButton>
+         <Box>
+            {finishRoute && (
+               <Slide direction="up" in={finishRoute} mountOnEnter unmountOnExit>
+                  <RouteFinishBox>
+                     <Typography variant="body1" sx={{ fontWeight: "bold", margin:"10px" }}>
+                        目的地に到着しました
+                     </Typography>
+                     <Button variant="contained" sx={{ margin:"10px", backgroundColor:"red" }} onClick={clearRoute}>
+                        ルートを終了
+                     </Button>
+                  </RouteFinishBox>
                </Slide>
-            </RouteStartButton>
-         )}
+            )}
+         </Box>
       </>
    );
 }
