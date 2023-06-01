@@ -27,7 +27,7 @@ function UserProvider({ children }) {
             setUser(response.data.user);
             navigate("/");
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     };
 

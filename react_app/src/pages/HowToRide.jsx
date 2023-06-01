@@ -97,4 +97,3 @@ const HowToRide = () => {
 };
 
 export default HowToRide;
-
