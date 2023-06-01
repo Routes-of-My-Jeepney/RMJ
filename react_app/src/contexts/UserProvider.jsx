@@ -25,6 +25,7 @@ function UserProvider({ children }) {
             // and the browser will automatically send the cookie to the server
             // in the subsequent request
             setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             navigate("/");
         } catch (error) {
             console.error(error);
@@ -40,6 +41,7 @@ function UserProvider({ children }) {
             // for the sake of token based authentication
             // localStorage.removeItem("authToken");
             setUser(null);
+            localStorage.removeItem("user");
             navigate("/login");
         } catch (error) {
             console.error(error);
@@ -56,6 +58,7 @@ function UserProvider({ children }) {
                 password_confirmation: passwordConfirmation,
             });
             setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             console.log(response.data);
         } catch (error) {
             // Handle error during registration
@@ -81,28 +84,40 @@ function UserProvider({ children }) {
             });
     };
 
+    const getUser = async () => {
+        await getCSRFToken();
+        axios
+            .get("/api/user") // Make sure this URL is correct
+            .then((response) => {
+                setUser(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
     const value = {
         user,
         login,
         logout,
         register,
         deleteUser,
+        getUser,
     };
 
-    useEffect(
-        () => async () => {
-            await getCSRFToken();
-            axios
-                .get("/api/user") // Make sure this URL is correct
-                .then((response) => {
-                    setUser(response.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        },
-        []
-    );
+    // useEffect(
+    //     () => async () => {
+    //         await getCSRFToken();
+    //         axios
+    //             .get("/api/user") // Make sure this URL is correct
+    //             .then((response) => {
+    //                 setUser(response.data);
+    //             })
+    //             .catch((error) => {
+    //                 console.error(error);
+    //             });
+    //     },
+    //     []
+    // );
 
     return (
         <UserContext.Provider value={value}>{children}</UserContext.Provider>
