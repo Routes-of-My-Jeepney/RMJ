@@ -3,14 +3,13 @@ import axios from "axios";
 import { DataGrid, useGridApiContext } from "@mui/x-data-grid";
 import {} from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { blue } from "@mui/material/colors";
 
 function History() {
     const [rows, setRows] = useState([]);
     const url = "http://localhost:8000/api/";
 
     const columns = [
-        { field: "id", headerName: "ID", width: 0 },
+        { field: "id", headerName: "ID", width: 0, sortDirection: "desc" },
         { field: "origin", headerName: "出発地", width: 300 },
         { field: "destination", headerName: "到着地", width: 300 },
         {
@@ -32,6 +31,12 @@ function History() {
 
             const historyData = historyRes.data;
 
+            const handleSortModelChange = (model) => {
+                console.log(model);
+                const sortedRows = sortData(rows, model);
+                setRows(sortedRows);
+            };
+
             let data = [];
 
             for (let i = 0; i < historyData.length; i++) {
@@ -48,6 +53,7 @@ function History() {
                 };
                 data.push(row);
             }
+
             setRows(data);
             console.log("===============");
             console.log("成功しました！！！");
@@ -58,7 +64,7 @@ function History() {
         }
     }
 
-    // ③ 一部のHistoryのデータを削除するリクエストを投げる関数を作る
+    // 一部のHistoryのデータを削除するリクエストを投げる関数を作る
 
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -76,21 +82,18 @@ function History() {
     // }, [selectedRows]);
 
     const deleteSelectedRows = async () => {
-        console.log(selectedRows);
         for (const id of selectedRows) {
             try {
                 const response = await axios.delete(url + "history", {
                     params: { id: id },
                 });
                 console.log(response.data);
-                refreshPage();
             } catch (error) {
-                console.error(error);
+                console.error("エラーが出力されました。");
             }
         }
+        refreshPage();
     };
-
-    const selectDelete = useGridApiContext;
 
     useEffect(() => {
         getHistory();
@@ -115,7 +118,7 @@ function History() {
                     rows={rows}
                     checkboxSelection
                     onRowSelectionModelChange={(newSelectionModel) => {
-                        console.log(newSelectionModel);
+                        //console.log(newSelectionModel);
                         setSelectedRows(newSelectionModel);
                     }}
                     selectionModel={selectedRows}

@@ -9,9 +9,9 @@ import { BottomNav } from "./components/BottomNav";
 import JeepRoutes from "./components/Jeepneylist";
 import History from "./pages/history";
 import axios from "axios";
+import UserProvider from "./contexts/UserProvider";
 
 axios.defaults.withCredentials = true;
-
 
 function App() {
     return (
@@ -24,8 +24,7 @@ function App() {
                     <Route path="/how-to-ride" element={<HowToRide />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Singup />} />
-                    <Route path="/history" element={<History />}>
-                    </Route>
+                    <Route path="/history" element={<History />}></Route>
                 </Routes>
                 <BottomNav />
             </UserProvider>
