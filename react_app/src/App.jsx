@@ -10,6 +10,7 @@ import JeepRoutes from "./components/Jeepneylist";
 import History from "./pages/history";
 import axios from "axios";
 import UserProvider from "./contexts/UserProvider";
+import UpdateProfilePage from "./pages/UpdateProfilePage";
 
 axios.defaults.withCredentials = true;
 
@@ -25,6 +26,10 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Singup />} />
                     <Route path="/history" element={<History />}></Route>
+                    <Route
+                        path="/update"
+                        element={<UpdateProfilePage />}
+                    ></Route>
                 </Routes>
                 <BottomNav />
             </UserProvider>

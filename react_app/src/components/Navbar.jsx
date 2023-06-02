@@ -19,7 +19,8 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function Navbar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const open = Boolean(anchorElUser);
-    const { user, deleteUser, logout } = useContext(UserContext);
+    const { deleteUser, logout } = useContext(UserContext);
+    let user = JSON.parse(localStorage.getItem("user"));
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -47,6 +48,7 @@ function Navbar() {
                     }}
                 >
                     <Typography variant="h6">RMJ</Typography>
+                    {user && <Typography variant="h6">{user.id}</Typography>}
                     <Avatar onClick={handleOpenUserMenu}></Avatar>
                     <Menu
                         anchorEl={anchorElUser}
@@ -99,6 +101,16 @@ function Navbar() {
                                 to="/login"
                             >
                                 Login
+                            </MenuItem>
+                        )}
+                        {user && (
+                            <MenuItem
+                                key="update"
+                                onClick={handleCloseUserMenu}
+                                component={Link}
+                                to="/update"
+                            >
+                                Update
                             </MenuItem>
                         )}
                     </Menu>

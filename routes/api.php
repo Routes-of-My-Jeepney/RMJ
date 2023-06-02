@@ -39,7 +39,7 @@ Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
 Route::delete('users/{user}', [UserController::class, 'delete']);
 Route::post('users/logout', [AuthController::class, 'logout']);
-
+Route::put('/user/{user}', [UserController::class, 'update']);
 Route::post('/favorites', function (Request $request) {
     $user = User::find($request->user_id);
     $jeepney = Jeepney::find($request->jeepney_id);
@@ -48,9 +48,6 @@ Route::post('/favorites', function (Request $request) {
 
     return response()->json(['message' => 'Jeepney added to favorites']);
 });
-
-
-
 
 Route::delete('/favorites/{user}/{jeepney}', function ($userId, $jeepneyId) {
     $user = User::find($userId);
