@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Jeepney extends Model
 {
     use HasFactory;
-    public function users()
+    public function likedByUsers()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'jeepney_user');
+    }
+
+        public function getIsLikedAttribute()
+    {
+        // Check if currently authenticated user is in the list of users that liked this jeepney.
+        return $this->likedByUsers()->where('users.id', auth()->id())->exists();
     }
 
     protected $fillable = [
@@ -20,4 +26,6 @@ class Jeepney extends Model
          'destinationlat', 
          'destinationlng',
     ];
+
+    protected $appends = ['isLiked'];
 }

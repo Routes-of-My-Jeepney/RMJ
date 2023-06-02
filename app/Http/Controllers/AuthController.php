@@ -24,40 +24,76 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
         $user->save();
+
+        Auth::login($user);
     
         return response()->json([
-            'message' => 'Successfully registered!'
+            'message' => 'Successfully registered!',
+            'user' => $user,
         ], 201);
     }
     
-    public function login(Request $request) {
+    // Token based authentication
+    // public function login(Request $request) {
+    //     // validate request data
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+    
+    //     // attempt to authenticate the user
+    //     if (!Auth::attempt($request->only('email', 'password'))) {
+    //         return response()->json([
+    //             'message' => 'Invalid login details'
+    //         ], 401);
+    //     }
+    
+    //     $user = $request->user();
+    
+    //     // generate a token for the user
+    //     $token = $user->createToken('TokenName')->accessToken;
+    
+    //     // return the token
+    //     return response()->json([
+    //         'token' => $token
+    //     ]);
+    // }
+
+    // Sanctum based authentication
+    public function login(Request $request)
+    {
         // validate request data
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
-    
+
         // attempt to authenticate the user
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($credentials)) {
+            // generate a token for the user
+            $request->session()->regenerate();
+            $user = $request->user();
+
             return response()->json([
-                'message' => 'Invalid login details'
-            ], 401);
+                'message' => 'Logged in successfully',
+                'user' => $user,
+            ], 200);
         }
-    
-        $user = $request->user();
-    
-        // generate a token for the user
-        $token = $user->createToken('TokenName')->accessToken;
-    
-        // return the token
+
         return response()->json([
-            'token' => $token
-        ]);
+            'message' => 'The provided credentials do not match our records.',
+        ], 403);
     }
     
     public function logout(Request $request) {
         // revoke the user's token
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+
         $request->user()->token()->revoke();
+
     
         return response()->json([
             'message' => 'Successfully logged out'

@@ -13,9 +13,9 @@ class User extends Authenticatable
     const DEFAULT_PROFILE_IMAGE = 'user-icon.png';
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function routes()
+    public function likedJeepneys()
     {
-        return $this->belongsToMany(Jeepney::class);
+        return $this->belongsToMany(Jeepney::class, 'jeepney_user');
     }
 
     /**
