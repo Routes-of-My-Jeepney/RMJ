@@ -28,7 +28,7 @@ function UserProvider({ children }) {
             localStorage.setItem("user", JSON.stringify(response.data.user));
             navigate("/");
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data.message);
         }
     };
 
