@@ -19,7 +19,7 @@ export const BottomNav = () => {
     return (
         <BottomNavigation
             showLabels
-            sx={{ position: "fixed", bottom: 0, width: "100%" }}
+            sx={{ position: "fixed", bottom: 0, width: "100%", display: { sm: 'flex', md: 'none' } }}
             value={value}
             onChange={(event, newValue) => {
                 setValue(newValue);
