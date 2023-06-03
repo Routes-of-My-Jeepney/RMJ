@@ -11,8 +11,8 @@ import JeepRoutes from "./components/Jeepneylist";
 import History from "./pages/history";
 import axios from "axios";
 import UserProvider from "./contexts/UserProvider";
-import { useEffect, useState } from "react";
 import { useMediaQuery, ThemeProvider, createTheme, Box } from "@mui/material";
+import UpdateProfilePage from "./pages/UpdateProfilePage";
 
 axios.defaults.withCredentials = true;
 const theme = createTheme({
@@ -26,6 +26,7 @@ function App() {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
+
         <ThemeProvider theme={theme}>
             <div className="App">
                 <UserProvider>
@@ -49,6 +50,21 @@ function App() {
                 </UserProvider>
             </div>
         </ThemeProvider >
+        <div className="App">
+            <UserProvider>
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/jeepneys/*" element={<JeepRoutes />} />
+                    <Route path="/how-to-ride" element={<HowToRide />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Singup />} />
+                    <Route path="/history" element={<History />}/>
+                    <Route path="/update" element={<UpdateProfilePage />} />                   
+                </Routes>
+                <BottomNav />
+            </UserProvider>
+        </div>
     );
 }
 

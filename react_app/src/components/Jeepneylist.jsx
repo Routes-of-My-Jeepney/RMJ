@@ -23,7 +23,6 @@ function JeepRoutes() {
     const [selectedJeepney, setSelectedJeepney] = useState(null);
     const [open, setOpen] = useState(false);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-    const { user } = useContext(UserContext);
 
     const handleClick = () => {
         setOpen(!open);
