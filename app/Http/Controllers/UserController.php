@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
 
 class UserController extends Controller
 {
@@ -81,22 +83,26 @@ class UserController extends Controller
 
     public function update(Request $request)
 {
+    try{
+    $user = Auth::user();
+    Log::info('Request Data:', $request->all()); 
     // Validate the request...
-    $user=$request->user();
-    dd($user);
     $request->validate([
+        'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,'.$user->id,
-        'profile_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'profile_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
     // Handle profile image upload...
-    if ($request->hasFile('profile_image')) {
-        $image = $request->file('profile_image');
-        $name = time().'.'.$image->getClientOriginalExtension();
-        $destinationPath = public_path('/images');
-        $image->move($destinationPath, $name);
-        $user->profile_image = $name;
+    if ($request->hasFile('profile_img')) {
+        $image = $request->file('profile_img');
+        $filename = time().'.'.$image->getClientOriginalExtension();
+        $path = $image->storeAs('public/images', $filename);
+        $user->profile_img = $filename;
     }
+
+    // Update name...
+    $user->name = $request->name;
 
     // Update email...
     $user->email = $request->email;
@@ -108,6 +114,13 @@ class UserController extends Controller
         'message' => 'Successfully updated user!',
         'user' => $user,
     ], 200);
+    }catch(\Exception $e){
+        Log::error('Error:',['message' => $e->getMessage()]);
+        return response()->json([
+            'message' => 'Error updating user!',
+            'error' => $e->getMessage(),
+        ], 409);
+    }
 }
     // public function update(Request $request, $id)
     // {
@@ -115,8 +128,8 @@ class UserController extends Controller
     //     $user = Auth::user();
 
     //     // リクエストデータを取得し、$updateUserに代入
-    //     $updateUser = $request->all();
-
+        // $updateUser = $request->all();
+// 
     //     // プロフィール画像の変更があった場合
     //     if ($request->hasFile('profile-img')) {
     //         // storeメソッドで一意のファイル名を自動生成しつつstorage/app/public/profilesに保存し、そのファイル名（ファイルパス）を$profileImagePathとして生成

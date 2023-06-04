@@ -26,7 +26,7 @@ use App\Http\Controllers\UserController;
 Route::get('/sanctum/csrf-cookie', function (Request $request) {
     return response('CSRF cookie set')->withCookie(cookie('XSRF-TOKEN', $request->session()->token()));
 });
-Route::apiResource('/history', 'HistorySample');
+// Route::apiResource('/history', 'HistorySample');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -34,9 +34,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/jeepney/{jeepneyId}/like', [JeepneyController::class, 'likeJeepney']);
 Route::delete('/jeepney/{jeepneyId}/dislike', [JeepneyController::class, 'dislikeJeepney']);
-Route::get('/user/liked-jeepneys', 'JeepneyController@showLikedJeepneys');
+Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
+
 Route::delete('users/{user}', [UserController::class, 'delete']);
 Route::post('users/logout', [AuthController::class, 'logout']);
 Route::put('/user/{user}', [UserController::class, 'update']);
@@ -66,7 +67,7 @@ Route::post('/logout', function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/routes',[RouteController::class, 'index']);
+
 Route::get('/history',[HistoryController::class, 'index']);
 Route::get('/get-user-id', function () {
     return Auth::user();})->middleware('auth:sanctum');
