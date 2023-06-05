@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from "react";
 import {
     AppBar,
@@ -64,26 +63,26 @@ function Navbar() {
                             vertical: "bottom",
                         }}
                     >
-                        {user ? (
+                        {user && (
                             <MenuItem
-                                key="delete"
-                                onClick={() => {
-                                    deleteUser(user.id);
-                                }}
-                            >
-                                Delete
-                            </MenuItem>
-                        ) : (
-                            <MenuItem
-                                key="signup"
+                                key="update"
                                 onClick={handleCloseUserMenu}
                                 component={Link}
-                                to="/signup"
+                                to="/update"
                             >
-                                Signup
+                                プロフィールの編集
                             </MenuItem>
                         )}
-
+                        {user && (
+                            <MenuItem
+                                key="history"
+                                onClick={handleCloseUserMenu}
+                                component={Link}
+                                to="/history"
+                            >
+                                履歴
+                            </MenuItem>
+                        )}
                         {user ? (
                             <MenuItem
                                 key="logout"
@@ -91,7 +90,7 @@ function Navbar() {
                                     logout();
                                 }}
                             >
-                                Logout
+                                ログアウト
                             </MenuItem>
                         ) : (
                             <MenuItem
@@ -100,17 +99,27 @@ function Navbar() {
                                 component={Link}
                                 to="/login"
                             >
-                                Login
+                                ログイン
                             </MenuItem>
                         )}
-                        {user && (
+
+                        {user ? (
                             <MenuItem
-                                key="update"
+                                key="delete"
+                                onClick={() => {
+                                    deleteUser(user.id);
+                                }}
+                            >
+                                アカウント削除
+                            </MenuItem>
+                        ) : (
+                            <MenuItem
+                                key="signup"
                                 onClick={handleCloseUserMenu}
                                 component={Link}
-                                to="/update"
+                                to="/signup"
                             >
-                                Update
+                                サインアップ
                             </MenuItem>
                         )}
                     </Menu>

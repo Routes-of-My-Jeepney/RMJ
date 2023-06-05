@@ -15,7 +15,7 @@ class HistoryController extends Controller
     // dieS();
 
     //maked by Sir Kynt
-    $x = History::where('user_id', 1)->orderBy("id", "desc")->get();
+    $x = History::where('user_id', $user_id)->orderBy("id", "desc")->get();
 
     if ($x) {
       $x = $x->toArray();

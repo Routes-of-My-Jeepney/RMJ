@@ -37,109 +37,126 @@ function PlacesAutoComplete({ mapRef }) {
     const [MarkerPosition, setMarkerPosition] = React.useState();
     const [showObject, setShowObject] = useState(true);
     const [showRoute, setShowRoute] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const url = "http://localhost:8000/api/";
+    let user = JSON.parse(localStorage.getItem("user"));
 
     const drawRoute = () => {
-        postHistory();
-        var directionsService = new google.maps.DirectionsService();
-        var directionsRenderer = new google.maps.DirectionsRenderer();
-        var distanceMatrixservice = new google.maps.DistanceMatrixService();
+        if (user) {
+            postHistory();
+        } else {
+            console.log("ログインしていないので、履歴保存されず");
+        }
 
-        var map = mapRef.current;
-
-        var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
-        var directionsRenderer = new google.maps.DirectionsRenderer({
-            map: map,
-        });
-        // directionsRenderer.setDirections(null);
-        var request = {
-            origin: { placeId: originId },
-            destination: { placeId: destinationId },
-            travelMode: "DRIVING",
-        };
-
-        // ルート取得
-        // setLocation(request.origin, request.destination);
-        setLocation(request.origin.placeId, request.destination.placeId);
-
-        function setLocation(originPlaceId, destinationPlaceId) {
-            // 所要時間取得
-            distanceMatrixservice.getDistanceMatrix(
-                {
-                    origins: [{ placeId: originPlaceId }], // 出発地
-                    destinations: [{ placeId: destinationPlaceId }], // 目的地
-                    travelMode: request.travelMode, // 移動手段
-                },
-                timeRequired
-            );
+        if (originRef.current.value !== "" && destRef.current.value !== "") {
             var directionsService = new google.maps.DirectionsService();
-            directionsService.route(request, function (result, status) {
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var distanceMatrixservice = new google.maps.DistanceMatrixService();
+
+            var map = mapRef.current;
+
+            var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+            });
+            // directionsRenderer.setDirections(null);
+
+            var request = {
+                origin: { placeId: originId },
+                destination: { placeId: destinationId },
+                travelMode: "DRIVING",
+            };
+
+            // ルート取得
+            // setLocation(request.origin, request.destination);
+            setLocation(request.origin.placeId, request.destination.placeId);
+
+            function setLocation(originPlaceId, destinationPlaceId) {
+                // 所要時間取得
+                distanceMatrixservice.getDistanceMatrix(
+                    {
+                        origins: [{ placeId: originPlaceId }], // 出発地
+                        destinations: [{ placeId: destinationPlaceId }], // 目的地
+                        travelMode: request.travelMode, // 移動手段
+                    },
+                    timeRequired
+                );
+                var directionsService = new google.maps.DirectionsService();
+                directionsService.route(request, function (result, status) {
+                    if (status == "OK") {
+                        console.log(result);
+                        directionsRenderer.setDirections(result);
+                        var bounds = new google.maps.LatLngBounds();
+                        var legs = result.routes[0].legs;
+                        for (var i = 0; i < legs.length; i++) {
+                            var steps = legs[i].steps;
+                            for (var j = 0; j < steps.length; j++) {
+                                var path = steps[j].path;
+                                for (var k = 0; k < path.length; k++) {
+                                    bounds.extend(path[k]);
+                                }
+                            }
+                        }
+                        map.fitBounds(bounds);
+                        var distance = legs[0].distance.text;
+                        var duration = legs[0].duration.text;
+
+                        // 吹き出しの内容を更新
+                        infoWindow.setContent(
+                            "距離：" + distance + "<br>所要時間：" + duration
+                        );
+                        // ルートの中心座標に吹き出しを表示
+                        infoWindow.setPosition(
+                            result.routes[0].overview_path[
+                                Math.floor(
+                                    result.routes[0].overview_path.length / 2
+                                )
+                            ]
+                        );
+                        // 吹き出しを開く
+                        infoWindow.open(map);
+                        setShowObject(false);
+                        setShowRoute(true);
+                    }
+                });
+            }
+
+            function timeRequired(response, status) {
                 if (status == "OK") {
-                    console.log(result);
-                    directionsRenderer.setDirections(result);
-                    var bounds = new google.maps.LatLngBounds();
-                    var legs = result.routes[0].legs;
-                    for (var i = 0; i < legs.length; i++) {
-                        var steps = legs[i].steps;
-                        for (var j = 0; j < steps.length; j++) {
-                            var path = steps[j].path;
-                            for (var k = 0; k < path.length; k++) {
-                                bounds.extend(path[k]);
+                    var origins = response.originAddresses;
+                    var destinations = response.destinationAddresses;
+                    for (var i = 0; i < origins.length; i++) {
+                        var results = response.rows[i].elements;
+                        for (var j = 0; j < results.length; j++) {
+                            var element = results[j];
+                            if (element.status === "OK") {
+                                var distance = element.distance.text;
+                                var duration = element.duration.text;
+                                var from = origins[i];
+                                var to = destinations[j];
+                                // console.log("距離: " + distance);
+                                // console.log("所要時間: " + duration);
+                            } else {
+                                // console.log("距離と所要時間の取得に失敗しました。");
                             }
                         }
                     }
-                    map.fitBounds(bounds);
-                    var distance = legs[0].distance.text;
-                    var duration = legs[0].duration.text;
-
-                    // 吹き出しの内容を更新
-                    infoWindow.setContent(
-                        "距離：" + distance + "<br>所要時間：" + duration
-                    );
-                    // ルートの中心座標に吹き出しを表示
-                    infoWindow.setPosition(
-                        result.routes[0].overview_path[
-                            Math.floor(
-                                result.routes[0].overview_path.length / 2
-                            )
-                        ]
-                    );
-                    // 吹き出しを開く
-                    infoWindow.open(map);
-                    setShowObject(false);
-                    setShowRoute(true);
-                }
-            });
-        }
-
-        function timeRequired(response, status) {
-            if (status == "OK") {
-                var origins = response.originAddresses;
-                var destinations = response.destinationAddresses;
-                for (var i = 0; i < origins.length; i++) {
-                    var results = response.rows[i].elements;
-                    for (var j = 0; j < results.length; j++) {
-                        var element = results[j];
-                        if (element.status === "OK") {
-                            var distance = element.distance.text;
-                            var duration = element.duration.text;
-                            var from = origins[i];
-                            var to = destinations[j];
-                            // console.log("距離: " + distance);
-                            // console.log("所要時間: " + duration);
-                        } else {
-                            // console.log("距離と所要時間の取得に失敗しました。");
-                        }
+                    {
+                        infoWindow.open(map);
                     }
+                } else {
+                    // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
                 }
-                {
-                    infoWindow.open(map);
-                }
-            } else {
-                // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
             }
+            // };
+        } else {
+            console.log("出発地と目的地を入力してください");
+            setSnackbarOpen(true);
+            setSnackbarMessage("出発地、または目的地を入力してください。");
         }
-        // };
     };
+
     const destinationLat = 10.3142109;
     const destinationLng = 123.9054164;
     const startRoute = () => {
@@ -210,24 +227,18 @@ function PlacesAutoComplete({ mapRef }) {
     }, []);
 
     //検索窓に入力された値を履歴用にuseRefで保存する
-
-    const url = "http://localhost:8000/api/";
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-
     async function postHistory() {
         try {
             const res = await axios.post(url + "history", {
-                user_id: 1,
+                user_id: user.id,
                 origin: originRef.current.value,
                 destination: destRef.current.value,
             });
+            console.log(user.id);
             console.log("よし");
         } catch (e) {
             console.log(e);
-            console.log("エラーが起きました！");
-            setSnackbarOpen(true);
-            setSnackbarMessage("出発地、または目的地を入力してください。");
+            console.log("ログインされないので履歴保存されません。");
             return;
         }
     }

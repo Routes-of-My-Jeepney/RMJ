@@ -81,7 +81,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'The provided credentials do not match our records.',
+            'message' => 'メールアドレスかパスワードが正しくありません。',
         ], 403);
     }
     
