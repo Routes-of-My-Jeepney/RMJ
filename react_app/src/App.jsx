@@ -43,6 +43,7 @@ function App() {
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/signup" element={<Singup />} />
                                 <Route path="/history" element={<History />} />
+                                <Route path="/update" element={<UpdateProfilePage />} />  
                             </Routes>
                         </Box>
                     </Box>
@@ -50,21 +51,6 @@ function App() {
                 </UserProvider>
             </div>
         </ThemeProvider >
-        <div className="App">
-            <UserProvider>
-                <Navbar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/jeepneys/*" element={<JeepRoutes />} />
-                    <Route path="/how-to-ride" element={<HowToRide />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Singup />} />
-                    <Route path="/history" element={<History />}/>
-                    <Route path="/update" element={<UpdateProfilePage />} />                   
-                </Routes>
-                <BottomNav />
-            </UserProvider>
-        </div>
     );
 }
 
