@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
 class AuthController extends Controller
@@ -60,8 +61,9 @@ class AuthController extends Controller
     // }
 
     // Sanctum based authentication
-    public function login(Request $request)
-    {
+    public function login(Request $request){
+    try{
+    
         // validate request data
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -79,11 +81,15 @@ class AuthController extends Controller
                 'user' => $user,
             ], 200);
         }
-
         return response()->json([
             'message' => 'The provided credentials do not match our records.',
         ], 403);
+    
+}catch(\Exception $e){
+        Log::error('Error: ', $e->getMessage());
     }
+}
+
     
     public function logout(Request $request) {
         // revoke the user's token

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('profile_img')->nullable()->comment('プロフィール画像を追加');
             $table->string('password',255);
             $table->string('email',255)->unique();
+            $table->string('name',255);
             $table->rememberToken();
             $table->timestamps();
         });

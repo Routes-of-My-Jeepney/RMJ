@@ -5,8 +5,11 @@ import getCSRFToken from "../utils/getCSRFToken";
 import { useNavigate } from "react-router-dom";
 
 function UserProvider({ children }) {
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [user, setUser] = useState(
+        JSON.parse(localStorage.getItem("user")) || null
+    );
+    const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
 
     const login = async (email, password) => {
         try {
@@ -24,8 +27,9 @@ function UserProvider({ children }) {
             // we need to store the cookie in the browser
             // and the browser will automatically send the cookie to the server
             // in the subsequent request
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            const userData = response.data.user;
+            localStorage.setItem("user", JSON.stringify(userData));
+            setUser(userData);
             navigate("/");
         } catch (error) {
             console.log(error.response.data.message);
@@ -40,8 +44,8 @@ function UserProvider({ children }) {
 
             // for the sake of token based authentication
             // localStorage.removeItem("authToken");
-            setUser(null);
             localStorage.removeItem("user");
+            setUser(null);
             navigate("/login");
         } catch (error) {
             console.error(error);
@@ -57,9 +61,9 @@ function UserProvider({ children }) {
                 password,
                 password_confirmation: passwordConfirmation,
             });
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-            console.log(response.data);
+            const userData = response.data.user;
+            localStorage.setItem("user", JSON.stringify(userData));
+            setUser(userData);
         } catch (error) {
             // Handle error during registration
             if (error.response && error.response.status === 422) {
@@ -76,6 +80,7 @@ function UserProvider({ children }) {
             .delete(`/api/users/${userId}`)
             .then((response) => {
                 console.log(response.data);
+                localStorage.removeItem("user");
                 setUser(null);
             })
             .catch((error) => {
@@ -89,20 +94,28 @@ function UserProvider({ children }) {
         axios
             .get("/api/user") // Make sure this URL is correct
             .then((response) => {
-                setUser(response.data);
+                const userData = response.data;
+                localStorage.setItem("user", JSON.stringify(userData));
+                setUser(userData);
             })
             .catch((error) => {
                 console.error(error);
             });
     };
+
     const value = {
-        user,
         login,
         logout,
         register,
         deleteUser,
         getUser,
+        isLoggedIn,
+        user,
     };
+
+    useEffect(() => {
+        setIsLoggedIn(user !== null);
+    }, [user]);
 
     // useEffect(
     //     () => async () => {

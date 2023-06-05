@@ -1,5 +1,4 @@
-
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     AppBar,
     Typography,
@@ -21,6 +20,7 @@ function Navbar() {
     const open = Boolean(anchorElUser);
     const { deleteUser, logout } = useContext(UserContext);
     let user = JSON.parse(localStorage.getItem("user"));
+    const [profileImgURL, setProfileImgURL] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -29,6 +29,14 @@ function Navbar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    useEffect(() => {
+        if (user) {
+            setProfileImgURL(
+                `http://localhost:8000/storage/images/${user.profile_img}`
+            );
+        }
+    }, [user]);
 
     // const handleMenu = (event) => {
     //     setAnchorEl(event.currentTarget);
@@ -48,8 +56,13 @@ function Navbar() {
                     }}
                 >
                     <Typography variant="h6">RMJ</Typography>
-                    {user && <Typography variant="h6">{user.id}</Typography>}
-                    <Avatar onClick={handleOpenUserMenu}></Avatar>
+                    {user && (
+                        <Avatar
+                            src={profileImgURL}
+                            onClick={handleOpenUserMenu}
+                        ></Avatar>
+                    )}
+                    {!user && <Avatar onClick={handleOpenUserMenu}></Avatar>}
                     <Menu
                         anchorEl={anchorElUser}
                         id="account-menu"
