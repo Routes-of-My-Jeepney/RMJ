@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jeepney_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('custom_name')->nullable();
             $table->timestamps();
         });
     }

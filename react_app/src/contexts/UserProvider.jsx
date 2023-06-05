@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 
 function UserProvider({ children }) {
     const navigate = useNavigate();
-    const [user, setUser] = useState(()=>{
-        const localStorageData = localStorage.getItem('user');
+    const [user, setUser] = useState(() => {
+        const localStorageData = localStorage.getItem("user");
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
     const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);

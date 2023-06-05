@@ -18,6 +18,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Jeepney::class, 'jeepney_user');
     }
 
+    public function isLikedJeepneys()
+    {
+        return $this->belongsToMany(Jeepney::class, 'jeepney_user')->wherePivot('user_id', $this->id)->exists();
+    }
+
     /**
      * The attributes that are mass assignable.
      *
