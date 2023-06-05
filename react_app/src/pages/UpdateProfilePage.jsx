@@ -4,7 +4,7 @@ import axios from "../axios";
 import UserContext from "../contexts/UserContext";
 import { Grid, Paper, Typography } from "@mui/material";
 import getCSRFToken from "../utils/getCSRFToken";
-import { set } from "lodash";
+// import { set } from "lodash";
 
 const UpdateProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);

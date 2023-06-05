@@ -52,7 +52,7 @@ const RouteFinishBox = styled(Stack)({
     bottom: 0,
     zIndex: 100,
     transform: "translateX(-50%)",
-    width: "100vw",
+    width: "80vw",
     height: "20vh",
     backgroundColor: "white",
     textAlign: "center",
