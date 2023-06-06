@@ -11,6 +11,9 @@ function UserProvider({ children }) {
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
     const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
+    const refreshPage = () => {
+        window.location.reload();
+    };
 
     const login = async (email, password) => {
         try {
@@ -48,6 +51,7 @@ function UserProvider({ children }) {
             localStorage.removeItem("user");
             setUser(null);
             navigate("/login");
+            refreshPage();
         } catch (error) {
             console.error(error);
         }
