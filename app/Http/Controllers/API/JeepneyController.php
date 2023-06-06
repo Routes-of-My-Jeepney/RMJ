@@ -10,7 +10,7 @@ class JeepneyController extends Controller
 {
     public function index()
     {
-        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+        $jeepneys = Jeepney::with(['likedByUsers' => function($query){$query->withPivot('custom_name');}])->get()->append('isLiked');
 
         return response()->json($jeepneys);
     }
@@ -69,4 +69,17 @@ class JeepneyController extends Controller
         'data' => $likedJeepneys,
     ], 200);
 }
+
+    public function updateLikedJeepneyName(Request $request, $jeepneyId)
+    {
+        $user = $request->user();
+        $jeepney = Jeepney::find($jeepneyId);
+        $user->likedJeepneys()->updateExistingPivot($jeepneyId, ['custom_name' => $request->custom_name]);
+        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        return response()->json([
+            'message' => 'Jeepney name updated successfully',
+            'jeepneys' => $jeepneys,
+        ], 200);
+    }
 }

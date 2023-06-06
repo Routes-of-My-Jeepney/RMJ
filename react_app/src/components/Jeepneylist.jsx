@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import InboxIcon from "@mui/icons-material/Inbox";
+import EditIconField from "./EditIconField";
 
 function JeepRoutes() {
     const [jeepneys, setJeepneys] = useState([]);
@@ -49,7 +50,6 @@ function JeepRoutes() {
         },
         []
     );
-    useEffect(() => {}, [jeepneys]);
 
     return (
         <>
@@ -115,7 +115,14 @@ function JeepRoutes() {
                                                 handleJeepneyClick(jeepney)
                                             }
                                         >
-                                            {jeepney.name}
+                                            {showOnlyFavorites &&
+                                            jeepney.liked_by_users.length > 0 &&
+                                            jeepney.liked_by_users[0].pivot &&
+                                            jeepney.liked_by_users[0].pivot
+                                                .custom_name
+                                                ? jeepney.liked_by_users[0]
+                                                      .pivot.custom_name
+                                                : jeepney.name}
                                         </ListItemButton>
                                         <LikeButton
                                             jeepney={jeepney}
@@ -126,6 +133,13 @@ function JeepRoutes() {
                                             jeepneys={jeepneys}
                                             setJeepneys={setJeepneys}
                                         />
+                                        {showOnlyFavorites && (
+                                            <EditIconField
+                                                initialText={jeepney.name}
+                                                jeepney={jeepney}
+                                                setJeepneys={setJeepneys}
+                                            />
+                                        )}
                                     </List>
                                 ))}
                         </List>
