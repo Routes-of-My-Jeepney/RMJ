@@ -15,6 +15,7 @@ import { useMediaQuery, ThemeProvider, createTheme, Box } from "@mui/material";
 import UpdateProfilePage from "./pages/UpdateProfilePage";
 import { useState } from "react";
 import SidebarToggleButton from "./components/SidebarToggleButton";
+import PasswordReset from "./pages/PasswordReset";
 
 axios.defaults.withCredentials = true;
 const theme = createTheme({
@@ -77,6 +78,10 @@ function App() {
                                 <Route
                                     path="/update"
                                     element={<UpdateProfilePage />}
+                                />
+                                <Route
+                                    path="/password-reset"
+                                    element={<PasswordReset />}
                                 />
                             </Routes>
                         </Box>

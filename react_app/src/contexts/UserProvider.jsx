@@ -97,8 +97,8 @@ function UserProvider({ children }) {
                 //                 localStorage.setItem(
                 //                     "user",
                 //                     JSON.stringify(response.data.user)
-                localStorage.setItem("user", JSON.stringify(userData));
                 const userData = response.data.user;
+                localStorage.setItem("user", JSON.stringify(userData));
                 return "アカウントの作成に成功しました";
                 //                   setUser(userData);
             } catch (error) {
@@ -108,6 +108,7 @@ function UserProvider({ children }) {
                 // } else {
                 //     console.error(error);
                 // }
+                console.log(error);
                 return error.response.data;
             }
         }
