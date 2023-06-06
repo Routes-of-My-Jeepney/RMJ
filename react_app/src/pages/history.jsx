@@ -19,11 +19,14 @@ function History() {
         },
     ];
 
+    let user = JSON.parse(localStorage.getItem("user"));
+
     async function getHistory() {
         try {
             let historyRes = await axios.get(url + "history", {
                 paramas: {
                     user_id: { id: id },
+
                 },
             });
 
@@ -55,19 +58,14 @@ function History() {
             }
 
             setRows(data);
-            console.log("===============");
-            console.log("成功しました！！！");
-            console.log("===============");
         } catch (e) {
             console.log(e);
             console.log("エラーが起きました！");
         }
     }
 
-    // 一部のHistoryのデータを削除するリクエストを投げる関数を作る
-
+    //削除機能
     const [selectedRows, setSelectedRows] = useState([]);
-
     const refreshPage = () => {
         window.location.reload();
     };
@@ -75,11 +73,6 @@ function History() {
     const handleRowSelect = (newSelection) => {
         setSelectedRows(newSelection.selectionModel);
     };
-
-    // useEffect(() => {
-    //     const selectedIds = selectedRows.map((row) => row.id);
-    //     console.log(selectedIds);
-    // }, [selectedRows]);
 
     const deleteSelectedRows = async () => {
         for (const id of selectedRows) {
@@ -107,10 +100,15 @@ function History() {
             <br />
             <br />
 
+            <script></script>
             <DeleteIcon
                 color="primary"
                 style={{ fontSize: 30, marginLeft: 11 }}
-                onClick={deleteSelectedRows}
+                onClick={function disp() {
+                    if (window.confirm("本当に履歴を削除しますか？")) {
+                        deleteSelectedRows();
+                    }
+                }}
             />
 
             <div style={{ height: 700, width: "100%" }}>

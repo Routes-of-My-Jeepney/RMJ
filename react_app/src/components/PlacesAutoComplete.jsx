@@ -75,6 +75,10 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const [MarkerPosition, setMarkerPosition] = React.useState();
     const [showObject, setShowObject] = useState(true);
     const [showRoute, setShowRoute] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const url = "http://localhost:8000/api/";
+    let user = JSON.parse(localStorage.getItem("user"));
     const [finishRoute, setFinishRoute] = useState(false);
     const [researchRoute, setResearchRoute] = useState(false);
     const [returnRoute, setReturnRoute] = useState(false);
@@ -82,8 +86,26 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const [searchDest, setSearchDest] = useState("");
     const [placeDestination, setPlaceDestination] = useState("");
     const [markerDesign, setMarkerDesign] = useState(null);
-
+  
     const drawRoute = () => {
+      
+          if (user) {
+            postHistory();
+        } else {
+            console.log("ログインしていないので、履歴保存されず");
+        }
+//       　　　 if (originRef.current.value !== "" && destRef.current.value !== "") {
+//             var directionsService = new google.maps.DirectionsService();
+//             var directionsRenderer = new google.maps.DirectionsRenderer();
+//             var distanceMatrixservice = new google.maps.DistanceMatrixService();
+
+//             var map = mapRef.current;
+          
+//            // directionsRenderer.setDirections(null);
+//         var request = {
+//             origin: { placeId: originId },
+//             destination: { placeId: destinationId },
+//             travelMode: "DRIVING",
         var distanceMatrixservice = new google.maps.DistanceMatrixService();
         var map = mapRef.current;
         var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
@@ -97,19 +119,20 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
             //       strokeWeight: 2,
             //    },
             // },
-        });
+        });  
 
-        // directionsRenderer.setDirections(null);
-        var request = {
-            origin: { placeId: originId },
-            destination: { placeId: destinationId },
-            travelMode: "DRIVING",
-        };
+            var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+            });
+            // directionsRenderer.setDirections(null);
 
-        // ルート取得
-        // setLocation(request.origin, request.destination);
-        setLocation(request.origin.placeId, request.destination.placeId);
-
+//             var request = {
+//                 origin: { placeId: originId },
+//                 destination: { placeId: destinationId },
+//                 travelMode: "DRIVING",
+//             };
+      
         function setLocation(originPlaceId, destinationPlaceId) {
             // 所要時間取得
             distanceMatrixservice.getDistanceMatrix(
@@ -134,12 +157,12 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                                 bounds.extend(path[k]);
                             }
                         }
-                    }
-                    map.fitBounds(bounds);
-                    var distance = legs[0].distance.text;
-                    var duration = legs[0].duration.text;
+                        map.fitBounds(bounds);
+                        var distance = legs[0].distance.text;
+                        var duration = legs[0].duration.text;
 
-                    // 吹き出しの内容を更新
+
+                         // 吹き出しの内容を更新
                     infoWindow.setContent(
                         "距離：" + distance + "<br>所要時間：" + duration
                     );
@@ -160,7 +183,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
             });
         }
 
-        // setSearchOrigin(originRef.current.value);
+            // setSearchOrigin(originRef.current.value);
         // setSearchDest(destRef.current.value);
 
         function timeRequired(response, status) {
@@ -180,16 +203,23 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                             // console.log("所要時間: " + duration);
                         } else {
                             // console.log("距離と所要時間の取得に失敗しました。");
+
                         }
                     }
+                    {
+                        infoWindow.open(map);
+                    }
+                } else {
+                    // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
                 }
-                {
-                    infoWindow.open(map);
-                }
-            } else {
-                // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
             }
+            // };
+        } else {
+            console.log("出発地と目的地を入力してください");
+            setSnackbarOpen(true);
+            setSnackbarMessage("出発地、または目的地を入力してください。");
         }
+
         // };
         console.log(originRef.current.value);
         console.log(destRef.current.value);
@@ -211,6 +241,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         setResearchRoute(false);
         refreshPage();
     };
+
 
     const startRoute = () => {
         setShowRoute(false);
@@ -282,6 +313,14 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         });
     }, [searchOrigin, searchDest]);
 
+    //検索窓に入力された値を履歴用にuseRefで保存する
+    async function postHistory() {
+        try {
+            const res = await axios.post(url + "history", {
+                user_id: user.id,
+                origin: originRef.current.value,
+                destination: destRef.current.value,
+            });} catch (e) {　return; }}
     const handleOrigin = () => {
         setSearchOrigin(originRef.current.value);
     };
