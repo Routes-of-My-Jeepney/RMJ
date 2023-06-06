@@ -61,7 +61,7 @@ function MapContainer() {
                         ref={mapRef}
                         mapContainerStyle={containerStyle}
                         center={center}
-                        zoom={10}
+                        zoom={20}
                         onLoad={onLoad}
                     >
                         <PlacesAutoComplete mapRef={mapRef} setIcon={setIcon} />

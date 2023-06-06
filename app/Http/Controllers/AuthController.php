@@ -6,18 +6,26 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
 
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         // validate request data
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
+            'name' => 'required|string|max:55',
+            'email' => 'required|email|unique:users,email',
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->symbols(),
+            ]
+
         ]);
-    
+
         // create a new user
         $user = new User([
             'name' => $request->name,
@@ -27,13 +35,13 @@ class AuthController extends Controller
         $user->save();
 
         Auth::login($user);
-    
+
         return response()->json([
             'message' => 'Successfully registered!',
             'user' => $user,
         ], 201);
     }
-    
+
     // Token based authentication
     // public function login(Request $request) {
     //     // validate request data
@@ -41,19 +49,19 @@ class AuthController extends Controller
     //         'email' => 'required|email',
     //         'password' => 'required',
     //     ]);
-    
+
     //     // attempt to authenticate the user
     //     if (!Auth::attempt($request->only('email', 'password'))) {
     //         return response()->json([
     //             'message' => 'Invalid login details'
     //         ], 401);
     //     }
-    
+
     //     $user = $request->user();
-    
+
     //     // generate a token for the user
     //     $token = $user->createToken('TokenName')->accessToken;
-    
+
     //     // return the token
     //     return response()->json([
     //         'token' => $token
@@ -61,37 +69,42 @@ class AuthController extends Controller
     // }
 
     // Sanctum based authentication
-    public function login(Request $request){
-    try{
-    
-        // validate request data
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+    public function login(Request $request)
+    {
+        try {
 
-        // attempt to authenticate the user
-        if (Auth::attempt($credentials)) {
-            // generate a token for the user
-            $request->session()->regenerate();
-            $user = $request->user();
+            // validate request data
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
+            // attempt to authenticate the user
+            if (Auth::attempt($credentials)) {
+                // generate a token for the user
+                $request->session()->regenerate();
+                $user = $request->user();
+
+                return response()->json([
+                    'message' => 'Logged in successfully',
+                    'user' => $user,
+                ], 200);
+            }
             return response()->json([
-                'message' => 'Logged in successfully',
-                'user' => $user,
-            ], 200);
+                'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',
+            ], 403);
+
+        } catch (\Exception $e) {
+            Log::error('Error: ', $e->getMessage());
         }
         return response()->json([
-            'message' => 'The provided credentials do not match our records.',
+            'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',
         ], 403);
-    
-}catch(\Exception $e){
-        Log::error('Error: ', $e->getMessage());
     }
-}
 
-    
-    public function logout(Request $request) {
+
+    public function logout(Request $request)
+    {
         // revoke the user's token
 
         Auth::logout();
@@ -100,7 +113,7 @@ class AuthController extends Controller
 
         $request->user()->token()->revoke();
 
-    
+
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
