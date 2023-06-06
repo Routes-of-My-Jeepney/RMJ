@@ -11,21 +11,37 @@ export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: {},
+    });
     const { register } = useContext(UserContext);
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        try {
-            await register(name, email, password, passwordConfirmation);
-            showAlert("Successfully registered!", "success");
-        } catch (error) {
-            showAlert("Registration failed!", "error");
+        if (
+            name !== "" &&
+            email !== "" &&
+            password !== "" &&
+            passwordConfirmation !== ""
+        ) {
+            try {
+                await register(name, email, password, passwordConfirmation);
+                error === !true;
+                showAlert("アカウントの作成に成功しました", "success");
+            } catch (error) {
+                console.log(error);
+                showAlert("アカウントの登録に失敗しました", "error");
+            }
+        } else {
+            showAlert("必要な情報を入力してください。", "error", 0);
         }
     };
 
-    const showAlert = (message, type) => {
-        setAlert({ open: true, message, type });
+    const showAlert = (message, type, id) => {
+        setAlert({ open: true, message, type, id });
     };
 
     const handleCloseAlert = (event, reason) => {
@@ -91,13 +107,14 @@ export default function SignupPage() {
                         </Button>
                     </form>
                     <CustomSnackbar
-                        open={alert.open}
-                        handleClose={handleCloseAlert}
-                        message={alert.message}
-                        type={alert.type}
+                    open={alert.open}
+                    handleClose={handleCloseAlert}
+                    message={alert.message}
+                    type={alert.type}
+                    id={alert.id}
                     />
                 </Paper>
-            </Grid>
+            </Grid>                
         </Grid>
     );
 }

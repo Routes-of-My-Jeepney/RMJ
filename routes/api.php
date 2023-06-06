@@ -73,11 +73,8 @@ Route::get('/get-user-id', function () {
     return Auth::user();})->middleware('auth:sanctum');
 
 // ① postメソッドで、Historyのcreateメソッドを呼び出す
-
 Route::post('/history',[HistoryController::class, 'create']);
 
 // ② post or delete メソッドで、Historyのdeleteメソッドを呼び出す
 Route::delete('/history', [HistoryController::class, 'delete']);
-
-// ③ post or delete メソッドで、HistoryのallDeleteメソッドを呼びだす
 
