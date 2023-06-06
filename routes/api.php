@@ -37,7 +37,6 @@ Route::delete('/jeepney/{jeepneyId}/dislike', [JeepneyController::class, 'dislik
 Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
-Route::post('/jeepney/{jeepneyId}/update', [JeepneyController::class, 'updateLikedJeepneyName']);
 
 Route::delete('users/{user}', [UserController::class, 'delete']);
 Route::post('users/logout', [AuthController::class, 'logout']);
@@ -79,3 +78,5 @@ Route::post('/history',[HistoryController::class, 'create']);
 // ② post or delete メソッドで、Historyのdeleteメソッドを呼び出す
 Route::delete('/history', [HistoryController::class, 'delete']);
 
+// ③ post or delete メソッドで、HistoryのallDeleteメソッドを呼びだす
+Route::post('/reset-password', [UserController::class, 'password-reset']);

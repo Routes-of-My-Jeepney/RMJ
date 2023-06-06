@@ -13,6 +13,7 @@ import axios from "axios";
 import UserProvider from "./contexts/UserProvider";
 import { useMediaQuery, ThemeProvider, createTheme, Box } from "@mui/material";
 import UpdateProfilePage from "./pages/UpdateProfilePage";
+import PasswordReset from "./pages/PasswordReset";
 
 axios.defaults.withCredentials = true;
 const theme = createTheme({
@@ -32,10 +33,10 @@ function App() {
                 <UserProvider>
                     <Navbar />
                     <Box sx={{ display: isMobile ? "block" : "flex" }}>
-                        <Box sx={{ width: isMobile ? "0" : "25vw"}}>
+                        <Box sx={{ width: isMobile ? "0" : "25vw" }}>
                             {!isMobile && <ResponsiveDrawer />}
                         </Box>
-                        <Box sx={{ width: isMobile ? "100vw" : "75vw"}}>
+                        <Box sx={{ width: isMobile ? "100vw" : "75vw" }}>
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/jeepneys/*" element={<JeepRoutes />} />
@@ -43,7 +44,8 @@ function App() {
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/signup" element={<Singup />} />
                                 <Route path="/history" element={<History />} />
-                                <Route path="/update" element={<UpdateProfilePage />} />  
+                                <Route path="/update" element={<UpdateProfilePage />} />
+                                <Route path="/password-reset" element={<PasswordReset />} />
                             </Routes>
                         </Box>
                     </Box>
