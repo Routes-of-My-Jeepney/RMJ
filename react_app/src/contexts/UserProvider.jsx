@@ -12,8 +12,8 @@ function UserProvider({ children }) {
     const [SnackbarMessage, setSuccessSnackbarMessage] = useState("");
     const [status, setStatus] = useState();
     const [message, setMessage] = useState("");
-    const [user, setUser] = useState(()=>{
-        const localStorageData = localStorage.getItem('user');
+    const [user, setUser] = useState(() => {
+        const localStorageData = localStorage.getItem("user");
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
     const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
@@ -21,7 +21,7 @@ function UserProvider({ children }) {
         window.location.reload();
     };
 
-
+    //login
     const login = async (email, password) => {
         try {
             await getCSRFToken();
@@ -40,16 +40,16 @@ function UserProvider({ children }) {
             // in the subsequent request
             const userData = response.data.user;
             setUser(response.data.user);
-//             localStorage.setItem("user", JSON.stringify(response.data.user));
+            //             localStorage.setItem("user", JSON.stringify(response.data.user));
             localStorage.setItem("user", JSON.stringify(userData));
             setUser(userData);
-            navigate("/");
             return "ログインに成功しました。";
-
         } catch (error) {
             return error.response.data;
         }
     };
+
+    //logout
     function successLogoutDisp() {
         window.alert("ログアウトに成功しました。");
     }
@@ -65,10 +65,10 @@ function UserProvider({ children }) {
             // for the sake of token based authentication
             // localStorage.removeItem("authToken");
             localStorage.removeItem("user");
-          
+
             successLogoutDisp();
-          
-          setUser(null);
+
+            setUser(null);
             navigate("/login");
             refreshPage();
         } catch (error) {
@@ -77,8 +77,8 @@ function UserProvider({ children }) {
         }
     };
 
+    //register
     const register = async (name, email, password, passwordConfirmation) => {
-
         if (
             name !== "" &&
             email !== "" &&
@@ -86,33 +86,34 @@ function UserProvider({ children }) {
             passwordConfirmation !== ""
         ) {
             try {
-            await getCSRFToken();
-            const response = await axios.post("/api/register", {
-                name,
-                email,
-                password,
-                password_confirmation: passwordConfirmation,
-            });
+                await getCSRFToken();
+                const response = await axios.post("/api/register", {
+                    name,
+                    email,
+                    password,
+                    password_confirmation: passwordConfirmation,
+                });
                 setUser(response.data.user);
-//                 localStorage.setItem(
-//                     "user",
-//                     JSON.stringify(response.data.user)
-                  localStorage.setItem("user", JSON.stringify(userData));
-                  const userData = response.data.user;
-//                   setUser(userData);
-                );
-             } catch (error) {
-            // Handle error during registration
-            if (error.response && error.response.status === 422) {
-                console.error(error.response.data.errors);
-            } else {
-                console.error(error);
+                //                 localStorage.setItem(
+                //                     "user",
+                //                     JSON.stringify(response.data.user)
+                localStorage.setItem("user", JSON.stringify(userData));
+                const userData = response.data.user;
+                return "アカウントの作成に成功しました";
+                //                   setUser(userData);
+            } catch (error) {
+                // Handle error during registration
+                // if (error.response && error.response.status === 422) {
+                //     console.error(error.response.data.errors);
+                // } else {
+                //     console.error(error);
+                // }
+                return error.response.data;
             }
-        } else {
-            console.error("こちら");
         }
     };
 
+    //Delete
     function successDeleteDisp() {
         window.alert("アカウントの削除に成功しました。");
     }

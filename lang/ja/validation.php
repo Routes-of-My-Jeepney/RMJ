@@ -158,7 +158,8 @@ return [
     'attributes' => [
         'email' => 'メールアドレス',
         'password'=>'パスワード',
-        'profile_img'=>'プロフィール画像'
+        'profile_img'=>'プロフィール画像',
+        'name'=>'名前'
     ],
 
 ];

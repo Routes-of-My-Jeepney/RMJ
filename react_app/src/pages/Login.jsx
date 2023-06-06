@@ -25,7 +25,7 @@ export default function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault();
         const res = await login(email, password);
-
+        console.log(res);
         if (res === "ログインに成功しました。") {
             setSnackbarOpen(true);
             setSnackbarMessage(res);
@@ -42,12 +42,10 @@ export default function LoginPage() {
             setSnackbarMessage(res.errors.email);
             setStatus("error");
         } else if (!res.errors.email) {
-            setSnackBarId(0);
             setSnackbarOpen1(true);
             setSnackbarMessage1(res.errors.password);
             setStatus1("error");
         } else {
-            setSnackBarId(1);
             setSnackbarOpen(true);
             setSnackbarMessage(res.errors.email);
             setStatus("error");
@@ -59,63 +57,63 @@ export default function LoginPage() {
 
     return (
         <>
-        <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            style={{ minHeight: "100vh" }}
-        >
-            <Grid item xs={10} sm={8} md={6} lg={4}>
-                <Paper elevation={3} style={{ padding: 16 }}>
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Login
-                    </Typography>
-                    <form onSubmit={login}>
-                        <TextField
-                            type="email"
-                            label="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            fullWidth
-                            margin="normal"
-                        />
-                        <TextField
-                            type="password"
-                            label="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            fullWidth
-                            margin="normal"
-                        />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleLogin}
-                            fullWidth
-                            sx={{ margin: "20px 0" }}
-                        >
-                            Log In
-                        </Button>
-                    </form>
+            <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                style={{ minHeight: "100vh" }}
+            >
+                <Grid item xs={10} sm={8} md={6} lg={4}>
+                    <Paper elevation={3} style={{ padding: 16 }}>
+                        <Typography variant="h6" align="center" gutterBottom>
+                            Login
+                        </Typography>
+                        <form onSubmit={login}>
+                            <TextField
+                                type="email"
+                                label="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                type="password"
+                                label="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleLogin}
+                                fullWidth
+                                sx={{ margin: "20px 0" }}
+                            >
+                                Log In
+                            </Button>
+                        </form>
 
-                    <CustomSnackbar
-                        id={0}
-                        open={snackbarOpen}
-                        handleClose={() => setSnackbarOpen(false)}
-                        message={snackbarMessage}
-                        type={status}
-                    />
+                        <CustomSnackbar
+                            id={0}
+                            open={snackbarOpen}
+                            handleClose={() => setSnackbarOpen(false)}
+                            message={snackbarMessage}
+                            type={status}
+                        />
 
-                    <CustomSnackbar
-                        id={snackBarId}
-                        open={snackbarOpen1}
-                        handleClose={() => setSnackbarOpen1(false)}
-                        message={snackbarMessage1}
-                        type={status1}
-                    />
-                </Paper>
+                        <CustomSnackbar
+                            id={snackBarId}
+                            open={snackbarOpen1}
+                            handleClose={() => setSnackbarOpen1(false)}
+                            message={snackbarMessage1}
+                            type={status1}
+                        />
+                    </Paper>
+                </Grid>
             </Grid>
-        </Grid>
         </>
     );
 }
