@@ -23,7 +23,7 @@ function History() {
         try {
             let historyRes = await axios.get(url + "history", {
                 paramas: {
-                    user_id: 1,
+                    user_id: { id: id },
                 },
             });
 
