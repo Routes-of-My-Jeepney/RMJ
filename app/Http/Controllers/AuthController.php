@@ -97,6 +97,12 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Error: ', $e->getMessage());
         }
+        return response()->json([
+            'message' => 'メールアドレスかパスワードが正しくありません。',
+        ], 403);
+}catch(\Exception $e){
+        Log::error('Error: ', $e->getMessage());
+
     }
 
 
