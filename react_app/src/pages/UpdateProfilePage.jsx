@@ -7,17 +7,19 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 // import { set } from "lodash";
 
+
 const UpdateProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
     const { isLoggedIn, getUser } = useContext(UserContext);
     const [user, setUser] = useState({});
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
     });
-    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
 
+    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
     const showAlert = (message, type) => {
         setAlert({ open: true, message, type });
     };
@@ -59,7 +61,7 @@ const UpdateProfilePage = () => {
             }, 1000);
         } catch (error) {
             console.log(error);
-            showAlert(error.response.data.error, "error");
+            showAlert(error.response.data.error, "error")
         }
     };
 
@@ -96,10 +98,7 @@ const UpdateProfilePage = () => {
                             label="Name"
                             value={formData.name}
                             onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    name: e.target.value,
-                                })
+                                setFormData({ ...formData, name: e.target.value })
                             }
                             fullWidth
                             margin="normal"
@@ -109,20 +108,12 @@ const UpdateProfilePage = () => {
                             label="Email"
                             value={formData.email}
                             onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    email: e.target.value,
-                                })
+                                setFormData({ ...formData, email: e.target.value })
                             }
                             fullWidth
                             margin="normal"
                         />
-                        <Box
-                            display="flex"
-                            justifyContent="center"
-                            marginY={2}
-                            sx={{ marginTop: "20px" }}
-                        >
+                        <Box display="flex" justifyContent="center" marginY={2} sx={{ marginTop: "20px" }} >
                             <input type="file" onChange={handleImageChange} />
                         </Box>
                         <Button
@@ -149,3 +140,4 @@ const UpdateProfilePage = () => {
 };
 
 export default UpdateProfilePage;
+

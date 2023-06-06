@@ -136,6 +136,16 @@ function Navbar() {
                                 サインアップ
                             </MenuItem>
                         )}
+                        {user && (
+                            <MenuItem
+                                key="password-reset"
+                                onClick={handleCloseUserMenu}
+                                component={Link}
+                                to="/password-reset"
+                            >
+                                パスワード再設定
+                            </MenuItem>
+                        )}
                     </Menu>
                 </Box>
             </Toolbar>
@@ -143,3 +153,4 @@ function Navbar() {
     );
 }
 export default Navbar;
+
