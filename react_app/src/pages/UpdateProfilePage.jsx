@@ -4,46 +4,60 @@ import axios from "../axios";
 import UserContext from "../contexts/UserContext";
 import { Grid, Paper, Typography } from "@mui/material";
 import getCSRFToken from "../utils/getCSRFToken";
+// import { set } from "lodash";
 
 const UpdateProfilePage = () => {
-    const [profileImage, setProfileImage] = useState(null);
-    const { user, getUser } = useContext(UserContext);
-    const [email, setEmail] = useState("");
+    const [profileImg, setProfileImg] = useState(null);
+    const { isLoggedIn, getUser } = useContext(UserContext);
+    const [user, setUser] = useState({});
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+    });
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("profile_image", profileImage);
 
         try {
             await getCSRFToken();
-            for (var pair of formData.entries()) {
+            // for (var pair of formData.entries()) {
+            //     console.log(pair[0] + ", " + pair[1]);
+            // }
+            const data = new FormData();
+            data.append("_method", "put");
+            data.append("name", formData.name);
+            data.append("email", formData.email);
+            if (profileImg) {
+                data.append("profile_img", profileImg);
+            }
+            for (var pair of data.entries()) {
                 console.log(pair[0] + ", " + pair[1]);
             }
-            const response = await axios.put(`/api/user/${user.id}`, formData, {
+            const response = await axios.post(`/api/user/${user.id}`, data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            // do something with response, update user state
+            console.log(response);
+            getUser();
         } catch (error) {
-            // handle error
+            console.log(error);
         }
     };
 
     const handleImageChange = (e) => {
-        setProfileImage(e.target.files[0]);
+        setProfileImg(e.target.files[0]);
     };
 
     useEffect(() => {
-        if (user) {
-            setEmail(user.email);
+        if (isLoggedIn) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            setUser(user);
+            setFormData({
+                name: user.name,
+                email: user.email,
+            });
         }
-    }, [user]);
-
-    useEffect(() => {
-        getUser();
     }, []);
 
     return (
@@ -52,10 +66,20 @@ const UpdateProfilePage = () => {
                 <Typography variant="h4">Update</Typography>
                 <form onSubmit={handleUpdate}>
                     <TextField
+                        type="text"
+                        label="name"
+                        value={formData.name}
+                        onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                        }
+                    />
+                    <TextField
                         type="email"
                         label="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={formData.email}
+                        onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                        }
                     />
                     <input type="file" onChange={handleImageChange} />
                     <Button type="submit">Update</Button>

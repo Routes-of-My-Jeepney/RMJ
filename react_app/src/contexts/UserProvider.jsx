@@ -6,18 +6,18 @@ import { useNavigate } from "react-router-dom";
 import CustomSnackbar from "../components/CustomSnackbar";
 
 function UserProvider({ children }) {
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    // function SuccessLoginDisp() {
-    //     // window.alert("ログインに成功しました。");
-
-    // }
-
     //custum snack bar
     const [SnackbarOpen, setSnackbarOpen] = useState(false);
     const [SnackbarMessage, setSuccessSnackbarMessage] = useState("");
     const [status, setStatus] = useState();
     const [message, setMessage] = useState("");
+    const [user, setUser] = useState(()=>{
+        const localStorageData = localStorage.getItem('user');
+        return localStorageData ? JSON.parse(localStorageData) : null;
+    });
+    const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
+
 
     const login = async (email, password) => {
         try {
@@ -35,12 +35,14 @@ function UserProvider({ children }) {
             // we need to store the cookie in the browser
             // and the browser will automatically send the cookie to the server
             // in the subsequent request
+            const userData = response.data.user;
             setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-
-            //SuccessLoginDisp();
-            //navigate("/");
+//             localStorage.setItem("user", JSON.stringify(response.data.user));
+            localStorage.setItem("user", JSON.stringify(userData));
+            setUser(userData);
+            navigate("/");
             return "ログインに成功しました。";
+
         } catch (error) {
             return error.response.data;
         }
@@ -59,9 +61,11 @@ function UserProvider({ children }) {
 
             // for the sake of token based authentication
             // localStorage.removeItem("authToken");
-            setUser(null);
             localStorage.removeItem("user");
+          
             successLogoutDisp();
+          
+          setUser(null);
             navigate("/login");
         } catch (error) {
             console.error(error);
@@ -70,6 +74,7 @@ function UserProvider({ children }) {
     };
 
     const register = async (name, email, password, passwordConfirmation) => {
+
         if (
             name !== "" &&
             email !== "" &&
@@ -77,26 +82,27 @@ function UserProvider({ children }) {
             passwordConfirmation !== ""
         ) {
             try {
-                await getCSRFToken();
-                const response = await axios.post("/api/register", {
-                    name,
-                    email,
-                    password,
-                    password_confirmation: passwordConfirmation,
-                });
+            await getCSRFToken();
+            const response = await axios.post("/api/register", {
+                name,
+                email,
+                password,
+                password_confirmation: passwordConfirmation,
+            });
                 setUser(response.data.user);
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(response.data.user)
+//                 localStorage.setItem(
+//                     "user",
+//                     JSON.stringify(response.data.user)
+                  localStorage.setItem("user", JSON.stringify(userData));
+                  const userData = response.data.user;
+//                   setUser(userData);
                 );
-                console.log(response.data);
-            } catch (error) {
-                // Handle error during registration
-                if (error.response && error.response.status === 422) {
-                    console.error(error.response.data.errors);
-                } else {
-                    console.error(error);
-                }
+             } catch (error) {
+            // Handle error during registration
+            if (error.response && error.response.status === 422) {
+                console.error(error.response.data.errors);
+            } else {
+                console.error(error);
             }
         } else {
             console.error("こちら");
@@ -115,6 +121,7 @@ function UserProvider({ children }) {
             .delete(`/api/users/${userId}`)
             .then((response) => {
                 console.log(response.data);
+                localStorage.removeItem("user");
                 setUser(null);
                 successDeleteDisp;
             })
@@ -130,20 +137,28 @@ function UserProvider({ children }) {
         axios
             .get("/api/user") // Make sure this URL is correct
             .then((response) => {
-                setUser(response.data);
+                const userData = response.data;
+                localStorage.setItem("user", JSON.stringify(userData));
+                setUser(userData);
             })
             .catch((error) => {
                 console.error(error);
             });
     };
+
     const value = {
-        user,
         login,
         logout,
         register,
         deleteUser,
         getUser,
+        isLoggedIn,
+        user,
     };
+
+    useEffect(() => {
+        setIsLoggedIn(user !== null);
+    }, [user]);
 
     // useEffect(
     //     () => async () => {

@@ -18,6 +18,7 @@ function MapContainer() {
     const [center, setCenter] = useState();
     const [MarkerPosition, setMarkerPosition] = React.useState();
     const [directions, setDirections] = useState(null);
+    const [icon, setIcon] = useState(false);
 
     React.useEffect(() => {
         if (navigator.geolocation) {
@@ -45,7 +46,9 @@ function MapContainer() {
     // }, [MarkerPosition])
 
     const onLoad = React.useCallback((map) => (mapRef.current = map), []);
-
+    const MarkaerPosition = (newValue) => {
+        setText(newValue);
+    };
     return (
         <>
             <LoadScript
@@ -61,7 +64,7 @@ function MapContainer() {
                         zoom={20}
                         onLoad={onLoad}
                     >
-                        <PlacesAutoComplete mapRef={mapRef} />
+                        <PlacesAutoComplete mapRef={mapRef} setIcon={setIcon} />
                         {directions && (
                             <DirectionsRenderer
                                 directions={directions}
@@ -74,7 +77,13 @@ function MapContainer() {
                                 }}
                             />
                         )}
-                        <MarkerF position={MarkerPosition} />
+                        {!icon && (
+                            <MarkerF position={MarkerPosition} />
+                        )}
+                        {icon && (
+                            <MarkerF position={MarkerPosition} icon={"https://maps.google.com/mapfiles/ms/micons/bus.png"}
+                            />
+                        )}
                     </GoogleMap>
                 </Box>
             </LoadScript>
