@@ -7,13 +7,11 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 // import { set } from "lodash";
 
-
 const UpdateProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
     const { isLoggedIn, getUser } = useContext(UserContext);
     const [user, setUser] = useState({});
     const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -43,7 +41,7 @@ const UpdateProfilePage = () => {
             if (profileImg) {
                 data.append("profile_img", profileImg);
             }
-            
+
             for (var pair of data.entries()) {
                 console.log(pair[0] + ", " + pair[1]);
             }
@@ -56,15 +54,12 @@ const UpdateProfilePage = () => {
 
             getUser();
             showAlert("更新が完了しました。", "success");
-            // setTimeout(() => {
-            //     navigate("/");
-            // }, 1000);
+            setTimeout(() => {
+                navigate("/");
+            }, 1000);
         } catch (error) {
             console.log(error);
-            setErrorMessage(error.response.data.error);
-            setTimeout(() => {
-                showAlert(errorMessage, "error");
-            }, 200);
+            showAlert(error.response.data.error, "error");
         }
     };
 
@@ -101,7 +96,10 @@ const UpdateProfilePage = () => {
                             label="Name"
                             value={formData.name}
                             onChange={(e) =>
-                                setFormData({ ...formData, name: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    name: e.target.value,
+                                })
                             }
                             fullWidth
                             margin="normal"
@@ -111,12 +109,20 @@ const UpdateProfilePage = () => {
                             label="Email"
                             value={formData.email}
                             onChange={(e) =>
-                                setFormData({ ...formData, email: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    email: e.target.value,
+                                })
                             }
                             fullWidth
                             margin="normal"
                         />
-                        <Box display="flex" justifyContent="center" marginY={2} sx={{ marginTop: "20px" }} >
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            marginY={2}
+                            sx={{ marginTop: "20px" }}
+                        >
                             <input type="file" onChange={handleImageChange} />
                         </Box>
                         <Button
@@ -128,13 +134,13 @@ const UpdateProfilePage = () => {
                         >
                             Update
                         </Button>
-                    <CustomSnackbar
-                        open={alert.open}
-                        handleClose={handleCloseAlert}
-                        message={alert.message}
-                        type={alert.type}
-                        id={0}
-                    />
+                        <CustomSnackbar
+                            open={alert.open}
+                            handleClose={handleCloseAlert}
+                            message={alert.message}
+                            type={alert.type}
+                            id={0}
+                        />
                     </form>
                 </Paper>
             </Grid>

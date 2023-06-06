@@ -25,8 +25,7 @@ function History() {
         try {
             let historyRes = await axios.get(url + "history", {
                 paramas: {
-                    user_id: { id: id },
-
+                    user_id: 1,
                 },
             });
 
@@ -78,7 +77,7 @@ function History() {
         for (const id of selectedRows) {
             try {
                 const response = await axios.delete(url + "history", {
-                    params: { id: id },
+                    params: 1,
                 });
                 console.log(response.data);
             } catch (error) {

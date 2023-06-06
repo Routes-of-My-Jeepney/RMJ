@@ -91,18 +91,15 @@ class AuthController extends Controller
                 ], 200);
             }
             return response()->json([
-                'message' => 'The provided credentials do not match our records.',
+                'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',
             ], 403);
 
         } catch (\Exception $e) {
             Log::error('Error: ', $e->getMessage());
         }
         return response()->json([
-            'message' => 'メールアドレスかパスワードが正しくありません。',
+            'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',
         ], 403);
-}catch(\Exception $e){
-        Log::error('Error: ', $e->getMessage());
-
     }
 
 
