@@ -27,13 +27,19 @@ export default function ResetPasswordPage() {
             data.append("_method", "post");
             data.append("currentPassword", currentPassword); // 現在のパスワードを追加
             data.append("newPassword", newPassword); // 新しいパスワードを追加
-            const response = await axios.post("http://localhost:8000/api/reset-password", data);
+            const response = await axios.post(
+                "http://localhost:8000/api/reset-password",
+                data
+            );
             console.log(response);
-            showAlert("Successfully registered!", "success");
+            showAlert("パスワードの変更に成功しました", "success");
             navigate("/");
         } catch (error) {
             console.log(error.response);
-            showAlert("Registration failed!", "error");
+            showAlert(
+                "パスワードの変更に失敗しました。大文字、小文字、記号を含む8文字以上に設定してください。",
+                "error"
+            );
         }
     };
 
@@ -53,7 +59,7 @@ export default function ResetPasswordPage() {
             const user = JSON.parse(localStorage.getItem("user"));
             setUser(user);
             setFormData({
-                password: user.password
+                password: user.password,
             });
             console.log(user);
         }
@@ -74,15 +80,9 @@ export default function ResetPasswordPage() {
                         type="password"
                         placeholder="New Password"
                         value={newPassword}
-                        onChange={(e) =>
-                            setNewPassword(e.target.value)
-                        }
+                        onChange={(e) => setNewPassword(e.target.value)}
                     />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                    >
+                    <Button variant="contained" color="primary" type="submit">
                         Reset Password
                     </Button>
                 </form>
@@ -91,9 +91,9 @@ export default function ResetPasswordPage() {
                     handleClose={handleCloseAlert}
                     message={alert.message}
                     type={alert.type}
+                    id={0}
                 />
             </Paper>
         </Grid>
     );
-    
 }
