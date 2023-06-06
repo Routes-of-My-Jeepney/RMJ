@@ -7,10 +7,12 @@ import {
     Menu,
     MenuItem,
     Box,
+    IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 const pages = ["Home", "HowtoRide", "Routes"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
