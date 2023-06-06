@@ -4,25 +4,42 @@ import axios from "../axios";
 import UserContext from "../contexts/UserContext";
 import { Grid, Paper, Typography } from "@mui/material";
 import getCSRFToken from "../utils/getCSRFToken";
+import CustomSnackbar from "../components/CustomSnackbar";
+import { useNavigate } from "react-router-dom";
 // import { set } from "lodash";
 
 const UpdateProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
     const { isLoggedIn, getUser } = useContext(UserContext);
     const [user, setUser] = useState({});
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
     });
+    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
+
+    const showAlert = (message, type) => {
+        setAlert({ open: true, message, type });
+    };
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setAlert({ ...alert, open: false });
+    };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
 
         try {
             await getCSRFToken();
-            // for (var pair of formData.entries()) {
-            //     console.log(pair[0] + ", " + pair[1]);
-            // }
+            console.log("===============");
+            console.log(formData.name);
+            console.log(profileImg);
+            console.log("===============");
             const data = new FormData();
             data.append("_method", "put");
             data.append("name", formData.name);
@@ -40,8 +57,16 @@ const UpdateProfilePage = () => {
             });
             console.log(response);
             getUser();
+            showAlert("更新が完了しました。", "success");
+            // setTimeout(() => {
+            //     navigate("/");
+            // }, 1000);
         } catch (error) {
             console.log(error);
+            setErrorMessage(error.response.data.error);
+            setTimeout(() => {
+                showAlert(errorMessage, "error");
+            }, 200);
         }
     };
 
@@ -83,6 +108,13 @@ const UpdateProfilePage = () => {
                     />
                     <input type="file" onChange={handleImageChange} />
                     <Button type="submit">Update</Button>
+                    <CustomSnackbar
+                        open={alert.open}
+                        handleClose={handleCloseAlert}
+                        message={alert.message}
+                        type={alert.type}
+                        id={0}
+                    />
                 </form>
             </Paper>
         </Grid>
