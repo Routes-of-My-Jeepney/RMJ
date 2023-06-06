@@ -52,56 +52,69 @@ export default function SignupPage() {
     };
 
     return (
-        <Grid container justify="center" style={{ paddingTop: "40%" }}>
-            <Paper style={{ padding: 16 }}>
-                <Typography variant="h4">Sign Up</Typography>
-                <form
-                    onSubmit={() => {
-                        handleRegister;
-                    }}
-                >
-                    <TextField
-                        type="text"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <TextField
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <TextField
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={passwordConfirmation}
-                        onChange={(e) =>
-                            setPasswordConfirmation(e.target.value)
-                        }
-                    />
-                    <Button
-                        onClick={handleRegister}
-                        variant="contained"
-                        color="primary"
-                    >
+        <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{ minHeight: "100vh" }}
+        >
+            <Grid item xs={10} sm={8} md={6} lg={4}>
+                <Paper elevation={3} style={{ padding: 16 }}>
+                    <Typography variant="h6" align="center" gutterBottom>
                         Sign Up
-                    </Button>
-                </form>
-                <CustomSnackbar
+                    </Typography>
+                    <form onSubmit={handleRegister}>
+                        <TextField
+                            type="text"
+                            label="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            type="email"
+                            label="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            type="password"
+                            label="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            type="password"
+                            label="Confirm Password"
+                            value={passwordConfirmation}
+                            onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            fullWidth
+                            sx={{ marginTop: 2 }}
+                        >
+                            Sign Up
+                        </Button>
+                    </form>
+                    <CustomSnackbar
                     open={alert.open}
                     handleClose={handleCloseAlert}
                     message={alert.message}
                     type={alert.type}
                     id={alert.id}
-                />
-            </Paper>
+                    />
+                </Paper>
+            </Grid>                
         </Grid>
     );
 }

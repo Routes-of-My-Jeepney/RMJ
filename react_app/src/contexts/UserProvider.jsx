@@ -17,6 +17,9 @@ function UserProvider({ children }) {
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
     const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
+    const refreshPage = () => {
+        window.location.reload();
+    };
 
 
     const login = async (email, password) => {
@@ -67,6 +70,7 @@ function UserProvider({ children }) {
           
           setUser(null);
             navigate("/login");
+            refreshPage();
         } catch (error) {
             console.error(error);
             failureLogoutDisp();

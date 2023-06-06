@@ -59,26 +59,40 @@ export default function LoginPage() {
 
     return (
         <>
-            <Grid container justify="center" style={{ paddingTop: "40%" }}>
-                <Paper style={{ padding: 16 }}>
-                    <Typography variant="h4">Login</Typography>
+        <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{ minHeight: "100vh" }}
+        >
+            <Grid item xs={10} sm={8} md={6} lg={4}>
+                <Paper elevation={3} style={{ padding: 16 }}>
+                    <Typography variant="h6" align="center" gutterBottom>
+                        Login
+                    </Typography>
                     <form onSubmit={login}>
                         <TextField
                             type="email"
-                            placeholder="Email"
+                            label="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            fullWidth
+                            margin="normal"
                         />
                         <TextField
                             type="password"
-                            placeholder="Password"
+                            label="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
                         />
                         <Button
-                            onClick={handleLogin}
                             variant="contained"
                             color="primary"
+                            onClick={handleLogin}
+                            fullWidth
+                            sx={{ margin: "20px 0" }}
                         >
                             Log In
                         </Button>
@@ -101,6 +115,7 @@ export default function LoginPage() {
                     />
                 </Paper>
             </Grid>
+        </Grid>
         </>
     );
 }
