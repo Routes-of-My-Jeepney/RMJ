@@ -4,6 +4,9 @@ import LikeButton from "./LikeButton";
 import MapJeepRoutes from "./MapJeepRoutes";
 import UserContext from "../contexts/UserContext";
 import getCSRFToken from "../utils/getCSRFToken";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { Switch, useTheme, useMediaQuery } from "@mui/material";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import {
     Grid,
     Box,
@@ -24,6 +27,9 @@ function JeepRoutes() {
     const [selectedJeepney, setSelectedJeepney] = useState(null);
     const [open, setOpen] = useState(false);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleClick = () => {
         setOpen(!open);
@@ -34,6 +40,99 @@ function JeepRoutes() {
     };
     const toggleFavorites = () => {
         setShowOnlyFavorites(!showOnlyFavorites);
+    };
+
+    const toggleDrawer = (open) => (event) => {
+        setDrawerOpen(open);
+    };
+
+    const jeepneyList = () => {
+        return (
+            <List
+                sx={{
+                    width: "100%",
+                    maxWidth: 360,
+                    bgcolor: "background.paper",
+                }}
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                subheader={
+                    <ListSubheader component="div" id="nested-list-subheader">
+                        Nested List Items
+                    </ListSubheader>
+                }
+            >
+                <FormControlLabel
+                    sx={{ color: "text.primary" }}
+                    control={
+                        <Switch
+                            checked={showOnlyFavorites}
+                            onChange={toggleFavorites}
+                        />
+                    }
+                    label="Show favorites"
+                />
+                <ListItemButton onClick={handleClick}>
+                    <ListItemIcon>
+                        <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Inbox" />
+                    {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={open} timeout="auto" unmountOnExit></Collapse>
+
+                {jeepneys
+                    .filter((jeepney) => !showOnlyFavorites || jeepney.isLiked)
+                    .map((jeepney) => (
+                        <List
+                            component="div"
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                            disablePadding
+                        >
+                            <ListItemButton
+                                variant="contained"
+                                key={jeepney.id}
+                                onClick={() => handleJeepneyClick(jeepney)}
+                            >
+                                {showOnlyFavorites &&
+                                jeepney.liked_by_users.length > 0 &&
+                                jeepney.liked_by_users[0].pivot &&
+                                jeepney.liked_by_users[0].pivot.custom_name
+                                    ? jeepney.liked_by_users[0].pivot
+                                          .custom_name
+                                    : jeepney.name}
+                            </ListItemButton>
+                            <LikeButton
+                                jeepney={jeepney}
+                                // userId={user.id}
+                                // initialIsFavorite={
+                                //     jeepney.isFavorite
+                                // }
+                                jeepneys={jeepneys}
+                                setJeepneys={setJeepneys}
+                            />
+                            {showOnlyFavorites && (
+                                <EditIconField
+                                    initialText={
+                                        jeepney.liked_by_users.length > 0 &&
+                                        jeepney.liked_by_users[0].pivot &&
+                                        jeepney.liked_by_users[0].pivot
+                                            .custom_name
+                                            ? jeepney.liked_by_users[0].pivot
+                                                  .custom_name
+                                            : jeepney.name
+                                    }
+                                    jeepney={jeepney}
+                                    setJeepneys={setJeepneys}
+                                />
+                            )}
+                        </List>
+                    ))}
+            </List>
+        );
     };
 
     useEffect(
@@ -60,101 +159,23 @@ function JeepRoutes() {
                 style={{ height: "calc(100vh - 70px)" }}
             >
                 <Grid item xs={2}>
-                    <Box>
-                        <List
-                            sx={{
-                                width: "100%",
-                                maxWidth: 360,
-                                bgcolor: "background.paper",
-                            }}
-                            component="nav"
-                            aria-labelledby="nested-list-subheader"
-                            subheader={
-                                <ListSubheader
-                                    component="div"
-                                    id="nested-list-subheader"
-                                >
-                                    Nested List Items
-                                </ListSubheader>
-                            }
-                        >
-                            <button onClick={toggleFavorites}>
-                                Toggle Favorites
-                            </button>
-                            <ListItemButton onClick={handleClick}>
-                                <ListItemIcon>
-                                    <InboxIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Inbox" />
-                                {open ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse
-                                in={open}
-                                timeout="auto"
-                                unmountOnExit
-                            ></Collapse>
-
-                            {jeepneys
-                                .filter(
-                                    (jeepney) =>
-                                        !showOnlyFavorites || jeepney.isLiked
-                                )
-                                .map((jeepney) => (
-                                    <List
-                                        component="div"
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                        }}
-                                        disablePadding
-                                    >
-                                        <ListItemButton
-                                            variant="contained"
-                                            key={jeepney.id}
-                                            onClick={() =>
-                                                handleJeepneyClick(jeepney)
-                                            }
-                                        >
-                                            {showOnlyFavorites &&
-                                            jeepney.liked_by_users.length > 0 &&
-                                            jeepney.liked_by_users[0].pivot &&
-                                            jeepney.liked_by_users[0].pivot
-                                                .custom_name
-                                                ? jeepney.liked_by_users[0]
-                                                      .pivot.custom_name
-                                                : jeepney.name}
-                                        </ListItemButton>
-                                        <LikeButton
-                                            jeepney={jeepney}
-                                            // userId={user.id}
-                                            // initialIsFavorite={
-                                            //     jeepney.isFavorite
-                                            // }
-                                            jeepneys={jeepneys}
-                                            setJeepneys={setJeepneys}
-                                        />
-                                        {showOnlyFavorites && (
-                                            <EditIconField
-                                                initialText={
-                                                    jeepney.liked_by_users
-                                                        .length > 0 &&
-                                                    jeepney.liked_by_users[0]
-                                                        .pivot &&
-                                                    jeepney.liked_by_users[0]
-                                                        .pivot.custom_name
-                                                        ? jeepney
-                                                              .liked_by_users[0]
-                                                              .pivot.custom_name
-                                                        : jeepney.name
-                                                }
-                                                jeepney={jeepney}
-                                                setJeepneys={setJeepneys}
-                                            />
-                                        )}
-                                    </List>
-                                ))}
-                        </List>
-                    </Box>
+                    {isMobile ? (
+                        <Box>
+                            <Button onClick={toggleDrawer(true)}>
+                                jeepneys
+                            </Button>
+                            <SwipeableDrawer
+                                anchor="left"
+                                open={drawerOpen}
+                                onClose={toggleDrawer(false)}
+                                onOpen={toggleDrawer(true)}
+                            >
+                                jeepneyList()
+                            </SwipeableDrawer>
+                        </Box>
+                    ) : (
+                        <Box>{jeepneyList()}</Box>
+                    )}
                 </Grid>
                 <Grid item xs={10}>
                     <MapJeepRoutes selectedJeepney={selectedJeepney} />
