@@ -135,7 +135,18 @@ function JeepRoutes() {
                                         />
                                         {showOnlyFavorites && (
                                             <EditIconField
-                                                initialText={jeepney.name}
+                                                initialText={
+                                                    jeepney.liked_by_users
+                                                        .length > 0 &&
+                                                    jeepney.liked_by_users[0]
+                                                        .pivot &&
+                                                    jeepney.liked_by_users[0]
+                                                        .pivot.custom_name
+                                                        ? jeepney
+                                                              .liked_by_users[0]
+                                                              .pivot.custom_name
+                                                        : jeepney.name
+                                                }
                                                 jeepney={jeepney}
                                                 setJeepneys={setJeepneys}
                                             />

@@ -73,7 +73,7 @@ class JeepneyController extends Controller
         $user = $request->user();
         $jeepney = Jeepney::find($jeepneyId);
         $user->likedJeepneys()->updateExistingPivot($jeepneyId, ['custom_name' => $request->custom_name]);
-        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+        $jeepneys = Jeepney::with(['likedByUsers' => function($query){$query->withPivot('custom_name');}])->get()->append('isLiked');
 
         return response()->json([
             'message' => 'Jeepney name updated successfully',
