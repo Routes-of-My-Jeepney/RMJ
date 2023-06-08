@@ -31,10 +31,9 @@ class JeepneyController extends Controller
         return response()->json($jeepney, 200);
     }
 
-    public function likeJeepney(Request $request, Jeepney $jeepneyId)
+    public function likeJeepney(Request $request, Jeepney $jeepney)
     {
         $user = $request->user();
-        $jeepney = Jeepney::find($jeepneyId);
         $user->likedJeepneys()->attach($jeepney);
         $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
 
@@ -44,10 +43,9 @@ class JeepneyController extends Controller
         ], 200);
     }
     
-    public function dislikeJeepney(Request $request, Jeepney $jeepneyId)
+    public function dislikeJeepney(Request $request, Jeepney $jeepney)
     {
         $user = $request->user();
-        $jeepney = Jeepney::find($jeepneyId);
         $user->likedJeepneys()->detach($jeepney);
         $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
 
