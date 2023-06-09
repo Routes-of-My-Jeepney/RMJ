@@ -167,24 +167,6 @@ export default function ResetPasswordPage() {
                         type={alert.type}
                         id={0}
                     />
-
-                    <TextField
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                    <Button variant="contained" color="primary" type="submit">
-                        Reset Password
-                    </Button>
-                    <CustomSnackbar
-                        open={alert.open}
-                        handleClose={handleCloseAlert}
-                        message={alert.message}
-                        type={alert.type}
-                        id={0}
-                    />
-
                     <CustomSnackbar
                         open={alert1.open}
                         handleClose={handleCloseAlert1}
