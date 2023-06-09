@@ -177,30 +177,30 @@ export default function ResetPasswordPage() {
                     <Button variant="contained" color="primary" type="submit">
                         Reset Password
                     </Button>
-                </form>
-                <CustomSnackbar
-                    open={alert.open}
-                    handleClose={handleCloseAlert}
-                    message={alert.message}
-                    type={alert.type}
-                    id={0}
-                />
+                    <CustomSnackbar
+                        open={alert.open}
+                        handleClose={handleCloseAlert}
+                        message={alert.message}
+                        type={alert.type}
+                        id={0}
+                    />
 
-                <CustomSnackbar
-                    open={alert1.open}
-                    handleClose={handleCloseAlert1}
-                    message={alert1.message}
-                    type={alert1.type}
-                    id={1}
-                />
-                <CustomSnackbar
-                    open={alert2.open}
-                    handleClose={handleCloseAlert2}
-                    message={alert2.message}
-                    type={alert2.type}
-                    id={1}
-                />
-            </Paper>
+                    <CustomSnackbar
+                        open={alert1.open}
+                        handleClose={handleCloseAlert1}
+                        message={alert1.message}
+                        type={alert1.type}
+                        id={1}
+                    />
+                    <CustomSnackbar
+                        open={alert2.open}
+                        handleClose={handleCloseAlert2}
+                        message={alert2.message}
+                        type={alert2.type}
+                        id={1}
+                    />
+                </Paper>
+            </Grid>
         </Grid>
     );
 }
