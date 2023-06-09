@@ -137,7 +137,9 @@ export default function ResetPasswordPage() {
         >
             <Grid item xs={10} sm={8} md={6} lg={4}>
                 <Paper elevation={3} style={{ padding: 16 }}>
-                    <Typography variant="h6" align="center" gutterBottom>Password Reset</Typography>
+                    <Typography variant="h6" align="center" gutterBottom>
+                        Password Reset
+                    </Typography>
                     <form onSubmit={handleResetPassword}>
                         <TextField
                             type="password"
@@ -155,8 +157,13 @@ export default function ResetPasswordPage() {
                             fullWidth
                             margin="normal"
                         />
-                        <Button variant="contained" color="primary" type="submit" fullWidth
-                            sx={{ marginTop: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            fullWidth
+                            sx={{ marginTop: 2 }}
+                        >
                             Reset Password
                         </Button>
                     </form>
@@ -167,40 +174,22 @@ export default function ResetPasswordPage() {
                         type={alert.type}
                         id={0}
                     />
-
-                    <TextField
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
+                    <CustomSnackbar
+                        open={alert1.open}
+                        handleClose={handleCloseAlert1}
+                        message={alert1.message}
+                        type={alert1.type}
+                        id={1}
                     />
-                    <Button variant="contained" color="primary" type="submit">
-                        Reset Password
-                    </Button>
-                </form>
-                <CustomSnackbar
-                    open={alert.open}
-                    handleClose={handleCloseAlert}
-                    message={alert.message}
-                    type={alert.type}
-                    id={0}
-                />
-
-                <CustomSnackbar
-                    open={alert1.open}
-                    handleClose={handleCloseAlert1}
-                    message={alert1.message}
-                    type={alert1.type}
-                    id={1}
-                />
-                <CustomSnackbar
-                    open={alert2.open}
-                    handleClose={handleCloseAlert2}
-                    message={alert2.message}
-                    type={alert2.type}
-                    id={1}
-                />
-            </Paper>
+                    <CustomSnackbar
+                        open={alert2.open}
+                        handleClose={handleCloseAlert2}
+                        message={alert2.message}
+                        type={alert2.type}
+                        id={1}
+                    />
+                </Paper>
+            </Grid>
         </Grid>
     );
 }
