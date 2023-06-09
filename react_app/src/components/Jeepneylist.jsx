@@ -170,7 +170,7 @@ function JeepRoutes() {
                                 onClose={toggleDrawer(false)}
                                 onOpen={toggleDrawer(true)}
                             >
-                                jeepneyList()
+                                {jeepneyList()}
                             </SwipeableDrawer>
                         </Box>
                     ) : (
