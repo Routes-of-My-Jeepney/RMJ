@@ -53,7 +53,7 @@ const HowToRide = () => {
                 }}
             >
                 <Grid item xs={12} sm={6} order={{ xs: 2, sm: 1 }}>
-                    <Image src="../src/img/jeepney.jpeg" alt="" />
+                    <Image src="../src/img/jeepney1.jpg" alt="" />
                 </Grid>
                 <Grid
                     item
@@ -97,7 +97,7 @@ const HowToRide = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6} order={{ xs: 2, sm: 1 }}>
-                    <Image src="../src/img/jeepney.jpeg" alt="" />
+                    <Image src="../src/img/jeepney2.jpg" alt="" />
                 </Grid>
             </Grid>
             <Grid
@@ -110,7 +110,7 @@ const HowToRide = () => {
                 }}
             >
                 <Grid item xs={12} sm={6} order={{ xs: 2, sm: 1 }}>
-                    <Image src="../src/img/jeepney.jpeg" alt="" />
+                    <Image src="../src/img/jeepney3.jpg" alt="" />
                 </Grid>
                 <Grid
                     item
@@ -140,7 +140,7 @@ const HowToRide = () => {
                 }}
             >
                 <Grid item xs={12} sm={6} sx={{ order: 2 }}>
-                    <Image src="../src/img/jeepney.jpeg" alt="" />
+                    <Image src="../src/img/jeepney4.jpg" alt="" />
                 </Grid>
                 <Grid item xs={12} sm={6} sx={{ order: 1, padding: "10px" }}>
                     <Typography variant="h3" sx={{ fontSize: "1.5rem" }}>

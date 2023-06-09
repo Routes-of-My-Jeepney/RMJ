@@ -56,7 +56,6 @@ export default function LoginPage() {
     };
 
     return (
-        <>
             <Grid
                 container
                 justifyContent="center"
@@ -90,7 +89,7 @@ export default function LoginPage() {
                                 color="primary"
                                 onClick={handleLogin}
                                 fullWidth
-                                sx={{ margin: "20px 0" }}
+                                sx={{ marginTop: 2 }}
                             >
                                 Log In
                             </Button>
@@ -114,6 +113,5 @@ export default function LoginPage() {
                     </Paper>
                 </Grid>
             </Grid>
-        </>
     );
 }

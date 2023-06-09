@@ -129,16 +129,45 @@ export default function ResetPasswordPage() {
     }, []);
 
     return (
-        <Grid container justify="center" style={{ paddingTop: "40%" }}>
-            <Paper style={{ padding: 16 }}>
-                <Typography variant="h4">Password Reset</Typography>
-                <form onSubmit={handleResetPassword}>
-                    <TextField
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
+        <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{ minHeight: "100vh" }}
+        >
+            <Grid item xs={10} sm={8} md={6} lg={4}>
+                <Paper elevation={3} style={{ padding: 16 }}>
+                    <Typography variant="h6" align="center" gutterBottom>Password Reset</Typography>
+                    <form onSubmit={handleResetPassword}>
+                        <TextField
+                            type="password"
+                            placeholder="Current Password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            type="password"
+                            placeholder="New Password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <Button variant="contained" color="primary" type="submit" fullWidth
+                            sx={{ marginTop: 2 }}>
+                            Reset Password
+                        </Button>
+                    </form>
+                    <CustomSnackbar
+                        open={alert.open}
+                        handleClose={handleCloseAlert}
+                        message={alert.message}
+                        type={alert.type}
+                        id={0}
                     />
+
                     <TextField
                         type="password"
                         placeholder="New Password"
