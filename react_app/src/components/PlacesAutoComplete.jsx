@@ -58,6 +58,7 @@ const refreshPage = () => {
     window.location.reload();
 };
 function PlacesAutoComplete({ mapRef, setIcon }) {
+    // states
     const originRef = useRef();
     const destRef = useRef();
     const [originId, setOriginId] = useState(null);
@@ -73,6 +74,8 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const [searchDest, setSearchDest] = useState("");
     const [placeDestination, setPlaceDestination] = useState("");
     const [markerDesign, setMarkerDesign] = useState(null);
+
+    // methods
     const drawRoute = () => {
         var distanceMatrixservice = new google.maps.DistanceMatrixService();
         var map = mapRef.current;

@@ -32,11 +32,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/jeepney/{jeepneyId}/like', [JeepneyController::class, 'likeJeepney']);
-Route::delete('/jeepney/{jeepneyId}/dislike', [JeepneyController::class, 'dislikeJeepney']);
+Route::post('/jeepney/{jeepney}/like', [JeepneyController::class, 'likeJeepney']);
+Route::delete('/jeepney/{jeepney}/dislike', [JeepneyController::class, 'dislikeJeepney']);
 Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
+Route::post('/jeepney/{jeepneyId}/update', [JeepneyController::class, 'updateLikedJeepneyName']);
 
 Route::delete('users/{user}', [UserController::class, 'delete']);
 Route::post('users/logout', [AuthController::class, 'logout']);
