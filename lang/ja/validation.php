@@ -96,7 +96,13 @@ return [
     'not_in'               => '選択された:attributeは正しくありません。',
     'not_regex'            => ':attributeの形式が正しくありません。',
     'numeric'              => ':attributeには、数字を指定してください。',
-    'password'             => '正しいパスワードを指定してください。',
+    'password'             => [
+        'letters' => ':attributeは、少なくとも1つの文字が含まれていなければなりません。',
+        'mixed' => ':attributeは、少なくとも大文字と小文字を1つずつ含める必要があります。',
+        'numbers' => ':attributeは、少なくとも1つの数字が含まれていなければなりません。',
+        'symbols' => ':attributeは、少なくとも1つの記号が含まれていなければなりません。',
+        'uncompromised' => 'この:attributeは過去に漏洩したことのある脆弱な:attributeです。別の:attributeを入力してください。',
+    ],
     'present'              => ':attributeが存在していません。',
     'regex'                => ':attributeに正しい形式を指定してください。',
     'required'             => ':attributeは必ず指定してください。',
@@ -137,8 +143,8 @@ return [
     */
 
     'custom' => [
-        '属性名' => [
-            'ルール名' => 'カスタムメッセージ',
+        'password' => [
+            'symbols' => 'パスワードには少なくとも 1 つの記号が含まれている必要があります',
         ],
     ],
 
@@ -159,7 +165,9 @@ return [
         'email' => 'メールアドレス',
         'password'=>'パスワード',
         'profile_img'=>'プロフィール画像',
-        'name'=>'名前'
+        'name'=>'名前',
+        'currentPassword' => '現在のパスワード',
+        'newPassword' => '新しいパスワード'
     ],
 
 ];

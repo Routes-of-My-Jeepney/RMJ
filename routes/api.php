@@ -37,7 +37,9 @@ Route::delete('/jeepney/{jeepney}/dislike', [JeepneyController::class, 'dislikeJ
 Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
+Route::get('/routes',[RouteController::class, 'index']);
 Route::post('/jeepney/{jeepneyId}/update', [JeepneyController::class, 'updateLikedJeepneyName']);
+
 
 Route::delete('users/{user}', [UserController::class, 'delete']);
 Route::post('users/logout', [AuthController::class, 'logout']);
@@ -72,12 +74,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/history',[HistoryController::class, 'index']);
 Route::get('/get-user-id', function () {
     return Auth::user();})->middleware('auth:sanctum');
-
-// ① postメソッドで、Historyのcreateメソッドを呼び出す
 Route::post('/history',[HistoryController::class, 'create']);
-
-// ② post or delete メソッドで、Historyのdeleteメソッドを呼び出す
 Route::delete('/history', [HistoryController::class, 'delete']);
-
-// ③ post or delete メソッドで、HistoryのallDeleteメソッドを呼びだす
-Route::post('/reset-password', [UserController::class, 'password-reset']);
+Route::post('/reset-password', [UserController::class, 'resetPassword']);

@@ -84,44 +84,36 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        try {
-            $user = Auth::user();
-            Log::info('Request Data:', $request->all());
-            // Validate the request...
-            $request->validate([
-                'name' => 'required|string|max:55',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'profile_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
+        $user = Auth::user();
+        Log::info('Request Data:', $request->all());
+        // Validate the request...
+        $request->validate([
+            'name' => 'required|string|max:55',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'profile_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-            // Handle profile image upload...
-            if ($request->hasFile('profile_img')) {
-                $image = $request->file('profile_img');
-                $filename = time() . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('public/images', $filename);
-                $user->profile_img = $filename;
-            }
-
-            // Update name...
-            $user->name = $request->name;
-
-            // Update email...
-            $user->email = $request->email;
-
-            // Save the changes...
-            $user->save();
-
-            return response()->json([
-                'message' => 'Successfully updated user!',
-                'user' => $user,
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error:', ['message' => $e->getMessage()]);
-            return response()->json([
-                'message' => 'Error updating user!',
-                'error' => $e->getMessage(),
-            ], 409);
+        // Handle profile image upload...
+        if ($request->hasFile('profile_img')) {
+            $image = $request->file('profile_img');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('public/images', $filename);
+            $user->profile_img = $filename;
         }
+
+        // Update name...
+        $user->name = $request->name;
+
+        // Update email...
+        $user->email = $request->email;
+
+        // Save the changes...
+        $user->save();
+
+        return response()->json([
+            'message' => 'Successfully updated user!',
+            'user' => $user,
+        ], 200);
     }
     // public function update(Request $request, $id)
     // {
@@ -168,9 +160,7 @@ class UserController extends Controller
 
     public function resetPassword(Request $request)
     {
-        try {
             $user = Auth::user();
-            Log::info('Request Data:', $request->all());
             // Validate the request...
             $request->validate([
                 'currentPassword' => 'required',
@@ -184,7 +174,7 @@ class UserController extends Controller
 
             if (!Hash::check($request->currentPassword, $user->password)) {
                 return response()->json([
-                    'message' => 'Current password is incorrect.',
+                    'message' => '現在のパスワードが正しくありません。',
                 ], 400);
             }
 
@@ -196,13 +186,6 @@ class UserController extends Controller
                 'message' => 'Successfully updated password!',
                 'user' => $user,
             ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error:', ['message' => $e->getMessage()]);
-            return response()->json([
-                'message' => 'Error updating password!',
-                'error' => $e->getMessage(),
-            ], 409);
-        }
     }
 
     public function deleteProfileImage()
