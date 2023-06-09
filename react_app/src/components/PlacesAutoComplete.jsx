@@ -59,6 +59,7 @@ const refreshPage = () => {
     window.location.reload();
 };
 function PlacesAutoComplete({ mapRef, setIcon }) {
+    // states
     const originRef = useRef();
     const destRef = useRef();
     const [originId, setOriginId] = useState(null);
@@ -110,6 +111,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         }
     }
 
+    // methods
     const drawRoute = () => {
         if (originRef.current.value !== "" && destRef.current.value !== "") {
             try {

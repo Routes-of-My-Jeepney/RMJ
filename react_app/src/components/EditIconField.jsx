@@ -26,8 +26,7 @@ function EditIconField({ initialText, jeepney, setJeepneys }) {
                     custom_name: text,
                 }
             );
-            const res = await axios.get("/api/jeepneys");
-            setJeepneys(res.data);
+            setJeepneys(response.data.jeepneys);
             console.log(response);
         } catch (error) {
             console.error(error);
