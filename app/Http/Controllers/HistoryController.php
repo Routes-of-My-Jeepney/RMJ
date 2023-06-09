@@ -30,7 +30,7 @@ class HistoryController extends Controller
 
 
     //$histories = json_encode(History::where($user_id)->get(), JSON_UNESCAPED_UNICODE);
-    
+    //$userId = $modx->getLoginUserID('web');
     
     // ③ ②で取得してきたデータをJSON形式で返す
     return response()->json($x);

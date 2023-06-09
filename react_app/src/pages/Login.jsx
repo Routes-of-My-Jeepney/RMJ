@@ -105,7 +105,7 @@ export default function LoginPage() {
                         />
 
                         <CustomSnackbar
-                            id={snackBarId}
+                            id={1}
                             open={snackbarOpen1}
                             handleClose={() => setSnackbarOpen1(false)}
                             message={snackbarMessage1}

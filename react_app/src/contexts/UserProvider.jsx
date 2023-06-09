@@ -160,6 +160,7 @@ function UserProvider({ children }) {
         getUser,
         isLoggedIn,
         user,
+        setUser,
     };
 
     useEffect(() => {

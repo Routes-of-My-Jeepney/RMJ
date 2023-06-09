@@ -24,11 +24,13 @@ function History() {
     async function getHistory() {
         try {
             let historyRes = await axios.get(url + "history", {
-                paramas: {
-                    user_id: { id: id },
+                params: {
+                    user_id: user.id,
                 },
             });
 
+            console.log(user.id);
+            console.log(11);
             console.log(historyRes);
 
             const historyData = historyRes.data;
@@ -40,6 +42,7 @@ function History() {
             };
 
             let data = [];
+            console.log(data);
 
             for (let i = 0; i < historyData.length; i++) {
                 let id = historyRes.data[i].id;
@@ -102,7 +105,7 @@ function History() {
             <script></script>
             <DeleteIcon
                 color="primary"
-                style={{ fontSize: 30, marginLeft: 11 }}
+                style={{ fontSize: 30, marginLeft: 51 }}
                 onClick={function disp() {
                     if (window.confirm("本当に履歴を削除しますか？")) {
                         deleteSelectedRows();
@@ -110,7 +113,7 @@ function History() {
                 }}
             />
 
-            <div style={{ height: 700, width: "100%" }}>
+            <div style={{ height: 700, width: "95%", marginLeft: 40 }}>
                 <DataGrid
                     rows={rows}
                     checkboxSelection

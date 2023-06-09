@@ -71,31 +71,22 @@ class AuthController extends Controller
     // Sanctum based authentication
     public function login(Request $request)
     {
-        try {
+        // validate request data
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-            // validate request data
-            $credentials = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ]);
+        // attempt to authenticate the user
+        if (Auth::attempt($credentials)) {
+            // generate a token for the user
+            $request->session()->regenerate();
+            $user = $request->user();
 
-            // attempt to authenticate the user
-            if (Auth::attempt($credentials)) {
-                // generate a token for the user
-                $request->session()->regenerate();
-                $user = $request->user();
-
-                return response()->json([
-                    'message' => 'Logged in successfully',
-                    'user' => $user,
-                ], 200);
-            }
             return response()->json([
-                'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',
-            ], 403);
-
-        } catch (\Exception $e) {
-            Log::error('Error: ', $e->getMessage());
+                'message' => 'Logged in successfully',
+                'user' => $user,
+            ], 200);
         }
         return response()->json([
             'message' => 'メールアドレスかパスワードが正しくありません。または登録されていません。',

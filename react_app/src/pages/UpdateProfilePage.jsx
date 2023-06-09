@@ -7,7 +7,6 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 // import { set } from "lodash";
 
-
 const UpdateProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
     const { isLoggedIn, getUser } = useContext(UserContext);
@@ -19,9 +18,25 @@ const UpdateProfilePage = () => {
         email: "",
     });
 
-    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: 0,
+    });
+
+    const [alert1, setAlert1] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: 1,
+    });
+
     const showAlert = (message, type) => {
         setAlert({ open: true, message, type });
+    };
+    const showAlert1 = (message, type) => {
+        setAlert1({ open: true, message, type });
     };
 
     const handleCloseAlert = (event, reason) => {
@@ -29,6 +44,12 @@ const UpdateProfilePage = () => {
             return;
         }
         setAlert({ ...alert, open: false });
+    };
+    const handleCloseAlert1 = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setAlert1({ ...alert, open: false });
     };
 
     const handleUpdate = async (e) => {
@@ -60,8 +81,17 @@ const UpdateProfilePage = () => {
                 navigate("/");
             }, 1000);
         } catch (error) {
-            console.log(error);
-            showAlert(error.response.data.error, "error")
+            if (!error.response.data.errors) {
+                showAlert(error.response.data.error, "error");
+            } else if (!error.response.data.errors.email) {
+                showAlert(error.response.data.errors.name, "error");
+            } else if (!error.response.data.errors.name) {
+                showAlert(error.response.data.errors.email, "error");
+            } else {
+                showAlert(error.response.data.errors.name, "error");
+                showAlert1(error.response.data.errors.email, "error");
+            }
+            // console.log(error);
         }
     };
 
@@ -98,7 +128,10 @@ const UpdateProfilePage = () => {
                             label="Name"
                             value={formData.name}
                             onChange={(e) =>
-                                setFormData({ ...formData, name: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    name: e.target.value,
+                                })
                             }
                             fullWidth
                             margin="normal"
@@ -108,12 +141,20 @@ const UpdateProfilePage = () => {
                             label="Email"
                             value={formData.email}
                             onChange={(e) =>
-                                setFormData({ ...formData, email: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    email: e.target.value,
+                                })
                             }
                             fullWidth
                             margin="normal"
                         />
-                        <Box display="flex" justifyContent="center" marginY={2} sx={{ marginTop: "20px" }} >
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            marginY={2}
+                            sx={{ marginTop: "20px" }}
+                        >
                             <input type="file" onChange={handleImageChange} />
                         </Box>
                         <Button
@@ -123,7 +164,7 @@ const UpdateProfilePage = () => {
                             fullWidth
                             sx={{ marginTop: 2 }}
                         >
-                            Update
+                            更新する
                         </Button>
                         <CustomSnackbar
                             open={alert.open}
@@ -131,6 +172,13 @@ const UpdateProfilePage = () => {
                             message={alert.message}
                             type={alert.type}
                             id={0}
+                        />
+                        <CustomSnackbar
+                            open={alert1.open}
+                            handleClose={handleCloseAlert1}
+                            message={alert1.message}
+                            type={alert1.type}
+                            id={1}
                         />
                     </form>
                 </Paper>
@@ -140,4 +188,3 @@ const UpdateProfilePage = () => {
 };
 
 export default UpdateProfilePage;
-

@@ -11,12 +11,62 @@ axios.defaults.withCredentials = true;
 export default function ResetPasswordPage() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
-    const [alert, setAlert] = useState({ open: false, message: "", type: "" });
     const { isLoggedIn, getUser } = useContext(UserContext);
     const [user, setUser] = useState({});
     const [formData, setFormData] = useState({
         password: "",
     });
+
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: 0,
+    });
+
+    const [alert1, setAlert1] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: 1,
+    });
+
+    const [alert2, setAlert2] = useState({
+        open: false,
+        message: "",
+        type: "",
+        id: 1,
+    });
+
+    const showAlert = (message, type) => {
+        setAlert({ open: true, message, type });
+    };
+    const showAlert1 = (message, type) => {
+        setAlert1({ open: true, message, type });
+    };
+    const showAlert2 = (message, type) => {
+        setAlert2({ open: true, message, type });
+    };
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setAlert({ ...alert, open: false });
+    };
+    const handleCloseAlert1 = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setAlert1({ ...alert, open: false });
+    };
+    const handleCloseAlert2 = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setAlert2({ ...alert, open: false });
+    };
+
     const navigate = useNavigate();
 
     const handleResetPassword = async (e) => {
@@ -35,23 +85,36 @@ export default function ResetPasswordPage() {
             showAlert("パスワードの変更に成功しました", "success");
             navigate("/");
         } catch (error) {
-            console.log(error.response);
-            showAlert(
-                "パスワードの変更に失敗しました。大文字、小文字、記号を含む8文字以上に設定してください。",
-                "error"
-            );
+            console.log(error);
+            if (!error.response.data.errors) {
+                showAlert(error.response.data.message, "error");
+            } else if (!error.response.data.errors) {
+                showAlert(error.response.data.error, "error");
+            } else if (
+                error.response.data.errors.currentPassword &&
+                error.response.data.errors.newPassword.length >= 2
+            ) {
+                showAlert(
+                    error.response.data.errors.currentPassword[0],
+                    "error"
+                );
+                showAlert1(error.response.data.errors.newPassword[0], "error");
+                showAlert2(error.response.data.errors.newPassword[1], "error");
+            } else if (
+                !error.response.data.errors.currentPassword &&
+                error.response.data.errors.newPassword.length >= 2
+            ) {
+                showAlert(error.response.data.errors.newPassword[0], "error");
+                showAlert1(error.response.data.errors.newPassword[1], "error");
+            } else if (!error.response.data.errors.currentPassword) {
+                showAlert(error.response.data.errors.newPassword[0], "error");
+            } else if (!error.response.data.errors.newPassword) {
+                showAlert(error.response.data.errors.currentPassword, "error");
+            } else {
+                showAlert(error.response.data.errors.currentPassword, "error");
+                showAlert1(error.response.data.errors.newPassword, "error");
+            }
         }
-    };
-
-    const showAlert = (message, type) => {
-        setAlert({ open: true, message, type });
-    };
-
-    const handleCloseAlert = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setAlert({ ...alert, open: false });
     };
 
     useEffect(() => {
@@ -92,6 +155,21 @@ export default function ResetPasswordPage() {
                     message={alert.message}
                     type={alert.type}
                     id={0}
+                />
+
+                <CustomSnackbar
+                    open={alert1.open}
+                    handleClose={handleCloseAlert1}
+                    message={alert1.message}
+                    type={alert1.type}
+                    id={1}
+                />
+                <CustomSnackbar
+                    open={alert2.open}
+                    handleClose={handleCloseAlert2}
+                    message={alert2.message}
+                    type={alert2.type}
+                    id={1}
                 />
             </Paper>
         </Grid>
