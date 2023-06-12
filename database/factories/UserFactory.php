@@ -18,9 +18,10 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'name' => $this->faker->name(),
             'profile_img' => null, // Or generate a random URL if you need
             'email' => $this->faker->unique()->safeEmail,
-            'password' => bcrypt('password'), // password
+            'password' => bcrypt('Password@123'), // password
             'remember_token' => Str::random(10),
         ];
     }
