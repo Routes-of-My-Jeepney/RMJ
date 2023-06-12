@@ -12,7 +12,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 const CustomSnackbar: FC<CustomSnackbarProps> = ({
-    id,
     open,
     handleClose,
     message,

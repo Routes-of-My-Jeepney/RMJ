@@ -11,8 +11,9 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CustomSnackbar from "../components/CustomSnackbar";
-import axios from "../axios";
+import { postHistory } from "../utils/axios";
 // Styled Components for TextField and Map
+
 const SearchBox = styled(Stack)({
     position: "absolute",
     left: "50%",
@@ -75,7 +76,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const [searchDest, setSearchDest] = useState("");
     const [placeDestination, setPlaceDestination] = useState("");
     const [markerDesign, setMarkerDesign] = useState(null);
-    const url = "http://localhost:8000/api/";
     const [alert, setAlert] = useState({
         open: false,
         message: "",
@@ -94,23 +94,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
 
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
-    async function postHistory() {
-        try {
-            const res = await axios.post("api/history", {
-                user_id: user.id,
-                origin: originRef.current.value,
-                destination: destRef.current.value,
-            });
-            console.log(user);
-            console.log("よし！");
-        } catch (e) {
-            console.log(user);
-            console.log(e);
-            console.log("エラーが起きました！");
-            return;
-        }
-    }
-
     // methods
     const drawRoute = () => {
         if (originRef.current.value !== "" && destRef.current.value !== "") {
@@ -124,34 +107,23 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                 var directionsRenderer = new google.maps.DirectionsRenderer({
                     map: map,
                     suppressMarkers: true,
-                    // markerOptions: {
-                    //    icon: {
-                    //       path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                    //       scale: 4,
-                    //       strokeWeight: 2,
-                    //    },
-                    // },
                 });
-                // directionsRenderer.setDirections(null);
                 var request = {
                     origin: { placeId: originId },
                     destination: { placeId: destinationId },
                     travelMode: "DRIVING",
                 };
 
-                // ルート取得
-                // setLocation(request.origin, request.destination);
                 setLocation(
                     request.origin.placeId,
                     request.destination.placeId
                 );
                 function setLocation(originPlaceId, destinationPlaceId) {
-                    // 所要時間取得
                     distanceMatrixservice.getDistanceMatrix(
                         {
-                            origins: [{ placeId: originPlaceId }], // 出発地
-                            destinations: [{ placeId: destinationPlaceId }], // 目的地
-                            travelMode: request.travelMode, // 移動手段
+                            origins: [{ placeId: originPlaceId }],
+                            destinations: [{ placeId: destinationPlaceId }],
+                            travelMode: request.travelMode,
                         },
                         timeRequired
                     );
@@ -173,14 +145,12 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                             map.fitBounds(bounds);
                             var distance = legs[0].distance.text;
                             var duration = legs[0].duration.text;
-                            // 吹き出しの内容を更新
                             infoWindow.setContent(
                                 "距離：" +
                                     distance +
                                     "<br>所要時間：" +
                                     duration
                             );
-                            // ルートの中心座標に吹き出しを表示
                             infoWindow.setPosition(
                                 result.routes[0].overview_path[
                                     Math.floor(
@@ -189,7 +159,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                                     )
                                 ]
                             );
-                            // 吹き出しを開く
                             infoWindow.open(map);
                             setShowObject(false);
                             setShowRoute(true);
@@ -197,29 +166,9 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         }
                     });
                 }
-                console.log(121233);
-                console.log("========================");
-                console.log(originRef.current.value);
-                console.log(destRef.current.value);
-                console.log("========================");
-
                 getUser();
                 postHistory();
-                // useEffect(() => {
-                //     if (isLoggedIn) {
-                //         const user = JSON.parse(localStorage.getItem("user"));
-                //         setUser(user);
-                //         setFormData({
-                //             name: user.name,
-                //             email: user.email,
-                //         });
-                //     }
-                // }, []);
 
-                //検索窓に入力された値を履歴用にuseRefで保存する
-
-                // setSearchOrigin(originRef.current.value);
-                // setSearchDest(destRef.current.value);
                 function timeRequired(response, status) {
                     if (status == "OK") {
                         var origins = response.originAddresses;
@@ -233,10 +182,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                                     var duration = element.duration.text;
                                     var from = origins[i];
                                     var to = destinations[j];
-                                    // console.log("距離: " + distance);
-                                    // console.log("所要時間: " + duration);
                                 } else {
-                                    // console.log("距離と所要時間の取得に失敗しました。");
                                 }
                             }
                         }
@@ -244,7 +190,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                             infoWindow.open(map);
                         }
                     } else {
-                        // console.log("距離と所要時間の取得に失敗しました。ステータス: " + status);
                     }
                 }
             } catch {
@@ -258,7 +203,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         if (watchId) {
             navigator.geolocation.clearWatch(watchId);
         }
-        setShowObject(true); // 検索入力を再表示
+        setShowObject(true);
         setShowRoute(false);
         setFinishRoute(false);
         refreshPage();
@@ -269,10 +214,10 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         setResearchRoute(false);
         refreshPage();
     };
+
     const startRoute = () => {
         setShowRoute(false);
         setResearchRoute(false);
-        // startRoute関数の内容をここに記述
         if (navigator.geolocation) {
             let watchId = navigator.geolocation.watchPosition(
                 (position) => {
@@ -296,7 +241,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         );
                     console.log(placeDestination);
                     console.log(distanceToDestination);
-                    // 距離が一定の範囲内にあればナビゲーションを停止し、アラートを表示
                     if (distanceToDestination <= 100) {
                         setReturnRoute(true);
                         setFinishRoute(true);
@@ -309,13 +253,14 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                 },
                 {
                     enableHighAccuracy: true,
-                    maximumAge: 10000, // maximumAgeの値を設定（ミリ秒単位）
+                    maximumAge: 10000,
                 }
             );
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
     };
+
     useEffect(() => {
         var autoCompleteOrigin = new window.google.maps.places.Autocomplete(
             originRef.current
@@ -341,6 +286,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const handleDest = () => {
         setSearchDest(destRef.current.value);
     };
+
     return (
         <>
             {showObject && (

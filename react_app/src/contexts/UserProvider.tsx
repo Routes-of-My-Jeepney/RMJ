@@ -76,6 +76,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     };
 
     //register
+    //register
     const register = async (
         name: string,
         email: string,
@@ -101,27 +102,19 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 );
                 const userData = response.data.user;
                 setUser(userData);
-                //                 localStorage.setItem(
-                //                     "user",
-                //                     JSON.stringify(response.data.user)
                 localStorage.setItem("user", JSON.stringify(userData));
                 return "アカウントの作成に成功しました";
-                //                   setUser(userData);
             } catch (error) {
-                // Handle error during registration
-                // if (error.response && error.response.status === 422) {
-                //     console.error(error.response.data.errors);
-                // } else {
-                //     console.error(error);
-                // }
                 if (isAxiosError(error)) {
                     const serverError = error as AxiosError<ErrorResponse>;
                     if (serverError && serverError.response) {
                         throw new Error(serverError.response.data.message);
                     }
                 }
-                throw error;
+                throw new Error("必要な情報を入力してください。"); // default error message
             }
+        } else {
+            throw new Error("All fields must be filled."); // this will be your message for when not all fields are filled
         }
     };
 
