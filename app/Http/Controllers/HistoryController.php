@@ -26,9 +26,6 @@ class HistoryController extends Controller
       }
     }
 
-
-
-
     //$histories = json_encode(History::where($user_id)->get(), JSON_UNESCAPED_UNICODE);
     //$userId = $modx->getLoginUserID('web');
     
@@ -48,7 +45,7 @@ class HistoryController extends Controller
     //$history->id = $request->input('id');
     $history->save();
 
-    return response()->json(['messege'=>'OKOKOKOKOKOKOKOKOKOKOKKOK']);
+    return response()->json('Succesful create history');
   }
 
   public function delete(Request $request){

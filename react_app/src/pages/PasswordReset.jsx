@@ -81,9 +81,10 @@ export default function ResetPasswordPage() {
                 "http://localhost:8000/api/reset-password",
                 data
             );
-            console.log(response);
             showAlert("パスワードの変更に成功しました", "success");
-            navigate("/");
+            setTimeout(() => {
+                navigate("/");
+            }, 1 * 1000);
         } catch (error) {
             console.log(error);
             if (!error.response.data.errors) {

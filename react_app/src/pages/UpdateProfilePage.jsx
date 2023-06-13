@@ -81,12 +81,22 @@ const UpdateProfilePage = () => {
                 navigate("/");
             }, 1000);
         } catch (error) {
+            console.log(error);
             if (!error.response.data.errors) {
                 showAlert(error.response.data.error, "error");
-            } else if (!error.response.data.errors.email) {
+            } else if (
+                !error.response.data.errors.email &&
+                !error.response.data.errors.profile_img
+            ) {
                 showAlert(error.response.data.errors.name, "error");
-            } else if (!error.response.data.errors.name) {
+            } else if (
+                !error.response.data.errors.name &&
+                !error.response.data.errors.profile_img
+            ) {
                 showAlert(error.response.data.errors.email, "error");
+            } else if (error.response.data.errors.profile_img) {
+                showAlert(error.response.data.errors.profile_img, "error");
+                //showAlert1(error.response.data.errors.email, "error");
             } else {
                 showAlert(error.response.data.errors.name, "error");
                 showAlert1(error.response.data.errors.email, "error");
@@ -96,7 +106,11 @@ const UpdateProfilePage = () => {
     };
 
     const handleImageChange = (e) => {
-        setProfileImg(e.target.files[0]);
+        try {
+            setProfileImg(e.target.files[0]);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {

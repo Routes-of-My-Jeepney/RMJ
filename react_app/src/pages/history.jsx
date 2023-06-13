@@ -28,13 +28,7 @@ function History() {
                     user_id: user.id,
                 },
             });
-
-            console.log(user.id);
-            console.log(11);
-            console.log(historyRes);
-
             const historyData = historyRes.data;
-
             const handleSortModelChange = (model) => {
                 console.log(model);
                 const sortedRows = sortData(rows, model);
@@ -42,7 +36,6 @@ function History() {
             };
 
             let data = [];
-            console.log(data);
 
             for (let i = 0; i < historyData.length; i++) {
                 let id = historyRes.data[i].id;
