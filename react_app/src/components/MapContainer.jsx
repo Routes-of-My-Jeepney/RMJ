@@ -51,42 +51,39 @@ function MapContainer() {
     };
     return (
         <>
-            <LoadScript
-                googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                libraries={["places"]}
-            >
-                <Box sx={{ position: "relative", height: "500px" }}>
-                    <GoogleMap
-                        id="map"
-                        ref={mapRef}
-                        mapContainerStyle={containerStyle}
-                        center={center}
-                        zoom={20}
-                        onLoad={onLoad}
-                    >
-                        <PlacesAutoComplete mapRef={mapRef} setIcon={setIcon} />
-                        {directions && (
-                            <DirectionsRenderer
-                                directions={directions}
-                                options={{
-                                    polylineOptions: {
-                                        strokeColor: "blue",
-                                        strokeOpacity: 0.8,
-                                        strokeWeight: 4,
-                                    },
-                                }}
-                            />
-                        )}
-                        {!icon && (
-                            <MarkerF position={MarkerPosition} />
-                        )}
-                        {icon && (
-                            <MarkerF position={MarkerPosition} icon={"https://maps.google.com/mapfiles/ms/micons/bus.png"}
-                            />
-                        )}
-                    </GoogleMap>
-                </Box>
-            </LoadScript>
+            <Box sx={{ position: "relative", height: "500px" }}>
+                <GoogleMap
+                    id="map"
+                    ref={mapRef}
+                    mapContainerStyle={containerStyle}
+                    center={center}
+                    zoom={20}
+                    onLoad={onLoad}
+                >
+                    <PlacesAutoComplete mapRef={mapRef} setIcon={setIcon} />
+                    {directions && (
+                        <DirectionsRenderer
+                            directions={directions}
+                            options={{
+                                polylineOptions: {
+                                    strokeColor: "blue",
+                                    strokeOpacity: 0.8,
+                                    strokeWeight: 4,
+                                },
+                            }}
+                        />
+                    )}
+                    {!icon && <MarkerF position={MarkerPosition} />}
+                    {icon && (
+                        <MarkerF
+                            position={MarkerPosition}
+                            icon={
+                                "https://maps.google.com/mapfiles/ms/micons/bus.png"
+                            }
+                        />
+                    )}
+                </GoogleMap>
+            </Box>
         </>
     );
 }

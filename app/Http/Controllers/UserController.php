@@ -115,36 +115,7 @@ class UserController extends Controller
             'user' => $user,
         ], 200);
     }
-    // public function update(Request $request, $id)
-    // {
-    //     // ログイン中のユーザの情報を取得し、$userに代入
-    //     $user = Auth::user();
-
-    //     // リクエストデータを取得し、$updateUserに代入
-    // $updateUser = $request->all();
-// 
-    //     // プロフィール画像の変更があった場合
-    //     if ($request->hasFile('profile-img')) {
-    //         // storeメソッドで一意のファイル名を自動生成しつつstorage/app/public/profilesに保存し、そのファイル名（ファイルパス）を$profileImagePathとして生成
-    //         $profileImagePath = $request->file('profile-img')->store('public/profiles');
-    //         // $updateUserのprofile_imgカラムに$profileImagePath（ファイルパス）を保存
-    //         $updateUser['profile_img'] = $profileImagePath;
-    //         // プロフィール画像を更新した場合は、$user 変数を更新する
-    //         $user->profile_img = $profileImagePath;
-    //     }
-    //     // // プロフィール画像が削除される場合
-    //     elseif ($request->input('delete-profile-img')) {
-    //         // プロフィール画像の削除がリクエストされた場合
-    //         $this->deleteProfileImage($user); // プロフィール画像を削除するメソッドを呼び出す
-    //         // プロフィール画像を削除した場合は、$user 変数を更新する
-    //         $user->profile_img = null;
-    //     }
-    //     // // ユーザー情報を更新
-    //     $user->fill($updateUser)->save();
-    //     return redirect()->route('home', Auth::user())->with('status', __('Mypage has been updated.'));
-
-    // }
-
+    
 
     /**
      * Remove the specified resource from storage.
