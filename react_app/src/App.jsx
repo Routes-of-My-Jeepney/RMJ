@@ -16,7 +16,7 @@ import UpdateProfilePage from "./pages/UpdateProfilePage";
 import { useState } from "react";
 import SidebarToggleButton from "./components/SidebarToggleButton";
 import PasswordReset from "./pages/PasswordReset";
-
+import { LoadScript } from "@react-google-maps/api";
 axios.defaults.withCredentials = true;
 const theme = createTheme({
     zIndex: {
@@ -62,28 +62,41 @@ function App() {
                                     : "100vw",
                             }}
                         >
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route
-                                    path="/jeepneys/*"
-                                    element={<JeepRoutes />}
-                                />
-                                <Route
-                                    path="/how-to-ride"
-                                    element={<HowToRide />}
-                                />
-                                <Route path="/login" element={<Login />} />
-                                <Route path="/signup" element={<Singup />} />
-                                <Route path="/history" element={<History />} />
-                                <Route
-                                    path="/update"
-                                    element={<UpdateProfilePage />}
-                                />
-                                <Route
-                                    path="/password-reset"
-                                    element={<PasswordReset />}
-                                />
-                            </Routes>
+                            <LoadScript
+                                googleMapsApiKey={
+                                    import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+                                }
+                                libraries={["places"]}
+                            >
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route
+                                        path="/jeepneys/*"
+                                        element={<JeepRoutes />}
+                                    />
+                                    <Route
+                                        path="/how-to-ride"
+                                        element={<HowToRide />}
+                                    />
+                                    <Route path="/login" element={<Login />} />
+                                    <Route
+                                        path="/signup"
+                                        element={<Singup />}
+                                    />
+                                    <Route
+                                        path="/history"
+                                        element={<History />}
+                                    />
+                                    <Route
+                                        path="/update"
+                                        element={<UpdateProfilePage />}
+                                    />
+                                    <Route
+                                        path="/password-reset"
+                                        element={<PasswordReset />}
+                                    />
+                                </Routes>
+                            </LoadScript>
                         </Box>
                     </Box>
                     {isMobile && <BottomNav />}

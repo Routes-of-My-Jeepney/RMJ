@@ -2,24 +2,31 @@
 
 namespace Database\Factories;
 
+use App\Models\Jeepney;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Jeepney>
- */
 class JeepneyFactory extends Factory
 {
     /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Jeepney::class;
+
+    /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return array
      */
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'origin' => $this->faker->city(),
-            'destination' => $this->faker->city(),
+            'name' => $this->faker->name,
+            'originlat' => $this->faker->latitude,
+            'originlng' => $this->faker->longitude,
+            'destinationlat' => $this->faker->latitude,
+            'destinationlng' => $this->faker->longitude,
             'created_at' => now(),
             'updated_at' => now(),
         ];

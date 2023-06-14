@@ -1,51 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import UserContext from "./UserContext";
 import axios from "../axios";
 import getCSRFToken from "../utils/getCSRFToken";
 import { useNavigate } from "react-router-dom";
 import CustomSnackbar from "../components/CustomSnackbar";
+import { UserContextType, User } from "../interfaces/UserContext";
+import { ErrorResponse, UserPostResponse } from "../interfaces/Response";
+import { isAxiosError, AxiosError } from "axios";
 
-function UserProvider({ children }) {
+const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const navigate = useNavigate();
     //custum snack bar
-    const [SnackbarOpen, setSnackbarOpen] = useState(false);
-    const [SnackbarMessage, setSuccessSnackbarMessage] = useState("");
-    const [status, setStatus] = useState();
-    const [message, setMessage] = useState("");
-    const [user, setUser] = useState(() => {
+    const [user, setUser] = useState<User | null>(() => {
         const localStorageData = localStorage.getItem("user");
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
-    const [isLoggedIn, setIsLoggedIn] = useState(user ? true : false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(user ? true : false);
     const refreshPage = () => {
         window.location.reload();
     };
 
     //login
-    const login = async (email, password) => {
+    const login = async (email: string, password: string) => {
         try {
             await getCSRFToken();
 
-            const response = await axios.post(`/api/login`, {
+            const response = await axios.post<UserPostResponse>(`/api/login`, {
                 email: email,
                 password: password,
             });
-            // for the sake of token based authentication
-            // we need to store the token in the browser
-            // localStorage.setItem("authToken", response.data.token);
 
-            // for the sake of cookie based authentication
-            // we need to store the cookie in the browser
-            // and the browser will automatically send the cookie to the server
-            // in the subsequent request
             const userData = response.data.user;
-            setUser(response.data.user);
-            //             localStorage.setItem("user", JSON.stringify(response.data.user));
-            localStorage.setItem("user", JSON.stringify(userData));
             setUser(userData);
+
+            localStorage.setItem("user", JSON.stringify(userData));
             return "ログインに成功しました。";
         } catch (error) {
-            return error.response.data;
+            if (isAxiosError(error)) {
+                const serverError = error as AxiosError<ErrorResponse>;
+                if (serverError && serverError.response) {
+                    throw new Error(serverError.response.data.message);
+                }
+            }
+            throw new Error("ログインに失敗しました。");
         }
     };
 
@@ -56,6 +53,7 @@ function UserProvider({ children }) {
     function failureLogoutDisp() {
         window.alert("ログアウトに失敗しました。");
     }
+
     const logout = async () => {
         try {
             await getCSRFToken();
@@ -78,7 +76,13 @@ function UserProvider({ children }) {
     };
 
     //register
-    const register = async (name, email, password, passwordConfirmation) => {
+    //register
+    const register = async (
+        name: string,
+        email: string,
+        password: string,
+        passwordConfirmation: string
+    ) => {
         if (
             name !== "" &&
             email !== "" &&
@@ -87,30 +91,30 @@ function UserProvider({ children }) {
         ) {
             try {
                 await getCSRFToken();
-                const response = await axios.post("/api/register", {
-                    name,
-                    email,
-                    password,
-                    password_confirmation: passwordConfirmation,
-                });
-                setUser(response.data.user);
-                //                 localStorage.setItem(
-                //                     "user",
-                //                     JSON.stringify(response.data.user)
+                const response = await axios.post<UserPostResponse>(
+                    "/api/register",
+                    {
+                        name,
+                        email,
+                        password,
+                        password_confirmation: passwordConfirmation,
+                    }
+                );
                 const userData = response.data.user;
+                setUser(userData);
                 localStorage.setItem("user", JSON.stringify(userData));
                 return "アカウントの作成に成功しました";
-                //                   setUser(userData);
             } catch (error) {
-                // Handle error during registration
-                // if (error.response && error.response.status === 422) {
-                //     console.error(error.response.data.errors);
-                // } else {
-                //     console.error(error);
-                // }
-                console.log(error);
-                return error.response.data;
+                if (isAxiosError(error)) {
+                    const serverError = error as AxiosError<ErrorResponse>;
+                    if (serverError && serverError.response) {
+                        throw new Error(serverError.response.data.message);
+                    }
+                }
+                throw new Error("必要な情報を入力してください。"); // default error message
             }
+        } else {
+            throw new Error("All fields must be filled."); // this will be your message for when not all fields are filled
         }
     };
 
@@ -121,10 +125,13 @@ function UserProvider({ children }) {
     function failureDeleteDisp() {
         window.alert("アカウントの削除に失敗しました。");
     }
-    const deleteUser = async (userId) => {
+    const deleteUser = async () => {
+        if (user === null) {
+            throw new Error("ユーザーが存在しません。");
+        }
         await getCSRFToken();
         axios
-            .delete(`/api/users/${userId}`)
+            .delete(`/api/users/${user.id}`)
             .then((response) => {
                 console.log(response.data);
                 localStorage.removeItem("user");
@@ -152,7 +159,7 @@ function UserProvider({ children }) {
             });
     };
 
-    const value = {
+    const value: UserContextType = {
         login,
         logout,
         register,
@@ -167,24 +174,9 @@ function UserProvider({ children }) {
         setIsLoggedIn(user !== null);
     }, [user]);
 
-    // useEffect(
-    //     () => async () => {
-    //         await getCSRFToken();
-    //         axios
-    //             .get("/api/user") // Make sure this URL is correct
-    //             .then((response) => {
-    //                 setUser(response.data);
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //     },
-    //     []
-    // );
-
     return (
         <UserContext.Provider value={value}>{children}</UserContext.Provider>
     );
-}
+};
 
 export default UserProvider;
