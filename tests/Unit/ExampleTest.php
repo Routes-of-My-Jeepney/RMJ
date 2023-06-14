@@ -18,25 +18,31 @@ class ExampleTest extends TestCase
     {
         $requestData = [
             'user_id' => 1,
-            'origin' => 'Exsample Origin',
+            'origin' => '消えろ',
             'destination' => 'ExampleDest'
         ];
 
         $request = new Request($requestData);
         $response = $this->post('/api/history', $requestData);
+        $historyId = $response['id'];
 
         // // テストデータを削除
-        $response = $this->post('/api/history', $requestData);
-        $responseData = $response->json(); // レスポンスからデータを取得
-        $historyId = $responseData['id']; // 履歴データのIDを取得
+        //$historyId = $response['id']; // 履歴データのIDを取得
+
+        $requestData2 = [
+            'id' => $historyId,
+             ];
+
+        $request2 = new Request($requestData2);
 
     // テストデータの削除
-        $response = $this->delete('/api/history/' . $historyId);
+        $response = $this->delete('/api/history/', $requestData2);
 
         
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('histories', $requestData);
-        $this->assertDatabaseMissing('histories', ['id' => $historyId]);
+        $this -> assertDatabaseMissing('histories',['id'=>$historyId]);
+        // $this->assertDatabaseHas('histories', $requestData);
+        // $this->assertDatabaseMissing('histories', ['id' => $historyId]);
     }
 }

@@ -45,6 +45,7 @@ class HistoryController extends Controller
     //$history->id = $request->input('id');
     $history->save();
 
+    // return response()->json($history);
     return response()->json('Succesful create history');
   }
 
