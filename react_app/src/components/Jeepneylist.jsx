@@ -152,35 +152,77 @@ function JeepRoutes() {
 
     return (
         <>
-            <Grid
-                container
-                paddingTop={"70px"}
-                paddingBottom={"70px"}
-                style={{ height: "calc(100vh - 70px)" }}
-            >
-                <Grid item xs={2}>
-                    {isMobile ? (
-                        <Box>
-                            <Button onClick={toggleDrawer(true)}>
-                                jeepneys
-                            </Button>
-                            <SwipeableDrawer
-                                anchor="left"
-                                open={drawerOpen}
-                                onClose={toggleDrawer(false)}
-                                onOpen={toggleDrawer(true)}
+            {isMobile ? (
+                <Grid container style={{ height: "calc(100vh - 70px)" }}>
+                    <Grid item xs={12}>
+                        {isMobile && (
+                            <Box>
+                                <Button onClick={toggleDrawer(true)}>
+                                    jeepneys
+                                </Button>
+                                <SwipeableDrawer
+                                    anchor="left"
+                                    open={drawerOpen}
+                                    onClose={(event) => {
+                                        event.stopPropagation();
+                                        toggleDrawer(false)(event);
+                                    }}
+                                    onOpen={toggleDrawer(true)}
+                                >
+                                    {jeepneyList()}
+                                </SwipeableDrawer>
+                            </Box>
+                        )}
+                        <Box position="relative" width="100%" height="100%">
+                            {drawerOpen && (
+                                <Box
+                                    position="absolute"
+                                    top={0}
+                                    left={0}
+                                    width="100%"
+                                    height="100%"
+                                    zIndex={1}
+                                />
+                            )}
+                            <MapJeepRoutes selectedJeepney={selectedJeepney} />
+                            <Box
+                                position="absolute"
+                                top={50}
+                                left="2.5%"
+                                transform="translateX(-50%)"
                             >
-                                {jeepneyList()}
-                            </SwipeableDrawer>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={
+                                        isMobile
+                                            ? toggleDrawer(true)
+                                            : undefined
+                                    }
+                                >
+                                    {isMobile
+                                        ? "Show Jeepneys"
+                                        : "Interact with Map"}
+                                </Button>
+                            </Box>
                         </Box>
-                    ) : (
+                    </Grid>
+                </Grid>
+            ) : (
+                <Grid
+                    container
+                    paddingTop={"70px"}
+                    paddingBottom={"70px"}
+                    style={{ height: "calc(100vh - 70px)" }}
+                >
+                    <Grid item xs={2}>
                         <Box>{jeepneyList()}</Box>
-                    )}
+                    </Grid>
+                    <Grid item xs={10}>
+                        <MapJeepRoutes selectedJeepney={selectedJeepney} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={10}>
-                    <MapJeepRoutes selectedJeepney={selectedJeepney} />
-                </Grid>
-            </Grid>
+            )}
         </>
     );
 }
