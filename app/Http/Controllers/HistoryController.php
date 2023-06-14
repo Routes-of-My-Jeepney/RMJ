@@ -48,7 +48,8 @@ class HistoryController extends Controller
     //$history->id = $request->input('id');
     $history->save();
 
-    return response()->json(['messege'=>'OKOKOKOKOKOKOKOKOKOKOKKOK']);
+    return response()->json($history);
+    //return response()->json('Succesful create history');
   }
 
   public function delete(Request $request){

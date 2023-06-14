@@ -136,7 +136,10 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 console.log(response.data);
                 localStorage.removeItem("user");
                 setUser(null);
-                successDeleteDisp;
+                successDeleteDisp();
+
+                navigate("/");
+                refreshPage();
             })
             .catch((error) => {
                 // Something went wrong. Handle the error here.
