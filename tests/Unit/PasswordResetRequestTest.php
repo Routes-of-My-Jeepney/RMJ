@@ -5,6 +5,8 @@ namespace Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\PasswordResetRequest;
 use Tests\TestCase;
 use App\Models\User;
 
@@ -25,7 +27,24 @@ class PasswordResetTest extends TestCase
         $this->actingAs($user);
 
         // 新しいパスワード
-        $newPassword = $this->faker->password(8);
+        // $newPassword = $this->faker->password(8);
+        $newPassword = 'AAAabcdef@';
+        // リクエストを作成
+
+
+        $request = new PasswordResetRequest();
+        $request->merge([
+            'newPassword' => $newPassword,
+        ]);
+
+        // バリデーションを実行
+        $validator = Validator::make($request->all(), $request->rules());
+        if ($validator->fails()) {
+            // バリデーションに失敗した場合の処理
+            $errors = $validator->errors()->all();
+            // エラーレスポンスを作成するなどの処理を行います
+            // ...
+        }
 
         // リクエストを送信します
         $response = $this->postJson('/api/reset-password', [
@@ -70,7 +89,7 @@ class PasswordResetTest extends TestCase
 
         // パスワードが変更されていないことを確認します
         $this->assertTrue(Hash::check('Password@123', $user->fresh()->password));
-    }
+    }    
 }
 
 
