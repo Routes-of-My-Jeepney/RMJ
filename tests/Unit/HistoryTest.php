@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Http\Request;
 
-class ExampleTest extends TestCase
+class HistoryTest extends TestCase
 {
     /**
      * A basic test example.
