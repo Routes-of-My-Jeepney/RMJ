@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useMediaQuery, Box } from "@mui/material";
 import ResponsiveDrawer from "./ResponsiveDrawer";
 import SidebarToggleButton from "./SidebarToggleButton";
-import { theme } from "../utils/theme";
+import theme from "../utils/theme";
 
 const ResponsiveDrawerWrapper = ({ children }) => {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
