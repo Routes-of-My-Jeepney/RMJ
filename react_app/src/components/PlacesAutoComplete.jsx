@@ -12,6 +12,9 @@ import {
 import { styled } from "@mui/material/styles";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { postHistory } from "../utils/axios";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+
+//import { makeStyles } from "@material-ui/core/styles";
 // Styled Components for TextField and Map
 
 const SearchBox = styled(Stack)({
@@ -28,10 +31,24 @@ const StyledStack = styled(Stack)({
     zIndex: 100,
     transform: "translateX(-50%)",
 });
+const SwapButton = styled(ChangeCircleIcon)({
+    color: "#2196f3",
+    fontSize: "35px",
+    position: "absolute",
+    right: -35,
+    top: 40,
+    "&:hover": {
+        color: "#64b5f6",
+    },
+    "&:active": {
+        color: "#2196f3",
+    },
+});
 const StyledTextField = styled(TextField)({
     backgroundColor: "#ffffff",
     width: "300px",
     borderRadius: "5px",
+    position: "relative",
 });
 const RouteDrawButton = styled(Stack)({});
 const RouteStartButton = styled(Stack)({
@@ -94,6 +111,17 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
 
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
+    //ルート入れ替え
+    const swapButton = () => {
+        const originValue = originRef.current.value;
+        const destinationValue = destRef.current.value;
+
+        setSearchOrigin(destinationValue);
+        setSearchDest(originValue);
+        setOriginId(destinationId);
+        setDestinationId(originId);
+    };
+
     // methods
     const drawRoute = () => {
         if (originRef.current.value !== "" && destRef.current.value !== "") {
@@ -111,7 +139,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                 var request = {
                     origin: { placeId: originId },
                     destination: { placeId: destinationId },
-                    travelMode: "DRIVING",
+                    travelMode: "TRANSIT",
                 };
 
                 setLocation(
@@ -227,7 +255,6 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         acr: position.coords.accuracy,
                         spd: position.coords.speed,
                     };
-                    console.log("Current Position (WatchPosition):", coords);
                     setCenter(coords);
                     setMarkerPosition(coords);
                     setIcon(true);
@@ -262,11 +289,19 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     };
 
     useEffect(() => {
+        var options = {
+            componentRestrictions: { country: "ph" },
+        };
+
         var autoCompleteOrigin = new window.google.maps.places.Autocomplete(
-            originRef.current
+            originRef.current,
+            options
         );
         var autoCompleteDestination =
-            new window.google.maps.places.Autocomplete(destRef.current);
+            new window.google.maps.places.Autocomplete(
+                destRef.current,
+                options
+            );
         autoCompleteOrigin.addListener("place_changed", async function () {
             const place_origin = await autoCompleteOrigin.getPlace();
             setOriginId(place_origin.place_id);
@@ -298,6 +333,12 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         unmountOnExit
                     >
                         <Box>
+                            <SwapButton
+                                variant="swapButton"
+                                onClick={swapButton}
+                            >
+                                BTN
+                            </SwapButton>
                             <StyledTextField
                                 id="origin-input"
                                 label="出発地"

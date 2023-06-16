@@ -57,6 +57,7 @@ function MapJeepRoutes({ selectedJeepney }) {
                 lat: 10.3157,
                 lng: 123.8854, // These are coordinates for Cebu. Adjust as needed.
             }}
+            region="PH"
         >
             {directions && <DirectionsRenderer directions={directions} />}
         </GoogleMap>
