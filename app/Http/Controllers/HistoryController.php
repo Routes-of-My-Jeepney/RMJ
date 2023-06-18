@@ -10,6 +10,11 @@ class HistoryController extends Controller
 {
   public function index(Request $request){
 
+    $user = $request->user();
+    
+
+
+
     $user_id = $request->input('user_id');
     // var_dump(History::where($user_id)->get()->toArray());
     // dieS();
@@ -32,13 +37,11 @@ class HistoryController extends Controller
     //$histories = json_encode(History::where($user_id)->get(), JSON_UNESCAPED_UNICODE);
     //$userId = $modx->getLoginUserID('web');
     
-    // ③ ②で取得してきたデータをJSON形式で返す
     return response()->json($x);
   }
 
   
   public function create(Request $request){
-    //入力欄のnameを使って取得
 
     $history = new History();
 

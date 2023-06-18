@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "../axios";
 import LikeButton from "./LikeButton";
-import MapJeepRoutes from "./JeepneyMap";
+import JeepneyMap from "./JeepneyMap";
 import JeepneyList from "./JeepneyList";
 import UserContext from "../contexts/UserContext";
 import { JeepneyProvider, useJeepneyContext } from "../contexts/JeepneyContext";
@@ -27,7 +27,7 @@ function JeepneyRoutes() {
     const [open, setOpen] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { isMobile } = useVisualContext();
-    const { jeepneys } = useJeepneyContext();
+    const { jeepneys, selectedJeepney } = useJeepneyContext();
 
     const toggleDrawer = (open) => (event) => {
         setDrawerOpen(open);
@@ -82,7 +82,7 @@ function JeepneyRoutes() {
                                     zIndex={1}
                                 />
                             )}
-                            <MapJeepRoutes />
+                            <JeepneyMap />
                             <Box
                                 position="absolute"
                                 top={50}
@@ -114,7 +114,9 @@ function JeepneyRoutes() {
                     style={{ height: "calc(100vh - 70px)" }}
                 >
                     <Grid item xs={2}>
-                        <Box>{jeepneyList()}</Box>
+                        <Box>
+                            <JeepneyList />
+                        </Box>
                     </Grid>
                     <Grid item xs={10}>
                         <JeepneyMap selectedJeepney={selectedJeepney} />

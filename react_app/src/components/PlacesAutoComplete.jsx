@@ -15,12 +15,12 @@ import {
     Grid,
     Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { postHistory } from "../utils/axios";
 import "../styles/MapPage.scss";
 import { useGoogleAutocomplete } from "../utils/hooks/GoogleMapApi";
 import { useDrawRoute } from "../utils/hooks/useDrawRoute";
+import { useStartRoute } from "../utils/hooks/useStartRoute";
 
 const refreshPage = () => {
     window.location.reload();
@@ -42,52 +42,15 @@ const reducer = (state, action) => {
     }
 };
 
-function PlacesAutoComplete({ mapRef, setIcon }) {
+function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
     // states
     const [state, dispatch] = useReducer(reducer, initialState);
     const originRef = useRef();
     const destRef = useRef();
-    const [center, setCenter] = useState();
-    const [MarkerPosition, setMarkerPosition] = React.useState();
-    const [showObject, setShowObject] = useState(true);
+    const [showSearchBar, setShowSearchBar] = useState(true);
     const [showRoute, setShowRoute] = useState(false);
     const [finishRoute, setFinishRoute] = useState(false);
     const [researchRoute, setResearchRoute] = useState(false);
-    const [returnRoute, setReturnRoute] = useState(false);
-    const [placeDestination, setPlaceDestination] = useState("");
-    const [markerDesign, setMarkerDesign] = useState(null);
-
-    const setOriginId = (id) => {
-        dispatch({
-            type: "SET_ORIGIN",
-            payload: { ...state.origin, placeId: id },
-        });
-    };
-
-    const setOriginSearch = (search) => {
-        console.log("search: ", search);
-        dispatch({
-            type: "SET_ORIGIN",
-            payload: { ...state.origin, search: search },
-        });
-    };
-
-    const setDestinationId = (id) => {
-        dispatch({
-            type: "SET_DESTINATION",
-            payload: { ...state.destination, placeId: id },
-        });
-    };
-
-    const setDestinationSearch = (search) => {
-        dispatch({
-            type: "SET_DESTINATION",
-            payload: { ...state.destination, search: search },
-        });
-    };
-
-    useGoogleAutocomplete(originRef, setOriginSearch, setOriginId);
-    useGoogleAutocomplete(destRef, setDestinationSearch, setDestinationId);
 
     const [alert, setAlert] = useState({
         open: false,
@@ -108,7 +71,22 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
     // methods
-    const drawRoute = useDrawRoute({ mapRef, state, dispatch });
+    const drawRoute = useDrawRoute({
+        mapRef,
+        state,
+        setShowRoute,
+        setShowSearchBar,
+    });
+
+    const startRoute = useStartRoute({
+        mapRef,
+        setShowRoute,
+        setResearchRoute,
+        setFinishRoute,
+        setCenter,
+        setMarkerPosition,
+        setIcon,
+    });
 
     const clearRoute = (watchId) => {
         if (watchId) {
@@ -126,59 +104,18 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         refreshPage();
     };
 
-    const startRoute = () => {
-        setShowRoute(false);
-        setResearchRoute(false);
-        if (navigator.geolocation) {
-            let watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    const coords = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                        acr: position.coords.accuracy,
-                        spd: position.coords.speed,
-                    };
-                    console.log("Current Position (WatchPosition):", coords);
-                    setCenter(coords);
-                    setMarkerPosition(coords);
-                    setIcon(true);
-                    mapRef.current.panTo(coords);
-                    const distanceToDestination =
-                        google.maps.geometry.spherical.computeDistanceBetween(
-                            new google.maps.LatLng(coords.lat, coords.lng),
-                            new google.maps.LatLng(
-                                placeDestination.geometry.location
-                            )
-                        );
-                    console.log(placeDestination);
-                    console.log(distanceToDestination);
-                    if (distanceToDestination <= 100) {
-                        setReturnRoute(true);
-                        setFinishRoute(true);
-                    } else {
-                        setResearchRoute(true);
-                    }
-                },
-                (error) => {
-                    console.log("Geolocation error", error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 10000,
-                }
-            );
-        } else {
-            console.log("Geolocation is not supported by this browser.");
-        }
-    };
+    useEffect(() => {
+        useGoogleAutocomplete(originRef, dispatch, "origin");
+        useGoogleAutocomplete(destRef, dispatch, "destination");
+    }, [state.origin, state.destination]);
 
     return (
         <>
-            {showObject && (
+            {showSearchBar && (
                 <Stack className="search-box">
                     <Slide
                         direction="down"
-                        in={showObject}
+                        in={showSearchBar}
                         mountOnEnter
                         unmountOnExit
                     >
@@ -191,7 +128,12 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                                 inputRef={originRef}
                                 value={state.origin.search}
                                 onChange={() => {
-                                    setOriginSearch(state.origin.search);
+                                    dispatch({
+                                        type: "SET_ORIGIN",
+                                        payload: {
+                                            search: state.origin.search,
+                                        },
+                                    });
                                 }}
                             />
                             <br />
@@ -203,9 +145,12 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                                 inputRef={destRef}
                                 value={state.destination.search}
                                 onChange={() => {
-                                    setDestinationSearch(
-                                        state.destination.search
-                                    );
+                                    dispatch({
+                                        type: "SET_DESTINATION",
+                                        payload: {
+                                            search: state.destination.search,
+                                        },
+                                    });
                                 }}
                             />
                             <Stack>

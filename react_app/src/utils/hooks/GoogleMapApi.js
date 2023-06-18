@@ -1,19 +1,5 @@
 import { useEffect } from "react";
 
-export const useDistanceMatrixService = ({ originId, destinationId }) => {
-    const service = new google.maps.DistanceMatrixService();
-
-    return () =>
-        service.getDistanceMatrix(
-            {
-                origins: [{ placeId: originId }],
-                destinations: [{ placeId: destinationId }],
-                travelMode: "DRIVING",
-            },
-            timeRequired
-        );
-};
-
 export const useDirectionsService = ({
     mapRef,
     originId,
@@ -61,16 +47,30 @@ export const useDirectionsService = ({
     };
 };
 
-export function useGoogleAutocomplete(inputRef, setValue, setId) {
-    useEffect(() => {
-        const autocomplete = new window.google.maps.places.Autocomplete(
-            inputRef.current
-        );
+export function useGoogleAutocomplete(inputRef, dispatch, type) {
+    const autocomplete = new window.google.maps.places.Autocomplete(
+        inputRef.current
+    );
 
-        autocomplete.addListener("place_changed", async function () {
-            const place = await autocomplete.getPlace();
-            setValue(place.name);
-            setId(place.place_id);
-        });
-    }, [inputRef, setValue, setId]);
+    autocomplete.addListener("place_changed", async function () {
+        const place = await autocomplete.getPlace();
+
+        if (type === "origin") {
+            dispatch({
+                type: "SET_ORIGIN",
+                payload: {
+                    placeId: place.place_id,
+                    name: place.name,
+                },
+            });
+        } else if (type === "destination") {
+            dispatch({
+                type: "SET_DESTINATION",
+                payload: {
+                    placeId: place.place_id,
+                    name: place.name,
+                },
+            });
+        }
+    });
 }

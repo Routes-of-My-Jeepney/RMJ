@@ -23,6 +23,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Jeepney::class, 'jeepney_user')->wherePivot('user_id', $this->id)->exists();
     }
 
+    public function histories()
+    {
+        return $this->hasMany(History::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
