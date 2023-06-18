@@ -108,7 +108,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
     // methods
-    const drawRoute = useDrawRoute({ mapRef, state, dispatch, getUser });
+    const drawRoute = useDrawRoute({ mapRef, state, dispatch });
 
     const clearRoute = (watchId) => {
         if (watchId) {
