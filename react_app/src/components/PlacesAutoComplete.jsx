@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, {
+    useRef,
+    useEffect,
+    useState,
+    useContext,
+    useReducer,
+} from "react";
 import UserContext from "../contexts/UserContext";
 import {
     Box,
@@ -12,59 +18,35 @@ import {
 import { styled } from "@mui/material/styles";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { postHistory } from "../utils/axios";
-// Styled Components for TextField and Map
+import "../styles/MapPage.scss";
+import { useGoogleAutocomplete } from "../utils/hooks/GoogleMapApi";
+import { useDrawRoute } from "../utils/hooks/useDrawRoute";
 
-const SearchBox = styled(Stack)({
-    position: "absolute",
-    left: "50%",
-    top: "100px",
-    zIndex: 100,
-    transform: "translateX(-50%)",
-});
-const StyledStack = styled(Stack)({
-    position: "absolute",
-    left: "50%",
-    top: "100px",
-    zIndex: 100,
-    transform: "translateX(-50%)",
-});
-const StyledTextField = styled(TextField)({
-    backgroundColor: "#ffffff",
-    width: "300px",
-    borderRadius: "5px",
-});
-const RouteDrawButton = styled(Stack)({});
-const RouteStartButton = styled(Stack)({
-    position: "absolute",
-    left: "50%",
-    bottom: "100px",
-    zIndex: 100,
-    transform: "translateX(-50%)",
-});
-const RouteFinishBox = styled(Stack)({
-    padding: "10px 0",
-    position: "absolute",
-    bottom: 0,
-    zIndex: 100,
-    transform: "translateX(-50%)",
-    width: "80vw",
-    height: "20vh",
-    backgroundColor: "white",
-    textAlign: "center",
-    display: "flex", // 縦に要素を並べるために追加
-    flexDirection: "column",
-    justifyContent: "center", // 要素を中央揃えにするために追加
-    alignItems: "center",
-});
 const refreshPage = () => {
     window.location.reload();
 };
+
+const initialState = {
+    origin: { search: null, placeId: null },
+    destination: { search: null, placeId: null },
+};
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "SET_ORIGIN":
+            return { ...state, origin: action.payload };
+        case "SET_DESTINATION":
+            return { ...state, destination: action.payload };
+        default:
+            throw new Error();
+    }
+};
+
 function PlacesAutoComplete({ mapRef, setIcon }) {
     // states
+    const [state, dispatch] = useReducer(reducer, initialState);
     const originRef = useRef();
     const destRef = useRef();
-    const [originId, setOriginId] = useState(null);
-    const [destinationId, setDestinationId] = useState(null);
     const [center, setCenter] = useState();
     const [MarkerPosition, setMarkerPosition] = React.useState();
     const [showObject, setShowObject] = useState(true);
@@ -72,10 +54,41 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const [finishRoute, setFinishRoute] = useState(false);
     const [researchRoute, setResearchRoute] = useState(false);
     const [returnRoute, setReturnRoute] = useState(false);
-    const [searchOrigin, setSearchOrigin] = useState("");
-    const [searchDest, setSearchDest] = useState("");
     const [placeDestination, setPlaceDestination] = useState("");
     const [markerDesign, setMarkerDesign] = useState(null);
+
+    const setOriginId = (id) => {
+        dispatch({
+            type: "SET_ORIGIN",
+            payload: { ...state.origin, placeId: id },
+        });
+    };
+
+    const setOriginSearch = (search) => {
+        console.log("search: ", search);
+        dispatch({
+            type: "SET_ORIGIN",
+            payload: { ...state.origin, search: search },
+        });
+    };
+
+    const setDestinationId = (id) => {
+        dispatch({
+            type: "SET_DESTINATION",
+            payload: { ...state.destination, placeId: id },
+        });
+    };
+
+    const setDestinationSearch = (search) => {
+        dispatch({
+            type: "SET_DESTINATION",
+            payload: { ...state.destination, search: search },
+        });
+    };
+
+    useGoogleAutocomplete(originRef, setOriginSearch, setOriginId);
+    useGoogleAutocomplete(destRef, setDestinationSearch, setDestinationId);
+
     const [alert, setAlert] = useState({
         open: false,
         message: "",
@@ -95,110 +108,8 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
     // methods
-    const drawRoute = () => {
-        if (originRef.current.value !== "" && destRef.current.value !== "") {
-            try {
-                console.log(originRef.current.value);
-                console.log(destRef.current.value);
-                var distanceMatrixservice =
-                    new google.maps.DistanceMatrixService();
-                var map = mapRef.current;
-                var infoWindow = new google.maps.InfoWindow(); // InfoWindowを作成
-                var directionsRenderer = new google.maps.DirectionsRenderer({
-                    map: map,
-                    suppressMarkers: true,
-                });
-                var request = {
-                    origin: { placeId: originId },
-                    destination: { placeId: destinationId },
-                    travelMode: "DRIVING",
-                };
+    const drawRoute = useDrawRoute({ mapRef, state, dispatch, getUser });
 
-                setLocation(
-                    request.origin.placeId,
-                    request.destination.placeId
-                );
-                function setLocation(originPlaceId, destinationPlaceId) {
-                    distanceMatrixservice.getDistanceMatrix(
-                        {
-                            origins: [{ placeId: originPlaceId }],
-                            destinations: [{ placeId: destinationPlaceId }],
-                            travelMode: request.travelMode,
-                        },
-                        timeRequired
-                    );
-                    var directionsService = new google.maps.DirectionsService();
-                    directionsService.route(request, function (result, status) {
-                        if (status == "OK") {
-                            directionsRenderer.setDirections(result);
-                            var bounds = new google.maps.LatLngBounds();
-                            var legs = result.routes[0].legs;
-                            for (var i = 0; i < legs.length; i++) {
-                                var steps = legs[i].steps;
-                                for (var j = 0; j < steps.length; j++) {
-                                    var path = steps[j].path;
-                                    for (var k = 0; k < path.length; k++) {
-                                        bounds.extend(path[k]);
-                                    }
-                                }
-                            }
-                            map.fitBounds(bounds);
-                            var distance = legs[0].distance.text;
-                            var duration = legs[0].duration.text;
-                            infoWindow.setContent(
-                                "距離：" +
-                                    distance +
-                                    "<br>所要時間：" +
-                                    duration
-                            );
-                            infoWindow.setPosition(
-                                result.routes[0].overview_path[
-                                    Math.floor(
-                                        result.routes[0].overview_path.length /
-                                            2
-                                    )
-                                ]
-                            );
-                            infoWindow.open(map);
-                            setShowObject(false);
-                            setShowRoute(true);
-                            setResearchRoute(true);
-                        }
-                    });
-                }
-                getUser();
-                postHistory();
-
-                function timeRequired(response, status) {
-                    if (status == "OK") {
-                        var origins = response.originAddresses;
-                        var destinations = response.destinationAddresses;
-                        for (var i = 0; i < origins.length; i++) {
-                            var results = response.rows[i].elements;
-                            for (var j = 0; j < results.length; j++) {
-                                var element = results[j];
-                                if (element.status === "OK") {
-                                    var distance = element.distance.text;
-                                    var duration = element.duration.text;
-                                    var from = origins[i];
-                                    var to = destinations[j];
-                                } else {
-                                }
-                            }
-                        }
-                        {
-                            infoWindow.open(map);
-                        }
-                    } else {
-                    }
-                }
-            } catch {
-                showAlert("入力された情報が読み取れませんでした。", "error");
-            }
-        } else {
-            showAlert("出発地と目的地を入力してください。", "error");
-        }
-    };
     const clearRoute = (watchId) => {
         if (watchId) {
             navigator.geolocation.clearWatch(watchId);
@@ -261,36 +172,10 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
         }
     };
 
-    useEffect(() => {
-        var autoCompleteOrigin = new window.google.maps.places.Autocomplete(
-            originRef.current
-        );
-        var autoCompleteDestination =
-            new window.google.maps.places.Autocomplete(destRef.current);
-        autoCompleteOrigin.addListener("place_changed", async function () {
-            const place_origin = await autoCompleteOrigin.getPlace();
-            setOriginId(place_origin.place_id);
-            setSearchOrigin(place_origin.name);
-        });
-        autoCompleteDestination.addListener("place_changed", async function () {
-            const place_destination = await autoCompleteDestination.getPlace();
-            console.log(place_destination);
-            setPlaceDestination(place_destination);
-            setDestinationId(place_destination.place_id);
-            setSearchDest(place_destination.name);
-        });
-    }, [searchOrigin, searchDest]);
-    const handleOrigin = () => {
-        setSearchOrigin(originRef.current.value);
-    };
-    const handleDest = () => {
-        setSearchDest(destRef.current.value);
-    };
-
     return (
         <>
             {showObject && (
-                <SearchBox>
+                <Stack className="search-box">
                     <Slide
                         direction="down"
                         in={showObject}
@@ -298,33 +183,41 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         unmountOnExit
                     >
                         <Box>
-                            <StyledTextField
+                            <TextField
+                                className="styled-text-field"
                                 id="origin-input"
                                 label="出発地"
                                 variant="outlined"
                                 inputRef={originRef}
-                                value={searchOrigin}
-                                onChange={handleOrigin}
+                                value={state.origin.search}
+                                onChange={() => {
+                                    setOriginSearch(state.origin.search);
+                                }}
                             />
                             <br />
-                            <StyledTextField
+                            <TextField
+                                className="styled-text-field"
                                 id="destination-input"
                                 label="目的地"
                                 variant="outlined"
                                 inputRef={destRef}
-                                value={searchDest}
-                                onChange={handleDest}
+                                value={state.destination.search}
+                                onChange={() => {
+                                    setDestinationSearch(
+                                        state.destination.search
+                                    );
+                                }}
                             />
-                            <RouteDrawButton>
+                            <Stack>
                                 <Button variant="contained" onClick={drawRoute}>
                                     ルートを表示
                                 </Button>
-                            </RouteDrawButton>
+                            </Stack>
                         </Box>
                     </Slide>
-                </SearchBox>
+                </Stack>
             )}
-            <RouteStartButton>
+            <Stack className="route-start-button">
                 <Grid container sx={{ display: "flex" }}>
                     {researchRoute && (
                         <Slide
@@ -365,7 +258,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         </Slide>
                     )}
                 </Grid>
-            </RouteStartButton>
+            </Stack>
             <Box>
                 {finishRoute && (
                     <Slide
@@ -374,7 +267,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                         mountOnEnter
                         unmountOnExit
                     >
-                        <RouteFinishBox>
+                        <Stack className="route-finish-box">
                             <Typography
                                 variant="body1"
                                 sx={{ fontWeight: "bold", margin: "10px" }}
@@ -388,7 +281,7 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                             >
                                 ルートを終了
                             </Button>
-                        </RouteFinishBox>
+                        </Stack>
                     </Slide>
                 )}
             </Box>
