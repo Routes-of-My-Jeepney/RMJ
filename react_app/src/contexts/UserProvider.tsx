@@ -11,7 +11,7 @@ import { isAxiosError, AxiosError } from "axios";
 const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const navigate = useNavigate();
     //custum snack bar
-    const [user, setUser] = useState<User | null>(() => {
+    const [user, setUser] = useState<User | null | undefined>(() => {
         const localStorageData = localStorage.getItem("user");
         return localStorageData ? JSON.parse(localStorageData) : null;
     });
@@ -126,7 +126,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         window.alert("アカウントの削除に失敗しました。");
     }
     const deleteUser = async () => {
-        if (user === null) {
+        if (user === null|| user === undefined) {
             throw new Error("ユーザーが存在しません。");
         }
         await getCSRFToken();
@@ -169,7 +169,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         deleteUser,
         getUser,
         isLoggedIn,
-        user,
+        user: user || null, // null または undefined の場合は null を指定する
         setUser,
     };
 

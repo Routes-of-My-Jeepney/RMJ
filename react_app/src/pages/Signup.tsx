@@ -1,7 +1,8 @@
-import React, { useState, useContext, useReducer, FormEvent } from "react";
+import React, { useState, useEffect, useContext, useReducer, FormEvent } from "react";
 import axios from "../axios";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
+import { UserContextType } from "../interfaces/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 import { SnackbarState } from "../interfaces/CustomSnackbar";
@@ -48,7 +49,7 @@ const reducer = (state: State, action: Action): State => {
 
 export default function SignupPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { register } = useContext(UserContext);
+    const { register }: UserContextType = useContext(UserContext) || {} as UserContextType;
     const navigate = useNavigate();
 
     const handleRegister = async (e: FormEvent) => {
@@ -74,7 +75,7 @@ export default function SignupPage() {
             setTimeout(() => {
                 navigate("/");
             }, 2000);
-        } catch (error) {
+        } catch (error:any) {
             dispatch({
                 type: "setSnackbar",
                 payload: [
@@ -86,6 +87,34 @@ export default function SignupPage() {
                     },
                 ],
             });
+        }
+    };
+
+    const showRegisterPasswordButton = () => {
+        const txtRegisterPass = document.getElementById("textRegisterPass") as HTMLInputElement;
+        const btnEyeRegisterPass = document.getElementById("buttonEyeRegisterPass");
+        if (txtRegisterPass && btnEyeRegisterPass) {
+            if (txtRegisterPass.type === "password") {
+                txtRegisterPass.type = "text";
+                btnEyeRegisterPass.className = "fa fa-eye";
+            } else {
+                txtRegisterPass.type = "password";
+                btnEyeRegisterPass.className = "fa fa-eye-slash";
+            }
+        }
+    };
+
+    const showConfirmPasswordButton = () => {
+        const txtConfirmPass = document.getElementById("textConfirmPass") as HTMLInputElement;
+        const btnEyeConfirmPass = document.getElementById("buttonEyeConfirmPass");
+        if (txtConfirmPass && btnEyeConfirmPass) { // 要素の存在を確認する
+            if (txtConfirmPass.type === "password") {
+                txtConfirmPass.type = "text";
+                btnEyeConfirmPass.className = "fa fa-eye";
+            } else {
+                txtConfirmPass.type = "password";
+                btnEyeConfirmPass.className = "fa fa-eye-slash";
+            }
         }
     };
 
@@ -130,6 +159,7 @@ export default function SignupPage() {
                         />
                         <TextField
                             type="password"
+                            id="textRegisterPass"
                             label="Password"
                             value={state.password}
                             onChange={(e) =>
@@ -140,9 +170,17 @@ export default function SignupPage() {
                             }
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                                endAdornment: (<span
+                                    id="buttonEyeRegisterPass"
+                                    className="fa fa-eye-slash"
+                                    onClick={showRegisterPasswordButton}>
+                                </span>),
+                            }}
                         />
                         <TextField
                             type="password"
+                            id="textConfirmPass"
                             label="Confirm Password"
                             value={state.passwordConfirmation}
                             onChange={(e) =>
@@ -153,6 +191,13 @@ export default function SignupPage() {
                             }
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                                endAdornment: (<span
+                                    id="buttonEyeConfirmPass"
+                                    className="fa fa-eye-slash"
+                                    onClick={showConfirmPasswordButton}>
+                                </span>),
+                            }}
                         />
                         <Button
                             variant="contained"

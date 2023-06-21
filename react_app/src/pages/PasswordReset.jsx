@@ -69,6 +69,30 @@ export default function ResetPasswordPage() {
 
     const navigate = useNavigate();
 
+    const showCurrentPasswordButton = () => {
+        const txtCurrentPass = document.getElementById("textCurrentPass");
+        const btnEyeCurrentPass = document.getElementById("buttonEyeCurrentPass");
+        if (txtCurrentPass.type === "password") {
+            txtCurrentPass.type = "text";
+            btnEyeCurrentPass.className = "fa fa-eye";
+        } else {
+            txtCurrentPass.type = "password";
+            btnEyeCurrentPass.className = "fa fa-eye-slash";
+        }
+    };
+
+    const showNewPasswordButton = () => {
+        const txtNewPass = document.getElementById("textNewPass");
+        const btnEyeNewPass = document.getElementById("buttonEyeNewPass");
+        if (txtNewPass.type === "password") {
+            txtNewPass.type = "text";
+            btnEyeNewPass.className = "fa fa-eye";
+        } else {
+            txtNewPass.type = "password";
+            btnEyeNewPass.className = "fa fa-eye-slash";
+        }
+    };
+
     const handleResetPassword = async (e) => {
         e.preventDefault();
         try {
@@ -119,6 +143,9 @@ export default function ResetPasswordPage() {
         }
     };
 
+
+
+
     useEffect(() => {
         if (isLoggedIn) {
             const user = JSON.parse(localStorage.getItem("user"));
@@ -142,25 +169,38 @@ export default function ResetPasswordPage() {
                     <Typography variant="h6" align="center" gutterBottom>
                         Password Reset
                     </Typography>
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Password Reset
-                    </Typography>
                     <form onSubmit={handleResetPassword}>
                         <TextField
                             type="password"
+                            id="textCurrentPass"
                             placeholder="Current Password"
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                                endAdornment: (<span
+                                    id="buttonEyeCurrentPass"
+                                    className="fa fa-eye-slash"
+                                    onClick={showCurrentPasswordButton}
+                                ></span>),
+                            }}
                         />
                         <TextField
                             type="password"
+                            id="textNewPass"
                             placeholder="New Password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                                endAdornment: (<span
+                                    id="buttonEyeNewPass"
+                                    className="fa fa-eye-slash"
+                                    onClick={showNewPasswordButton}>
+                                </span>),
+                            }}
                         />
                         <Button
                             variant="contained"
