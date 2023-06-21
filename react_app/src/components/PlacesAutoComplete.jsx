@@ -8,6 +8,7 @@ import {
     Button,
     Grid,
     Typography,
+    Alert,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CustomSnackbar from "../components/CustomSnackbar";
@@ -58,21 +59,26 @@ const RouteStartButton = styled(Stack)({
     zIndex: 100,
     transform: "translateX(-50%)",
 });
-const RouteFinishBox = styled(Stack)({
-    padding: "10px 0",
+const RouteFinishAlert = styled(Stack)({
     position: "absolute",
+    left: "50%",
     bottom: 0,
     zIndex: 100,
-    transform: "translateX(-50%)",
-    width: "80vw",
+    width: "100vw",
     height: "20vh",
+    transform: "translateX(-50%)",
+})
+const RouteFinishBox = styled(Stack)({
+    position: "absolute",
+    width: "100%",
+    height: "100%",
     backgroundColor: "white",
-    textAlign: "center",
     display: "flex", // 縦に要素を並べるために追加
     flexDirection: "column",
     justifyContent: "center", // 要素を中央揃えにするために追加
     alignItems: "center",
 });
+
 const refreshPage = () => {
     window.location.reload();
 };
@@ -175,16 +181,16 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                             var duration = legs[0].duration.text;
                             infoWindow.setContent(
                                 "距離：" +
-                                    distance +
-                                    "<br>所要時間：" +
-                                    duration
+                                distance +
+                                "<br>所要時間：" +
+                                duration
                             );
                             infoWindow.setPosition(
                                 result.routes[0].overview_path[
-                                    Math.floor(
-                                        result.routes[0].overview_path.length /
-                                            2
-                                    )
+                                Math.floor(
+                                    result.routes[0].overview_path.length /
+                                    2
+                                )
                                 ]
                             );
                             infoWindow.open(map);
@@ -407,32 +413,34 @@ function PlacesAutoComplete({ mapRef, setIcon }) {
                     )}
                 </Grid>
             </RouteStartButton>
-            <Box>
-                {finishRoute && (
-                    <Slide
-                        direction="up"
-                        in={finishRoute}
-                        mountOnEnter
-                        unmountOnExit
-                    >
-                        <RouteFinishBox>
-                            <Typography
-                                variant="body1"
-                                sx={{ fontWeight: "bold", margin: "10px" }}
-                            >
-                                目的地に到着しました
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                sx={{ margin: "10px", backgroundColor: "red" }}
-                                onClick={clearRoute}
-                            >
-                                ルートを終了
-                            </Button>
-                        </RouteFinishBox>
-                    </Slide>
-                )}
-            </Box>
+            {finishRoute && (
+                <RouteFinishAlert>
+                    <Grid container sx={{ display: "flex" }}>
+                        <Slide
+                            direction="up"
+                            in={finishRoute}
+                            mountOnEnter
+                            unmountOnExit
+                        >
+                            <RouteFinishBox>
+                                <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: "bold", margin: "10px" }}
+                                >
+                                    目的地に到着しました
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    sx={{ margin: "10px", backgroundColor: "red" }}
+                                    onClick={clearRoute}
+                                >
+                                    ルートを終了
+                                </Button>
+                            </RouteFinishBox>
+                        </Slide>
+                    </Grid>
+                </RouteFinishAlert>
+            )}
             <CustomSnackbar
                 open={alert.open}
                 handleClose={handleCloseAlert}

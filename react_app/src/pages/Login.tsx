@@ -1,6 +1,7 @@
 import React, { useReducer, useContext, FormEvent } from "react";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
+import { UserContextType } from "../interfaces/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 import { SnackbarState } from "../interfaces/CustomSnackbar";
@@ -37,7 +38,7 @@ const reducer = (state: State, action: Action): State => {
 
 export default function LoginPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { login } = useContext(UserContext);
+    const { login }: UserContextType = useContext(UserContext) || {} as UserContextType;
     const navigate = useNavigate();
 
     const handleLogin = async (e: FormEvent) => {
@@ -58,7 +59,7 @@ export default function LoginPage() {
             setTimeout(() => {
                 navigate("/");
             }, 1 * 1000);
-        } catch (error) {
+        } catch (error:any) {
             dispatch({
                 type: "setSnackbar",
                 payload: [
@@ -70,6 +71,19 @@ export default function LoginPage() {
                     },
                 ],
             });
+        }
+    };
+    const showLoginPasswordButton = () => {
+        const txtLoginPass = document.getElementById("textLoginPass") as HTMLInputElement;
+        const btnEyeLoginPass = document.getElementById("buttonEyeLoginPass");
+        if (txtLoginPass && btnEyeLoginPass) {
+            if (txtLoginPass.type === "password") {
+                txtLoginPass.type = "text";
+                btnEyeLoginPass.className = "fa fa-eye";
+            } else {
+                txtLoginPass.type = "password";
+                btnEyeLoginPass.className = "fa fa-eye-slash";
+            }
         }
     };
 
@@ -101,6 +115,7 @@ export default function LoginPage() {
                         />
                         <TextField
                             type="password"
+                            id="textLoginPass"
                             label="Password"
                             value={state.password}
                             onChange={(e) =>
@@ -111,6 +126,13 @@ export default function LoginPage() {
                             }
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                                endAdornment: (<span
+                                    id="buttonEyeLoginPass"
+                                    className="fa fa-eye-slash"
+                                    onClick={showLoginPasswordButton}>
+                                </span>),
+                            }}
                         />
                         <Button
                             type="submit"
