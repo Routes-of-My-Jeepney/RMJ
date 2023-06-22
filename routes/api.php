@@ -71,7 +71,7 @@ Route::post('/logout', function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/history',[HistoryController::class, 'index']);
+Route::get('/user/history',[HistoryController::class, 'index']);
 Route::get('/get-user-id', function () {
     return Auth::user();})->middleware('auth:sanctum');
 Route::post('/history',[HistoryController::class, 'create']);

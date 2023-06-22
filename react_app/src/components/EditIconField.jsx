@@ -3,10 +3,12 @@ import { TextField, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import getCSRFToken from "../utils/getCSRFToken";
 import axios from "../axios";
+import { useJeepneyContext } from "../contexts/JeepneyContext";
 
-function EditIconField({ initialText, jeepney, setJeepneys }) {
+function EditIconField({ initialText, jeepney }) {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(initialText);
+    const { setJeepneys } = useJeepneyContext();
 
     const handleEditClick = () => {
         setIsEditing(true);

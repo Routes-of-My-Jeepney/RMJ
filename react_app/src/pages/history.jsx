@@ -6,7 +6,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 function History() {
     const [rows, setRows] = useState([]);
-    const url = "http://localhost:8000/api/";
 
     const columns = [
         { field: "id", headerName: "ID", width: 0, sortDirection: "desc" },
@@ -23,11 +22,7 @@ function History() {
 
     async function getHistory() {
         try {
-            let historyRes = await axios.get(url + "history", {
-                params: {
-                    user_id: user.id,
-                },
-            });
+            let historyRes = await axios.get("/user/history");
 
             console.log(user.id);
             console.log(11);

@@ -6,11 +6,13 @@ import axios from "../axios";
 import UserContext from "../contexts/UserContext";
 import { useContext } from "react";
 import getCSRFToken from "../utils/getCSRFToken";
+import { useJeepneyContext } from "../contexts/JeepneyContext";
 
-function LikeButton({ jeepney, setJeepneys, jeepneys }) {
+function LikeButton({ jeepney }) {
     // function LikeButton({ jeepneyId, userId, initialIsFavorite }) {
     // const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
     const { user } = useContext(UserContext);
+    const { setJeepneys, jeepneys } = useJeepneyContext();
 
     const handleLike = async (jeepney) => {
         await getCSRFToken();

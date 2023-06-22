@@ -4,11 +4,13 @@ import {
     DirectionsService,
     DirectionsRenderer,
 } from "@react-google-maps/api";
+import { useJeepneyContext } from "../contexts/JeepneyContext";
 
-function MapJeepRoutes({ selectedJeepney }) {
+function JeepneyMap() {
     const [origin, setOrigin] = useState({ lat: null, lng: null });
     const [destination, setDestination] = useState({ lat: null, lng: null });
     const [directions, setDirections] = useState(null);
+    const { selectedJeepney } = useJeepneyContext();
 
     useEffect(() => {
         if (selectedJeepney) {
@@ -32,7 +34,7 @@ function MapJeepRoutes({ selectedJeepney }) {
                 {
                     origin: origin,
                     destination: destination,
-                    travelMode: google.maps.TravelMode.DRIVING,
+                    travelMode: google.maps.TravelMode.TRANSIT,
                 },
                 (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
@@ -64,4 +66,4 @@ function MapJeepRoutes({ selectedJeepney }) {
     );
 }
 
-export default MapJeepRoutes;
+export default JeepneyMap;

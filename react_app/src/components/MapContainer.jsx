@@ -16,8 +16,7 @@ const containerStyle = {
 function MapContainer() {
     const mapRef = useRef();
     const [center, setCenter] = useState();
-    const [MarkerPosition, setMarkerPosition] = React.useState();
-    const [directions, setDirections] = useState(null);
+    const [MarkerPosition, setMarkerPosition] = useState();
     const [icon, setIcon] = useState(false);
 
     React.useEffect(() => {
@@ -60,8 +59,13 @@ function MapContainer() {
                     zoom={20}
                     onLoad={onLoad}
                 >
-                    <PlacesAutoComplete mapRef={mapRef} setIcon={setIcon} />
-                    {directions && (
+                    <PlacesAutoComplete
+                        mapRef={mapRef}
+                        setIcon={setIcon}
+                        setCenter={setCenter}
+                        setMarkerPosition={setMarkerPosition}
+                    />
+                    {/* {directions && (
                         <DirectionsRenderer
                             directions={directions}
                             options={{
@@ -72,7 +76,7 @@ function MapContainer() {
                                 },
                             }}
                         />
-                    )}
+                    )} */}
                     {!icon && <MarkerF position={MarkerPosition} />}
                     {icon && (
                         <MarkerF

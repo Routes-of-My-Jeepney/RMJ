@@ -1,0 +1,39 @@
+.search-box,
+.styled-stack,
+.route-start-button {
+    position: absolute;
+    left: 50%;
+    z-index: 100;
+    transform: translateX(-50%);
+}
+
+.search-box,
+.styled-stack {
+    top: 100px;
+}
+
+.route-start-button {
+    bottom: 100px;
+}
+
+.styled-text-field {
+    background-color: #ffffff;
+    width: 300px;
+    border-radius: 5px;
+    position: "relative";
+}
+
+.route-finish-box {
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    z-index: 100;
+    width: 80vw;
+    height: 20vh;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

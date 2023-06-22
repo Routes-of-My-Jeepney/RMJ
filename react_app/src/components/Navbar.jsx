@@ -9,7 +9,7 @@ import {
     Box,
     IconButton,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+
 import { Link } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
