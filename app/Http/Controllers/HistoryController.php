@@ -43,9 +43,10 @@ class HistoryController extends Controller
   
   public function create(Request $request){
 
+
     $history = new History();
 
-    $history->user_id = $request->input('user_id');
+    $history->user_id = $request->user()->id;
     $history->origin = $request->input('origin');
     $history->destination = $request->input('destination');
     //$history->id = $request->input('id');

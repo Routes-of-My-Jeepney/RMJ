@@ -1,9 +1,10 @@
-import axios from "../axios";
+import client from "../axios";
+import getCSRFToken from "../utils/getCSRFToken";
 
-export async function postHistory(userId, origin, destination) {
+export async function postHistory(origin, destination) {
     try {
-        const res = await axios.post("api/history", {
-            user_id: userId,
+        getCSRFToken();
+        const res = await client.post("/api/history", {
             origin: origin,
             destination: destination,
         });

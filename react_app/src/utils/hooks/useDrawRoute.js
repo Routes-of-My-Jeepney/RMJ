@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { postHistory } from "../axios";
 
 export const useDrawRoute = ({
     mapRef,
@@ -84,7 +85,7 @@ export const useDrawRoute = ({
                         setResearchRoute(true);
                     }
                 });
-                // postHistory();
+                postHistory(state.origin.search, state.destination.search);
             } catch (error) {
                 console.log(error);
             }
