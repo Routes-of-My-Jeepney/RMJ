@@ -21,14 +21,30 @@ import "../styles/MapPage.scss";
 import { useGoogleAutocomplete } from "../utils/hooks/GoogleMapApi";
 import { useDrawRoute } from "../utils/hooks/useDrawRoute";
 import { useStartRoute } from "../utils/hooks/useStartRoute";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import { styled } from "@mui/material/styles";
+
+const SwapButton = styled(ChangeCircleIcon)({
+    color: "#2196f3",
+    fontSize: "35px",
+    position: "absolute",
+    right: -35,
+    top: 40,
+    "&:hover": {
+        color: "#64b5f6",
+    },
+    "&:active": {
+        color: "#2196f3",
+    },
+});
 
 const refreshPage = () => {
     window.location.reload();
 };
 
 const initialState = {
-    origin: { search: null, placeId: null },
-    destination: { search: null, placeId: null },
+    origin: { search: "", placeId: null },
+    destination: { search: "", placeId: null },
 };
 
 const reducer = (state, action) => {
@@ -70,12 +86,32 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
 
     const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
 
+    //ルート入れ替え
+    const handleSwapPlaces = () => {
+        dispatch({
+            type: "SET_ORIGIN",
+            payload: {
+                placeId: state.destination.placeId,
+                search: destRef.current.value,
+            },
+        });
+
+        dispatch({
+            type: "SET_DESTINATION",
+            payload: {
+                placeId: state.origin.placeId,
+                search: originRef.current.value,
+            },
+        });
+    };
+
     // methods
     const drawRoute = useDrawRoute({
         mapRef,
         state,
         setShowRoute,
         setShowSearchBar,
+        setResearchRoute,
     });
 
     const startRoute = useStartRoute({
@@ -92,21 +128,21 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         if (watchId) {
             navigator.geolocation.clearWatch(watchId);
         }
-        setShowObject(true);
         setShowRoute(false);
         setFinishRoute(false);
         refreshPage();
     };
     const backToSearch = () => {
-        setShowObject(true);
         setShowRoute(false);
         setResearchRoute(false);
         refreshPage();
     };
 
     useEffect(() => {
-        useGoogleAutocomplete(originRef, dispatch, "origin");
-        useGoogleAutocomplete(destRef, dispatch, "destination");
+        useGoogleAutocomplete(originRef, dispatch, state, "origin");
+        useGoogleAutocomplete(destRef, dispatch, state, "destination");
+        console.log(`origin  ${state.origin}`);
+        console.log("dest" + state.destination);
     }, [state.origin, state.destination]);
 
     return (
@@ -120,6 +156,12 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                         unmountOnExit
                     >
                         <Box>
+                            <SwapButton
+                                variant="swapButton"
+                                onClick={handleSwapPlaces}
+                            >
+                                BTN
+                            </SwapButton>
                             <TextField
                                 className="styled-text-field"
                                 id="origin-input"
@@ -127,11 +169,12 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                 variant="outlined"
                                 inputRef={originRef}
                                 value={state.origin.search}
-                                onChange={() => {
+                                onChange={(e) => {
                                     dispatch({
                                         type: "SET_ORIGIN",
                                         payload: {
-                                            search: state.origin.search,
+                                            ...state.origin,
+                                            search: e.target.value,
                                         },
                                     });
                                 }}
@@ -144,11 +187,12 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                 variant="outlined"
                                 inputRef={destRef}
                                 value={state.destination.search}
-                                onChange={() => {
+                                onChange={(e) => {
                                     dispatch({
                                         type: "SET_DESTINATION",
                                         payload: {
-                                            search: state.destination.search,
+                                            ...state.destination,
+                                            search: e.target.value,
                                         },
                                     });
                                 }}

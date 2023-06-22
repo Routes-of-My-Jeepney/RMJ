@@ -5,6 +5,7 @@ export const useDrawRoute = ({
     state,
     setShowRoute,
     setShowSearchBar,
+    setResearchRoute,
 }) => {
     const directionsRendererRef = useRef();
     const drawRoute = () => {
@@ -80,7 +81,7 @@ export const useDrawRoute = ({
                         infoWindow.open(map);
                         setShowSearchBar(false);
                         setShowRoute(true);
-                        // setResearchRoute(true);
+                        setResearchRoute(true);
                     }
                 });
                 // postHistory();

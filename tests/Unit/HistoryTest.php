@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Http\Request;
 
-class ExampleTest extends TestCase
+class HistoryTest extends TestCase
 {
     /**
      * A basic test example.
@@ -36,8 +36,6 @@ class ExampleTest extends TestCase
 
     // テストデータの削除
         $response = $this->delete('/api/history/', $requestData2);
-
-
         $response->assertStatus(200);
 
         $this -> assertDatabaseMissing('histories',['id'=>$historyId]);

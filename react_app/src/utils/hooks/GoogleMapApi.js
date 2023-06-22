@@ -47,7 +47,7 @@ export const useDirectionsService = ({
     };
 };
 
-export function useGoogleAutocomplete(inputRef, dispatch, type) {
+export function useGoogleAutocomplete(inputRef, dispatch, state, type) {
     const autocomplete = new window.google.maps.places.Autocomplete(
         inputRef.current
     );
@@ -59,16 +59,18 @@ export function useGoogleAutocomplete(inputRef, dispatch, type) {
             dispatch({
                 type: "SET_ORIGIN",
                 payload: {
+                    ...state.origin,
                     placeId: place.place_id,
-                    name: place.name,
+                    search: place.name,
                 },
             });
         } else if (type === "destination") {
             dispatch({
                 type: "SET_DESTINATION",
                 payload: {
+                    ...state.destination,
                     placeId: place.place_id,
-                    name: place.name,
+                    search: place.name,
                 },
             });
         }
