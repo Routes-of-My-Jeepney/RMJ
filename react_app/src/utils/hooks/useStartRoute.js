@@ -34,7 +34,6 @@ export const useStartRoute = ({
                     console.log(placeDestination);
                     console.log(distanceToDestination);
                     if (distanceToDestination <= 100) {
-                        setReturnRoute(true);
                         setFinishRoute(true);
                     } else {
                         setResearchRoute(true);
