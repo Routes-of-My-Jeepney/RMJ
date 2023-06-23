@@ -6,10 +6,12 @@ export const useStartRoute = ({
     setCenter,
     setMarkerPosition,
     setIcon,
+    state,
 }) => {
     const startRoute = () => {
         setShowRoute(false);
         setResearchRoute(false);
+        const placeDestination = state.destination.place;
         if (navigator.geolocation) {
             let watchId = navigator.geolocation.watchPosition(
                 (position) => {

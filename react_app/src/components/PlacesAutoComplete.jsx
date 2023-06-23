@@ -43,8 +43,8 @@ const refreshPage = () => {
 };
 
 const initialState = {
-    origin: { search: "", placeId: null },
-    destination: { search: "", placeId: null },
+    origin: { place: null, search: "", placeId: null },
+    destination: { place: null, search: "", placeId: null },
 };
 
 const reducer = (state, action) => {
@@ -91,6 +91,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         dispatch({
             type: "SET_ORIGIN",
             payload: {
+                place: state.destination.place,
                 placeId: state.destination.placeId,
                 search: destRef.current.value,
             },
@@ -99,6 +100,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         dispatch({
             type: "SET_DESTINATION",
             payload: {
+                place: state.origin.place,
                 placeId: state.origin.placeId,
                 search: originRef.current.value,
             },
@@ -122,6 +124,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         setCenter,
         setMarkerPosition,
         setIcon,
+        state,
     });
 
     const clearRoute = (watchId) => {
