@@ -252,30 +252,34 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                 </Grid>
             </Stack>
             <Box>
-                {finishRoute && (
-                    <Slide
-                        direction="up"
-                        in={finishRoute}
-                        mountOnEnter
-                        unmountOnExit
-                    >
-                        <Stack className="route-finish-box">
-                            <Typography
-                                variant="body1"
-                                sx={{ fontWeight: "bold", margin: "10px" }}
-                            >
-                                目的地に到着しました
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                sx={{ margin: "10px", backgroundColor: "red" }}
-                                onClick={clearRoute}
-                            >
-                                ルートを終了
-                            </Button>
-                        </Stack>
-                    </Slide>
-                )}
+            {finishRoute && (
+                <Stack className="route-finish-alert">
+                    <Grid container sx={{ display: "flex" }}>
+                        <Slide
+                            direction="up"
+                            in={finishRoute}
+                            mountOnEnter
+                            unmountOnExit
+                        >
+                            <Stack className="route-finish-box">
+                                <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: "bold", margin: "10px" }}
+                                >
+                                    目的地に到着しました
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    sx={{ margin: "10px", backgroundColor: "red" }}
+                                    onClick={clearRoute}
+                                >
+                                    ルートを終了
+                                </Button>
+                            </Stack>
+                        </Slide>
+                    </Grid>
+                </Stack>
+            )}
             </Box>
             <CustomSnackbar
                 open={alert.open}
