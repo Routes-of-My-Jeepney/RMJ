@@ -60,6 +60,7 @@ export function useGoogleAutocomplete(inputRef, dispatch, state, type) {
                 type: "SET_ORIGIN",
                 payload: {
                     ...state.origin,
+                    place: place,
                     placeId: place.place_id,
                     search: place.name,
                 },
@@ -69,6 +70,7 @@ export function useGoogleAutocomplete(inputRef, dispatch, state, type) {
                 type: "SET_DESTINATION",
                 payload: {
                     ...state.destination,
+                    place: place,
                     placeId: place.place_id,
                     search: place.name,
                 },

@@ -16,7 +16,7 @@ instance.interceptors.response.use(
     (error) => {
         // Do something with response error
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
             window.location = "/login"; // redirect user to login page
         }
         return Promise.reject(error);
