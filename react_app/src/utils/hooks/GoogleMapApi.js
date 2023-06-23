@@ -48,8 +48,12 @@ export const useDirectionsService = ({
 };
 
 export function useGoogleAutocomplete(inputRef, dispatch, state, type) {
+    var options = {
+        componentRestrictions: { country: "ph" },
+    };
     const autocomplete = new window.google.maps.places.Autocomplete(
-        inputRef.current
+        inputRef.current,
+        options
     );
 
     autocomplete.addListener("place_changed", async function () {
