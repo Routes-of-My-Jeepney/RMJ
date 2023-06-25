@@ -8,23 +8,26 @@ use Carbon\Carbon;
 
 class HistoryController extends Controller
 {
-  public function index(Request $request){
+  public function index(Request $request)
+  {
 
     $user = $request->user();
-    
 
+    // Get user_id from $user, not from request input
+    $user_id = $user->id;
 
-
-    $user_id = $request->input('user_id');
     // var_dump(History::where($user_id)->get()->toArray());
     // dieS();
 
     //maked by Sir Kynt
     $x = History::where('user_id', $user_id)->orderBy("id", "desc")->get();
+    if (!$x) {
+      return response()->json(['error' => 'No history data found for this user']);
+    }
 
     if ($x) {
       $x = $x->toArray();
-      foreach($x as $i => $y) {
+      foreach ($x as $i => $y) {
         $x[$i]['created_at'] = Carbon::parse($y['created_at'])->diffForHumans();
         $x[$i]['diff_for_humans'] = Carbon::parse($y['created_at'])->diffForHumans();
         //formatLocalized('%Y年%m月%d日')
@@ -36,12 +39,13 @@ class HistoryController extends Controller
 
     //$histories = json_encode(History::where($user_id)->get(), JSON_UNESCAPED_UNICODE);
     //$userId = $modx->getLoginUserID('web');
-    
+
     return response()->json($x);
   }
 
-  
-  public function create(Request $request){
+
+  public function create(Request $request)
+  {
 
 
     $history = new History();
@@ -56,18 +60,18 @@ class HistoryController extends Controller
     //return response()->json('Succesful create history');
   }
 
-  public function delete(Request $request){
+  public function delete(Request $request)
+  {
 
-      $id = $request->input('id');
-      History::destroy($id);
+    $id = $request->input('id');
+    History::destroy($id);
 
-      $history = History::find($id);
+    $history = History::find($id);
 
-      if($history == ""){
-        return response()->json(["message" => "履歴データの削除が成功しました"]);
-      }else{
-        return response()->json(["message"=>"履歴データの削除が失敗しました"]);
-      }
+    if ($history == "") {
+      return response()->json(["message" => "履歴データの削除が成功しました"]);
+    } else {
+      return response()->json(["message" => "履歴データの削除が失敗しました"]);
+    }
   }
-
- }
+}

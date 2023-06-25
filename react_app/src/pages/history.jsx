@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../axios";
 import { DataGrid, useGridApiContext } from "@mui/x-data-grid";
 import {} from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
 import DeleteIcon from "@mui/icons-material/Delete";
+import getCSRFToken from "../utils/getCSRFToken";
 
 function History() {
     const [rows, setRows] = useState([]);
@@ -22,7 +23,8 @@ function History() {
 
     async function getHistory() {
         try {
-            let historyRes = await axios.get("/user/history");
+            getCSRFToken();
+            let historyRes = await axios.get("/api/user/history");
 
             console.log(user.id);
             console.log(11);
