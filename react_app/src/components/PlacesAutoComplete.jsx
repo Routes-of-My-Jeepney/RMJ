@@ -27,6 +27,7 @@ import CustomDropdown from "./CustomDropdown";
 import getCSRFToken from "../utils/getCSRFToken";
 import axios from "../axios";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
+import { useSnackbarContext } from "../contexts/SnackbarContext";
 
 const SwapButton = styled(ChangeCircleIcon)({
     color: "#2196f3",
@@ -119,24 +120,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
     const [showRoute, setShowRoute] = useState(false);
     const [finishRoute, setFinishRoute] = useState(false);
     const [researchRoute, setResearchRoute] = useState(false);
-
-    const [alert, setAlert] = useState({
-        open: false,
-        message: "",
-        type: "",
-        id: 0,
-    });
-    const showAlert = (message, type) => {
-        setAlert({ open: true, message, type });
-    };
-    const handleCloseAlert = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setAlert({ ...alert, open: false });
-    };
-
-    const { isLoggedIn, getUser, user, setUser } = useContext(UserContext);
+    const { openSnackbar } = useSnackbarContext();
 
     //ルート入れ替え
     const handleSwapPlaces = () => {
@@ -209,14 +193,13 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
 
             dispatch({ type: type, payload: places });
         } catch (err) {
-            console.log(err);
+            openSnackbar(err.message, "error");
         }
     };
     // Use the function in your focus handlers
     const createHandleFocus = (ref, type, dropdown) => () => {
         if (!ref.current.value) {
             fetchAndDispatchHistory(type);
-            console.log(state);
             dispatch({ type: dropdown, payload: true });
         }
     };
@@ -267,8 +250,6 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
 
     const handleClickAway = (ACTION) => {
         dispatch({ type: ACTION, payload: false });
-        console.log("clicked away");
-        console.log(ACTION);
     };
 
     useEffect(() => {
@@ -325,14 +306,18 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                         }}
                                     />
                                     <br />
-                                    <CustomDropdown
-                                        anchorEl={originRef.current}
-                                        options={state.origin.histories}
-                                        open={state.origin.showCustomDropdown}
-                                        handleSelect={handleOriginSelect}
-                                        dispatch={dispatch}
-                                        ACTION="SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
-                                    />
+                                    {state.origin.histories.length > 0 && (
+                                        <CustomDropdown
+                                            anchorEl={originRef.current}
+                                            options={state.origin.histories}
+                                            open={
+                                                state.origin.showCustomDropdown
+                                            }
+                                            handleSelect={handleOriginSelect}
+                                            dispatch={dispatch}
+                                            ACTION="SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
+                                        />
+                                    )}
                                 </Box>
                             </ClickAwayListener>
                             <ClickAwayListener
@@ -366,16 +351,23 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                             });
                                         }}
                                     />
-                                    <CustomDropdown
-                                        anchorEl={destRef.current}
-                                        options={state.destination.histories}
-                                        open={
-                                            state.destination.showCustomDropdown
-                                        }
-                                        handleSelect={handleDestinationSelect}
-                                        dispatch={dispatch}
-                                        ACTION="SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
-                                    />
+                                    {state.destination.histories.length > 0 && (
+                                        <CustomDropdown
+                                            anchorEl={destRef.current}
+                                            options={
+                                                state.destination.histories
+                                            }
+                                            open={
+                                                state.destination
+                                                    .showCustomDropdown
+                                            }
+                                            handleSelect={
+                                                handleDestinationSelect
+                                            }
+                                            dispatch={dispatch}
+                                            ACTION="SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
+                                        />
+                                    )}
                                 </Box>
                             </ClickAwayListener>
                             <Stack>
@@ -455,13 +447,6 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                     </Slide>
                 )}
             </Box>
-            <CustomSnackbar
-                open={alert.open}
-                handleClose={handleCloseAlert}
-                message={alert.message}
-                type={alert.type}
-                id={0}
-            />
         </>
     );
 }

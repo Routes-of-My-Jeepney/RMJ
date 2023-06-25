@@ -7,52 +7,65 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import { UserContextType, User } from "../interfaces/UserContext";
 import { ErrorResponse, UserPostResponse } from "../interfaces/Response";
 import { isAxiosError, AxiosError } from "axios";
+import { useSnackbarContext } from "./SnackbarContext";
 
 const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const navigate = useNavigate();
     //custum snack bar
     const [user, setUser] = useState<User | null>(() => {
         const localStorageData = localStorage.getItem("user");
-        return localStorageData ? JSON.parse(localStorageData) : null;
+        return localStorageData && localStorageData !== "undefined"
+            ? JSON.parse(localStorageData)
+            : null;
     });
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(user ? true : false);
+    const { openSnackbar, snackbars } = useSnackbarContext();
     const refreshPage = () => {
         window.location.reload();
     };
 
     //login
     const login = async (email: string, password: string) => {
-        try {
-            await getCSRFToken();
+        await getCSRFToken();
 
-            const response = await axios.post<UserPostResponse>(`/api/login`, {
+        await axios
+            .post<UserPostResponse>(`/api/login`, {
                 email: email,
                 password: password,
-            });
+            })
+            .then((response) => {
+                const userData = response.data.user;
+                localStorage.setItem("user", JSON.stringify(userData));
+                setUser(userData);
+                openSnackbar("ログインしました。", "success");
+            })
+            .catch((error) => {
+                if (isAxiosError(error)) {
+                    const serverError = error as AxiosError<ErrorResponse>;
 
-            const userData = response.data.user;
-            setUser(userData);
-
-            localStorage.setItem("user", JSON.stringify(userData));
-            return "ログインに成功しました。";
-        } catch (error) {
-            if (isAxiosError(error)) {
-                const serverError = error as AxiosError<ErrorResponse>;
-                if (serverError && serverError.response) {
-                    throw new Error(serverError.response.data.message);
+                    if (serverError && serverError.response) {
+                        const errorObject = serverError.response.data.errors; // Get the 'errors' object directly
+                        if (errorObject) {
+                            Object.entries(errorObject).forEach(
+                                ([key, errorArray]) => {
+                                    if (Array.isArray(errorArray)) {
+                                        errorArray.forEach((error) => {
+                                            openSnackbar(error, "error");
+                                        });
+                                    }
+                                }
+                            );
+                        } else {
+                            throw new Error(serverError.response.data.message);
+                        }
+                    }
+                } else {
+                    openSnackbar("ログインに失敗しました。", "error");
                 }
-            }
-            throw new Error("ログインに失敗しました。");
-        }
+            });
     };
 
     //logout
-    function successLogoutDisp() {
-        window.alert("ログアウトに成功しました。");
-    }
-    function failureLogoutDisp() {
-        window.alert("ログアウトに失敗しました。");
-    }
 
     const logout = async () => {
         try {
@@ -64,67 +77,62 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
             // localStorage.removeItem("authToken");
             localStorage.removeItem("user");
 
-            successLogoutDisp();
-
             setUser(null);
             navigate("/login");
-            refreshPage();
+            openSnackbar("ログアウトしました。", "success");
         } catch (error) {
-            console.error(error);
-            failureLogoutDisp();
+            openSnackbar("ログアウトに失敗しました。", "error");
+            openSnackbar(error.message, "error");
         }
     };
 
     //register
-    //register
+
     const register = async (
         name: string,
         email: string,
         password: string,
         passwordConfirmation: string
     ) => {
-        if (
-            name !== "" &&
-            email !== "" &&
-            password !== "" &&
-            passwordConfirmation !== ""
-        ) {
-            try {
-                await getCSRFToken();
-                const response = await axios.post<UserPostResponse>(
-                    "/api/register",
-                    {
-                        name,
-                        email,
-                        password,
-                        password_confirmation: passwordConfirmation,
-                    }
-                );
+        await getCSRFToken();
+        await axios
+            .post<UserPostResponse>("/api/register", {
+                name,
+                email,
+                password,
+                password_confirmation: passwordConfirmation,
+            })
+            .then((response) => {
                 const userData = response.data.user;
                 setUser(userData);
                 localStorage.setItem("user", JSON.stringify(userData));
-                return "アカウントの作成に成功しました";
-            } catch (error) {
+                console.log(response.data);
+            })
+            .catch((error) => {
                 if (isAxiosError(error)) {
                     const serverError = error as AxiosError<ErrorResponse>;
+
                     if (serverError && serverError.response) {
-                        throw new Error(serverError.response.data.message);
+                        const errorObject = serverError.response.data.errors; // Get the 'errors' object directly
+                        if (errorObject) {
+                            Object.entries(errorObject).forEach(
+                                ([key, errorArray]) => {
+                                    if (Array.isArray(errorArray)) {
+                                        errorArray.forEach((error) => {
+                                            openSnackbar(error, "error");
+                                        });
+                                    }
+                                }
+                            );
+                        } else {
+                            throw new Error(serverError.response.data.message);
+                        }
                     }
                 }
-                throw new Error("必要な情報を入力してください。"); // default error message
-            }
-        } else {
-            throw new Error("All fields must be filled."); // this will be your message for when not all fields are filled
-        }
+                openSnackbar(error.message, "error");
+            });
     };
 
-    //Delete
-    function successDeleteDisp() {
-        window.alert("アカウントの削除に成功しました。");
-    }
-    function failureDeleteDisp() {
-        window.alert("アカウントの削除に失敗しました。");
-    }
     const deleteUser = async () => {
         if (user === null) {
             throw new Error("ユーザーが存在しません。");
@@ -136,15 +144,13 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 console.log(response.data);
                 localStorage.removeItem("user");
                 setUser(null);
-                successDeleteDisp();
+                openSnackbar("ユーザーを削除しました。", "success");
 
                 navigate("/");
                 refreshPage();
             })
             .catch((error) => {
-                // Something went wrong. Handle the error here.
-                console.error(error);
-                failureDeleteDisp();
+                openSnackbar("ユーザーの削除に失敗しました。", "error");
             });
     };
 

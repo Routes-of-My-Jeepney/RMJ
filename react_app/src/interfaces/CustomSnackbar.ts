@@ -2,13 +2,14 @@ import { AlertColor } from "@mui/material";
 
 export interface CustomSnackbarProps {
     open: boolean;
-    handleClose: () => void;
     message: string;
-    type: AlertColor;
+    severity: string;
+    handleClose: () => void; // This function doesn't take any arguments and doesn't return anything.
+    style?: React.CSSProperties;
 }
 
 export interface SnackbarState {
     open: boolean;
     message: string;
-    type: AlertColor;
+    severity: AlertColor;
 }

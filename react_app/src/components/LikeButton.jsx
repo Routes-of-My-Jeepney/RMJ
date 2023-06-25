@@ -13,6 +13,7 @@ function LikeButton({ jeepney }) {
     // const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
     const { user } = useContext(UserContext);
     const { setJeepneys, jeepneys } = useJeepneyContext();
+    const { openSnackbar } = useVisualContext();
 
     const handleLike = async (jeepney) => {
         await getCSRFToken();
@@ -26,11 +27,11 @@ function LikeButton({ jeepney }) {
                 }
             )
             .then((response) => {
-                console.log(response.data);
                 setJeepneys(response.data.jeepneys);
+                openSnackbar("Liked jeepney", "success");
             })
             .catch((error) => {
-                console.error(error);
+                openSnackbar(error.message, "error");
             });
     };
 

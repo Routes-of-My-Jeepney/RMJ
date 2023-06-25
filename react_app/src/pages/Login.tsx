@@ -1,25 +1,22 @@
 import React, { useReducer, useContext, FormEvent } from "react";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
-import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 import { SnackbarState } from "../interfaces/CustomSnackbar";
+import { useSnackbarContext } from "../contexts/SnackbarContext";
 
 type State = {
     email: string;
     password: string;
-    snackbars: SnackbarState[];
 };
 
 type Action =
     | { type: "setEmail"; payload: string }
-    | { type: "setPassword"; payload: string }
-    | { type: "setSnackbar"; payload: SnackbarState[] };
+    | { type: "setPassword"; payload: string };
 
 const initialState: State = {
     email: "",
     password: "",
-    snackbars: [],
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -28,8 +25,6 @@ const reducer = (state: State, action: Action): State => {
             return { ...state, email: action.payload };
         case "setPassword":
             return { ...state, password: action.payload };
-        case "setSnackbar":
-            return { ...state, snackbars: action.payload };
         default:
             return state;
     }
@@ -38,39 +33,12 @@ const reducer = (state: State, action: Action): State => {
 export default function LoginPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { login } = useContext(UserContext);
+    const { openSnackbar } = useSnackbarContext();
     const navigate = useNavigate();
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
-        try {
-            const res = await login(state.email, state.password);
-            dispatch({
-                type: "setSnackbar",
-                payload: [
-                    ...state.snackbars,
-                    {
-                        open: true,
-                        message: res,
-                        type: "success",
-                    },
-                ],
-            });
-            setTimeout(() => {
-                navigate("/");
-            }, 1 * 1000);
-        } catch (error) {
-            dispatch({
-                type: "setSnackbar",
-                payload: [
-                    ...state.snackbars,
-                    {
-                        open: true,
-                        message: error.message,
-                        type: "error",
-                    },
-                ],
-            });
-        }
+        await login(state.email, state.password); // Add await here
     };
 
     return (
@@ -122,27 +90,6 @@ export default function LoginPage() {
                             Log In
                         </Button>
                     </form>
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column-reverse",
-                            gap: "16px",
-                        }}
-                    >
-                        {state.snackbars.map((snackbar, index) => (
-                            <CustomSnackbar
-                                {...snackbar}
-                                handleClose={() =>
-                                    dispatch({
-                                        type: "setSnackbar",
-                                        payload: state.snackbars.filter(
-                                            (_, i) => i !== index
-                                        ),
-                                    })
-                                }
-                            />
-                        ))}
-                    </div>
                 </Paper>
             </Grid>
         </Grid>

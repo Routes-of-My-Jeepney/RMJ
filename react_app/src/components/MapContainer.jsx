@@ -7,6 +7,7 @@ import {
 } from "@react-google-maps/api";
 import PlacesAutoComplete from "./PlacesAutoComplete";
 import { Box } from "@mui/material";
+import { useSnackbarContext } from "../contexts/SnackbarContext";
 
 const containerStyle = {
     width: "100%",
@@ -18,6 +19,7 @@ function MapContainer() {
     const [center, setCenter] = useState();
     const [MarkerPosition, setMarkerPosition] = useState();
     const [icon, setIcon] = useState(false);
+    const { openSnackbar } = useSnackbarContext();
 
     React.useEffect(() => {
         if (navigator.geolocation) {
@@ -32,11 +34,14 @@ function MapContainer() {
                     mapRef.current.panTo(coords);
                 },
                 (error) => {
-                    console.log("Geolocation error", error);
+                    openSnackbar(error.message, "error");
                 }
             );
         } else {
-            console.log("Geolocation is not supported by this browser.");
+            openSnackbar(
+                "Geolocation is not supported by this browser.",
+                "error"
+            );
         }
     }, []);
 

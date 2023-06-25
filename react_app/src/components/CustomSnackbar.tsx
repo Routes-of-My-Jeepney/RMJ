@@ -13,23 +13,32 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 const CustomSnackbar: FC<CustomSnackbarProps> = ({
     open,
-    handleClose,
     message,
-    type,
+    severity,
+    handleClose,
+    style,
 }) => {
-    const anchorOrigin = {
-        vertical: "top",
-        horizontal: "right",
-    };
-
     return (
         <Snackbar
             open={open}
             autoHideDuration={6000}
-            onClose={handleClose}
+            onClose={(e, reason) => {
+                if (reason !== "clickaway") {
+                    return;
+                }
+
+                handleClose();
+            }}
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            style={style}
         >
-            <Alert onClose={handleClose} severity={type} sx={{ width: "100%" }}>
+            <Alert
+                open={open}
+                // onClose={handleClose}
+                severity={severity}
+                sx={{ width: "100%" }}
+                style={style}
+            >
                 {message}
             </Alert>
         </Snackbar>

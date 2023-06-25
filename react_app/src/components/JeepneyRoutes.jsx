@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "../axios";
+
 import LikeButton from "./LikeButton";
 import JeepneyMap from "./JeepneyMap";
 import JeepneyList from "./JeepneyList";

@@ -1,32 +1,29 @@
 import React, { useState, useContext, useReducer, FormEvent } from "react";
-import axios from "../axios";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { useNavigate } from "react-router-dom";
 import { SnackbarState } from "../interfaces/CustomSnackbar";
+import { useSnackbarContext } from "../contexts/SnackbarContext";
 
 type State = {
     name: string;
     email: string;
     password: string;
     passwordConfirmation: string;
-    snackbars: SnackbarState[];
 };
 
 type Action =
     | { type: "setName"; payload: string }
     | { type: "setEmail"; payload: string }
     | { type: "setPassword"; payload: string }
-    | { type: "setPasswordConfirmation"; payload: string }
-    | { type: "setSnackbar"; payload: SnackbarState[] };
+    | { type: "setPasswordConfirmation"; payload: string };
 
 const initialState: State = {
     name: "",
     email: "",
     password: "",
     passwordConfirmation: "",
-    snackbars: [],
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -39,8 +36,6 @@ const reducer = (state: State, action: Action): State => {
             return { ...state, password: action.payload };
         case "setPasswordConfirmation":
             return { ...state, passwordConfirmation: action.payload };
-        case "setSnackbar":
-            return { ...state, snackbars: action.payload };
         default:
             return state;
     }
@@ -50,43 +45,16 @@ export default function SignupPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { register } = useContext(UserContext);
     const navigate = useNavigate();
+    const { openSnackbar } = useSnackbarContext();
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
-        try {
-            const res = await register(
-                state.name,
-                state.email,
-                state.password,
-                state.passwordConfirmation
-            );
-            dispatch({
-                type: "setSnackbar",
-                payload: [
-                    ...state.snackbars,
-                    {
-                        open: true,
-                        message: res,
-                        type: "success",
-                    },
-                ],
-            });
-            setTimeout(() => {
-                navigate("/");
-            }, 2000);
-        } catch (error) {
-            dispatch({
-                type: "setSnackbar",
-                payload: [
-                    ...state.snackbars,
-                    {
-                        open: true,
-                        message: error.message,
-                        type: "error",
-                    },
-                ],
-            });
-        }
+        await register(
+            state.name,
+            state.email,
+            state.password,
+            state.passwordConfirmation
+        );
     };
 
     return (
@@ -164,27 +132,6 @@ export default function SignupPage() {
                             Sign Up
                         </Button>
                     </form>
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "column-reverse",
-                            gap: "16px",
-                        }}
-                    >
-                        {state.snackbars.map((snackbar, index) => (
-                            <CustomSnackbar
-                                {...snackbar}
-                                handleClose={() =>
-                                    dispatch({
-                                        type: "setSnackbar",
-                                        payload: state.snackbars.filter(
-                                            (_, i) => i !== index
-                                        ),
-                                    })
-                                }
-                            />
-                        ))}
-                    </div>
                 </Paper>
             </Grid>
         </Grid>

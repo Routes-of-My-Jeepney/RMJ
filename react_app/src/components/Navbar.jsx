@@ -20,8 +20,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function Navbar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const open = Boolean(anchorElUser);
-    const { deleteUser, logout } = useContext(UserContext);
-    let user = JSON.parse(localStorage.getItem("user"));
+    const { deleteUser, logout, user } = useContext(UserContext);
     const [profileImgURL, setProfileImgURL] = useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -104,6 +103,7 @@ function Navbar() {
                                 key="logout"
                                 onClick={() => {
                                     logout();
+                                    handleCloseUserMenu();
                                 }}
                             >
                                 ログアウト

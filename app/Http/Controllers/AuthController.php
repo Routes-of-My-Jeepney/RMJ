@@ -7,11 +7,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
-
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         // validate request data
         $request->validate([
@@ -45,7 +46,7 @@ class AuthController extends Controller
 
 
     // Sanctum based authentication
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         // validate request data
         $credentials = $request->validate([
@@ -74,13 +75,10 @@ class AuthController extends Controller
     {
         // revoke the user's token
 
-        Auth::logout();
 
         $request->session()->invalidate();
 
-        if ($request->user()) {
-            $request->user()->token()->revoke();
-        }
+        $request->session()->regenerateToken();
 
         return response()->json([
             'message' => 'Successfully logged out'

@@ -4,10 +4,11 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
+import { Snackbar, ThemeProvider } from "@mui/material";
 import UserProvider from "./contexts/UserProvider";
 import theme from "./utils/theme";
 import { VisualProvider } from "./contexts/VisualContext";
+import { SnackbarProvider } from "./contexts/SnackbarContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -15,9 +16,11 @@ root.render(
         <BrowserRouter>
             <ThemeProvider theme={theme}>
                 <VisualProvider>
-                    <UserProvider>
-                        <App />
-                    </UserProvider>
+                    <SnackbarProvider>
+                        <UserProvider>
+                            <App />
+                        </UserProvider>
+                    </SnackbarProvider>
                 </VisualProvider>
             </ThemeProvider>
         </BrowserRouter>
