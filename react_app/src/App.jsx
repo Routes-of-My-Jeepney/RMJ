@@ -13,14 +13,28 @@ import { LoadScript } from "@react-google-maps/api";
 import ResponsiveDrawerWrapper from "./components/ResponsiveDrawerWrapper";
 import { useVisualContext } from "./contexts/VisualContext";
 import JeepneyRoutesPage from "./pages/JeepneyRoutesPage";
+import CustomSnackbar from "./components/CustomSnackbar";
+import { useSnackbarContext } from "./contexts/SnackbarContext";
+import { Stack } from "@mui/material";
 
 function App() {
     const { isMobile } = useVisualContext();
+    const { snackbars, closeSnackbar } = useSnackbarContext();
 
     return (
         <>
             <div className="App">
                 <Navbar />
+                <div>
+                    {snackbars.map((snackbar, i) => (
+                        <CustomSnackbar
+                            {...snackbar}
+                            key={i}
+                            style={{ top: `${i * 50}px` }}
+                            handleClose={() => closeSnackbar(i)}
+                        />
+                    ))}
+                </div>
                 <ResponsiveDrawerWrapper>
                     <LoadScript
                         googleMapsApiKey={

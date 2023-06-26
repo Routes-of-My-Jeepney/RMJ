@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, createContext } from "react";
-import axios from "../axios";
 import getCSRFToken from "../utils/getCSRFToken";
+import axios from "../axios";
 
 export const JeepneyContext = createContext();
 

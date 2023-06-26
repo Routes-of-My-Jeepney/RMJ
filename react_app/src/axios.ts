@@ -15,12 +15,22 @@ instance.interceptors.response.use(
     },
     (error) => {
         // Do something with response error
-        if (error.response && error.response.status === 401) {
-            localStorage.removeItem("user");
-            window.location = "/login"; // redirect user to login page
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    localStorage.removeItem("user");
+                    break;
+                case 422:
+                    // Handle the validation error here
+                    // The exact implementation depends on your application
+                    console.error("Validation error:", error.response.data);
+                    break;
+                default:
+                    // Optionally handle other status codes
+                    break;
+            }
         }
         return Promise.reject(error);
     }
 );
-
 export default instance;

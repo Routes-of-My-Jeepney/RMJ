@@ -3,7 +3,6 @@ import "../styles/MapPage.scss";
 
 const CustomDropdown = ({ anchorEl, options, open, handleSelect }) => {
     const handleClick = (value) => {
-        console.log(value);
         handleSelect(value);
     };
 

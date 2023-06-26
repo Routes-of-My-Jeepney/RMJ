@@ -50,13 +50,13 @@ class LoginRequest extends FormRequest
      * @throw HttpResponseException
      * @see FormRequest::failedValidation()
      */
-    protected function failedValidation(Validator $validator)
-    {
-        $response['status'] = 422;
-        $response['statusText'] = 'Failed validation.';
-        $response['errors'] = $validator->errors();
-        throw new HttpResponseException(
-            response()->json($response, 200)
-        );
-    }
+    // protected function failedValidation(Validator $validator)
+    // {
+    //     $response['status'] = 422;
+    //     $response['statusText'] = 'Failed validation.';
+    //     $response['errors'] = $validator->errors();
+    //     throw new HttpResponseException(
+    //         response()->json($response, 200)
+    //     );
+    // }
 }
