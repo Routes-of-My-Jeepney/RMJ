@@ -23,57 +23,32 @@ use App\Http\Controllers\UserController;
 */
 
 
-Route::get('/sanctum/csrf-cookie', function (Request $request) {
-    return response('CSRF cookie set')->withCookie(cookie('XSRF-TOKEN', $request->session()->token()));
-});
-// Route::apiResource('/history', 'HistorySample');
+// Authenticated routes
+Route::middleware('auth:sanctum')->group(function () {
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::get('/user', fn(Request $request) => $request->user());
+
+    Route::post('/jeepney/{jeepney}/like', [JeepneyController::class, 'likeJeepney']);
+    Route::delete('/jeepney/{jeepney}/dislike', [JeepneyController::class, 'dislikeJeepney']);
+    Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
+    Route::post('/jeepney/{jeepneyId}/update', [JeepneyController::class, 'updateLikedJeepneyName']);
+    Route::delete('/user/{user}', [UserController::class, 'delete']);
+    Route::post('/user/logout', [AuthController::class, 'logout']);
+    Route::put('/user/{user}', [UserController::class, 'update']);
+
+
+    Route::get('/user/history',[HistoryController::class, 'index']);
+    Route::post('/history',[HistoryController::class, 'create']);
+    Route::delete('/history', [HistoryController::class, 'delete']);
 });
 
-Route::post('/jeepney/{jeepney}/like', [JeepneyController::class, 'likeJeepney']);
-Route::delete('/jeepney/{jeepney}/dislike', [JeepneyController::class, 'dislikeJeepney']);
-Route::get('/user/liked-jeepneys', [JeepneyController::class, 'showLikedJeepneys']);
+// Unauthenticated routes
+Route::get('/sanctum/csrf-cookie', fn(Request $request) => response('CSRF cookie set')->withCookie(cookie('XSRF-TOKEN', $request->session()->token())));
+
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
 Route::get('/routes',[RouteController::class, 'index']);
-Route::post('/jeepney/{jeepneyId}/update', [JeepneyController::class, 'updateLikedJeepneyName']);
-
-
-Route::delete('users/{user}', [UserController::class, 'delete']);
-Route::post('users/logout', [AuthController::class, 'logout']);
-Route::put('/user/{user}', [UserController::class, 'update']);
-Route::post('/favorites', function (Request $request) {
-    $user = User::find($request->user_id);
-    $jeepney = Jeepney::find($request->jeepney_id);
-
-    $user->jeepneys()->attach($jeepney);
-
-    return response()->json(['message' => 'Jeepney added to favorites']);
-});
-
-Route::delete('/favorites/{user}/{jeepney}', function ($userId, $jeepneyId) {
-    $user = User::find($userId);
-    $jeepney = Jeepney::find($jeepneyId);
-
-    $user->jeepneys()->detach($jeepney);
-
-    return response()->json(['message' => 'Jeepney removed from favorites']);
-});
-
-Route::post('/logout', function () {
-    Auth::logout();
-
-    return response()->json('Logged out successfully', 200);
-});
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
-Route::get('/user/history',[HistoryController::class, 'index']);
-Route::get('/get-user-id', function () {
-    return Auth::user();})->middleware('auth:sanctum');
-Route::post('/history',[HistoryController::class, 'create']);
-Route::delete('/history', [HistoryController::class, 'delete']);
 Route::post('/reset-password', [UserController::class, 'resetPassword']);

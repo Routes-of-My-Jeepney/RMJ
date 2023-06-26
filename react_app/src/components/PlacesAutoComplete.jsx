@@ -23,6 +23,10 @@ import { useDrawRoute } from "../utils/hooks/useDrawRoute";
 import { useStartRoute } from "../utils/hooks/useStartRoute";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import { styled } from "@mui/material/styles";
+import CustomDropdown from "./CustomDropdown";
+import getCSRFToken from "../utils/getCSRFToken";
+import axios from "../axios";
+import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 const SwapButton = styled(ChangeCircleIcon)({
     color: "#2196f3",
@@ -43,8 +47,20 @@ const refreshPage = () => {
 };
 
 const initialState = {
-    origin: { place: null, search: "", placeId: null },
-    destination: { place: null, search: "", placeId: null },
+    origin: {
+        place: null,
+        search: "",
+        placeId: null,
+        histories: [],
+        showCustomDropdown: false,
+    },
+    destination: {
+        place: null,
+        search: "",
+        placeId: null,
+        histories: [],
+        showCustomDropdown: false,
+    },
 };
 
 const reducer = (state, action) => {
@@ -53,6 +69,42 @@ const reducer = (state, action) => {
             return { ...state, origin: action.payload };
         case "SET_DESTINATION":
             return { ...state, destination: action.payload };
+        case "SET_ORIGIN_SEARCH":
+            return {
+                ...state,
+                origin: { ...state.origin, search: action.payload },
+            };
+        case "SET_DESTINATION_SEARCH":
+            return {
+                ...state,
+                destination: { ...state.destination, search: action.payload },
+            };
+        case "SET_ORIGIN_HISTORY":
+            return {
+                ...state,
+                origin: { ...state.origin, histories: action.payload },
+            };
+        case "SET_DESTINATION_HISTORY":
+            return {
+                ...state,
+                destination: {
+                    ...state.destination,
+                    histories: action.payload,
+                },
+            };
+        case "SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN":
+            return {
+                ...state,
+                origin: { ...state.origin, showCustomDropdown: action.payload },
+            };
+        case "SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN":
+            return {
+                ...state,
+                destination: {
+                    ...state.destination,
+                    showCustomDropdown: action.payload,
+                },
+            };
         default:
             throw new Error();
     }
@@ -141,11 +193,87 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         refreshPage();
     };
 
+    // Create an async function that fetches and dispatches history data
+    const fetchAndDispatchHistory = async (type) => {
+        getCSRFToken();
+        try {
+            const { data: data } = await axios.get("/api/user/history");
+
+            let places;
+            if (type === "SET_ORIGIN_HISTORY") {
+                places = data.map(({ origin }) => origin);
+            } else if (type === "SET_DESTINATION_HISTORY") {
+                places = data.map(({ destination }) => destination);
+            }
+            // Default case
+
+            dispatch({ type: type, payload: places });
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    // Use the function in your focus handlers
+    const createHandleFocus = (ref, type, dropdown) => () => {
+        if (!ref.current.value) {
+            fetchAndDispatchHistory(type);
+            console.log(state);
+            dispatch({ type: dropdown, payload: true });
+        }
+    };
+
+    const handleOriginFocus = createHandleFocus(
+        originRef,
+        "SET_ORIGIN_HISTORY",
+        "SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
+    );
+    const handleDestinationFocus = createHandleFocus(
+        destRef,
+        "SET_DESTINATION_HISTORY",
+        "SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
+    );
+
+    // const createHandleInput = (type) => () => {
+    //     // Hide history data when user starts typing
+    //     dispatch({
+    //         type: type,
+    //         payload: {
+    //             histories: [],
+    //         },
+    //     });
+    // };
+
+    // const handleOriginInput = createHandleInput("SET_ORIGIN_SEARCH");
+    // const handleDestinationInput = createHandleInput("SET_DESTINATION_SEARCH");
+
+    const createHandleSelect = (type, closer, ref) => (value) => {
+        dispatch({
+            type: type,
+            payload: value,
+        });
+        dispatch({ type: closer, payload: false });
+        ref.current.value = value;
+    };
+
+    const handleOriginSelect = createHandleSelect(
+        "SET_ORIGIN_SEARCH",
+        "SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN",
+        originRef
+    );
+    const handleDestinationSelect = createHandleSelect(
+        "SET_DESTINATION_SEARCH",
+        "SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN",
+        destRef
+    );
+
+    const handleClickAway = (ACTION) => {
+        dispatch({ type: ACTION, payload: false });
+        console.log("clicked away");
+        console.log(ACTION);
+    };
+
     useEffect(() => {
         useGoogleAutocomplete(originRef, dispatch, state, "origin");
         useGoogleAutocomplete(destRef, dispatch, state, "destination");
-        console.log(`origin  ${state.origin}`);
-        console.log("dest" + state.destination);
     }, [state.origin, state.destination]);
 
     return (
@@ -165,41 +293,91 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                             >
                                 BTN
                             </SwapButton>
-                            <TextField
-                                className="styled-text-field"
-                                id="origin-input"
-                                label="出発地"
-                                variant="outlined"
-                                inputRef={originRef}
-                                value={state.origin.search}
-                                onChange={(e) => {
-                                    dispatch({
-                                        type: "SET_ORIGIN",
-                                        payload: {
-                                            ...state.origin,
-                                            search: e.target.value,
-                                        },
-                                    });
+                            <ClickAwayListener
+                                onClickAway={() => {
+                                    handleClickAway(
+                                        "SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
+                                    );
                                 }}
-                            />
-                            <br />
-                            <TextField
-                                className="styled-text-field"
-                                id="destination-input"
-                                label="目的地"
-                                variant="outlined"
-                                inputRef={destRef}
-                                value={state.destination.search}
-                                onChange={(e) => {
-                                    dispatch({
-                                        type: "SET_DESTINATION",
-                                        payload: {
-                                            ...state.destination,
-                                            search: e.target.value,
-                                        },
-                                    });
+                            >
+                                <Box>
+                                    <TextField
+                                        className="styled-text-field"
+                                        id="origin-input"
+                                        label="出発地"
+                                        variant="outlined"
+                                        inputRef={originRef}
+                                        value={state.origin.search}
+                                        onFocus={handleOriginFocus}
+                                        // onInput={handleOriginInput}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: "SET_ORIGIN",
+                                                payload: {
+                                                    ...state.origin,
+                                                    search: e.target.value,
+                                                },
+                                            });
+                                            dispatch({
+                                                type: "SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN",
+                                                payload: false,
+                                            });
+                                        }}
+                                    />
+                                    <br />
+                                    <CustomDropdown
+                                        anchorEl={originRef.current}
+                                        options={state.origin.histories}
+                                        open={state.origin.showCustomDropdown}
+                                        handleSelect={handleOriginSelect}
+                                        dispatch={dispatch}
+                                        ACTION="SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
+                                    />
+                                </Box>
+                            </ClickAwayListener>
+                            <ClickAwayListener
+                                onClickAway={() => {
+                                    handleClickAway(
+                                        "SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
+                                    );
                                 }}
-                            />
+                            >
+                                <Box>
+                                    <TextField
+                                        className="styled-text-field"
+                                        id="destination-input"
+                                        label="目的地"
+                                        variant="outlined"
+                                        inputRef={destRef}
+                                        value={state.destination.search}
+                                        onFocus={handleDestinationFocus}
+                                        // onInput={handleDestinationInput}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: "SET_DESTINATION",
+                                                payload: {
+                                                    ...state.destination,
+                                                    search: e.target.value,
+                                                },
+                                            });
+                                            dispatch({
+                                                type: "SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN",
+                                                payload: false,
+                                            });
+                                        }}
+                                    />
+                                    <CustomDropdown
+                                        anchorEl={destRef.current}
+                                        options={state.destination.histories}
+                                        open={
+                                            state.destination.showCustomDropdown
+                                        }
+                                        handleSelect={handleDestinationSelect}
+                                        dispatch={dispatch}
+                                        ACTION="SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
+                                    />
+                                </Box>
+                            </ClickAwayListener>
                             <Stack>
                                 <Button variant="contained" onClick={drawRoute}>
                                     ルートを表示

@@ -58,7 +58,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         try {
             await getCSRFToken();
 
-            await axios.post(`/api/logout`);
+            await axios.post("/api/user/logout");
 
             // for the sake of token based authentication
             // localStorage.removeItem("authToken");
@@ -131,7 +131,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
         }
         await getCSRFToken();
         axios
-            .delete(`/api/users/${user.id}`)
+            .delete(`/api/user/${user.id}`)
             .then((response) => {
                 console.log(response.data);
                 localStorage.removeItem("user");
