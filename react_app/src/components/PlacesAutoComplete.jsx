@@ -124,23 +124,28 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
 
     //ルート入れ替え
     const handleSwapPlaces = () => {
-        dispatch({
-            type: "SET_ORIGIN",
-            payload: {
-                place: state.destination.place,
-                placeId: state.destination.placeId,
-                search: destRef.current.value,
-            },
-        });
+        if (state.origin.place && state.destination.place) {
+            dispatch({
+                type: "SET_ORIGIN",
+                payload: {
+                    place: state.destination.place,
+                    placeId: state.destination.placeId,
+                    search: destRef.current.value,
+                },
+            });
 
-        dispatch({
-            type: "SET_DESTINATION",
-            payload: {
-                place: state.origin.place,
-                placeId: state.origin.placeId,
-                search: originRef.current.value,
-            },
-        });
+            dispatch({
+                type: "SET_DESTINATION",
+                payload: {
+                    place: state.origin.place,
+                    placeId: state.origin.placeId,
+                    search: originRef.current.value,
+                },
+            });
+            console.log(state);
+        } else {
+            openSnackbar("Enter both origin and destination", "error");
+        }
     };
 
     // methods
@@ -306,18 +311,22 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                         }}
                                     />
                                     <br />
-                                    {state.origin.histories.length > 0 && (
-                                        <CustomDropdown
-                                            anchorEl={originRef.current}
-                                            options={state.origin.histories}
-                                            open={
-                                                state.origin.showCustomDropdown
-                                            }
-                                            handleSelect={handleOriginSelect}
-                                            dispatch={dispatch}
-                                            ACTION="SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
-                                        />
-                                    )}
+                                    {state.origin.histories &&
+                                        state.origin.histories.length > 0 && (
+                                            <CustomDropdown
+                                                anchorEl={originRef.current}
+                                                options={state.origin.histories}
+                                                open={
+                                                    state.origin
+                                                        .showCustomDropdown
+                                                }
+                                                handleSelect={
+                                                    handleOriginSelect
+                                                }
+                                                dispatch={dispatch}
+                                                ACTION="SET_ORIGIN_TOGGLE_CUSTOM_DROPDOWN"
+                                            />
+                                        )}
                                 </Box>
                             </ClickAwayListener>
                             <ClickAwayListener
@@ -351,23 +360,25 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
                                             });
                                         }}
                                     />
-                                    {state.destination.histories.length > 0 && (
-                                        <CustomDropdown
-                                            anchorEl={destRef.current}
-                                            options={
-                                                state.destination.histories
-                                            }
-                                            open={
-                                                state.destination
-                                                    .showCustomDropdown
-                                            }
-                                            handleSelect={
-                                                handleDestinationSelect
-                                            }
-                                            dispatch={dispatch}
-                                            ACTION="SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
-                                        />
-                                    )}
+                                    {state.destination.histories &&
+                                        state.destination.histories.length >
+                                            0 && (
+                                            <CustomDropdown
+                                                anchorEl={destRef.current}
+                                                options={
+                                                    state.destination.histories
+                                                }
+                                                open={
+                                                    state.destination
+                                                        .showCustomDropdown
+                                                }
+                                                handleSelect={
+                                                    handleDestinationSelect
+                                                }
+                                                dispatch={dispatch}
+                                                ACTION="SET_DESTINATION_TOGGLE_CUSTOM_DROPDOWN"
+                                            />
+                                        )}
                                 </Box>
                             </ClickAwayListener>
                             <Stack>

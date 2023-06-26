@@ -26,10 +26,6 @@ function History() {
             getCSRFToken();
             let historyRes = await axios.get("/api/user/history");
 
-            console.log(user.id);
-            console.log(11);
-            console.log(historyRes);
-
             const historyData = historyRes.data;
 
             const handleSortModelChange = (model) => {
@@ -76,15 +72,15 @@ function History() {
     const deleteSelectedRows = async () => {
         for (const id of selectedRows) {
             try {
-                const response = await axios.delete(url + "history", {
+                const response = await axios.delete("/api/user/history", {
                     params: { id: id },
                 });
                 console.log(response.data);
             } catch (error) {
-                console.error("エラーが出力されました。");
+                console.error(error);
             }
         }
-        refreshPage();
+        //refreshPage();
     };
 
     useEffect(() => {
