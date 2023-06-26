@@ -7,13 +7,14 @@ import UserContext from "../contexts/UserContext";
 import { useContext } from "react";
 import getCSRFToken from "../utils/getCSRFToken";
 import { useJeepneyContext } from "../contexts/JeepneyContext";
+import { useSnackbarContext } from "../contexts/SnackbarContext";
 
 function LikeButton({ jeepney }) {
     // function LikeButton({ jeepneyId, userId, initialIsFavorite }) {
     // const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
     const { user } = useContext(UserContext);
     const { setJeepneys, jeepneys } = useJeepneyContext();
-    const { openSnackbar } = useVisualContext();
+    const { openSnackbar } = useSnackbarContext();
 
     const handleLike = async (jeepney) => {
         await getCSRFToken();
