@@ -22,13 +22,7 @@ const CustomSnackbar: FC<CustomSnackbarProps> = ({
         <Snackbar
             open={open}
             autoHideDuration={6000}
-            onClose={(e, reason) => {
-                if (reason !== "clickaway") {
-                    return;
-                }
-
-                handleClose();
-            }}
+            onClose={handleClose}
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
             style={style}
         >
