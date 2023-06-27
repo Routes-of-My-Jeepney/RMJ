@@ -47,7 +47,7 @@ Route::get('/sanctum/csrf-cookie', fn(Request $request) => response('CSRF cookie
 
 Route::get('/jeepneys', [JeepneyController::class, 'index']);
 Route::get('/jeepneys/{id}', [JeepneyController::class, 'show']);
-// Route::get('/routes',[RouteController::class, 'index']);
+Route::get('/routes',[RouteController::class, 'index']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

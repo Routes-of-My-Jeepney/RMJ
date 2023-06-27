@@ -82,10 +82,10 @@ class PasswordResetTest extends TestCase
         ]);
 
         // レスポンスを検証します
-        // $response->assertStatus(400)
-        //     ->assertJson([
-        //         'message' => '現在のパスワードが正しくありません。',
-        //     ]);
+        $response->assertStatus(400)
+            ->assertJson([
+                'message' => '現在のパスワードが正しくありません。',
+            ]);
 
         // パスワードが変更されていないことを確認します
         $this->assertTrue(Hash::check('Password@123', $user->fresh()->password));

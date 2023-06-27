@@ -145,10 +145,6 @@ return [
     'custom' => [
         'password' => [
             'symbols' => 'パスワードには少なくとも 1 つの記号が含まれている必要があります',
-            'password' => '入力された:attributeと登録されているパスワードが一致しません。',
-        ],    
-        'email' => [
-            'email' => '入力された:attributeと登録されているメールアドレスが一致しません。',
         ],
     ],
 
@@ -168,11 +164,10 @@ return [
     'attributes' => [
         'email' => 'メールアドレス',
         'password'=>'パスワード',
-        'password_confirmation'=>'確認用パスワード',
         'profile_img'=>'プロフィール画像',
         'name'=>'名前',
         'currentPassword' => '現在のパスワード',
-        'newPassword' => '新しいパスワード',  
+        'newPassword' => '新しいパスワード'
     ],
 
 ];

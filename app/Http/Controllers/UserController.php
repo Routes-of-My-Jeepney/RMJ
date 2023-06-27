@@ -67,7 +67,7 @@ class UserController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
@@ -79,7 +79,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
 
     public function update(Request $request)
@@ -89,7 +89,7 @@ class UserController extends Controller
         // Validate the request...
         $request->validate([
             'name' => 'required|string|max:55',
-            'email' => 'required|email:filter,dns|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'profile_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -121,7 +121,7 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function delete(User $user)
     {
