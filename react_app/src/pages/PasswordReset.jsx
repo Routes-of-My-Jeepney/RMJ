@@ -142,9 +142,6 @@ export default function ResetPasswordPage() {
                     <Typography variant="h6" align="center" gutterBottom>
                         Password Reset
                     </Typography>
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Password Reset
-                    </Typography>
                     <form onSubmit={handleResetPassword}>
                         <TextField
                             type="password"
