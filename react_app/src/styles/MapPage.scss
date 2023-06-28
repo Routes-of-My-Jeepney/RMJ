@@ -20,7 +20,7 @@
     background-color: #ffffff;
     width: 300px;
     border-radius: 5px;
-    position: "relative";
+    position: relative;
 }
 
 .route-finish-box {
@@ -40,6 +40,14 @@
 
 .custom-dropdown {
     z-index: 3000; // set a high z-index
-    position: "relative"; // ensure the element is positioned
+    position: relative; // ensure the element is positioned
     width: 300px;
+}
+
+.loading-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
 }

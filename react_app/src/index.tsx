@@ -9,21 +9,25 @@ import UserProvider from "./contexts/UserProvider";
 import theme from "./utils/theme";
 import { VisualProvider } from "./contexts/VisualContext";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <ThemeProvider theme={theme}>
-                <VisualProvider>
-                    <SnackbarProvider>
-                        <UserProvider>
-                            <App />
-                        </UserProvider>
-                    </SnackbarProvider>
-                </VisualProvider>
-            </ThemeProvider>
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                <ThemeProvider theme={theme}>
+                    <VisualProvider>
+                        <SnackbarProvider>
+                            <UserProvider>
+                                <App />
+                            </UserProvider>
+                        </SnackbarProvider>
+                    </VisualProvider>
+                </ThemeProvider>
+            </BrowserRouter>
+        </Provider>
     </React.StrictMode>
 );
 

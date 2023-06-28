@@ -15,7 +15,7 @@ import { useVisualContext } from "./contexts/VisualContext";
 import JeepneyRoutesPage from "./pages/JeepneyRoutesPage";
 import CustomSnackbar from "./components/CustomSnackbar";
 import { useSnackbarContext } from "./contexts/SnackbarContext";
-import { Stack } from "@mui/material";
+import LoadingCircle from "./components/LoadingCircle";
 
 function App() {
     const { isMobile } = useVisualContext();
@@ -25,6 +25,7 @@ function App() {
         <>
             <div className="App">
                 <Navbar />
+                <LoadingCircle />
                 <div>
                     {snackbars.map((snackbar, i) => (
                         <CustomSnackbar
