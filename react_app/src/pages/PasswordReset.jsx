@@ -140,9 +140,6 @@ export default function ResetPasswordPage() {
                     <Typography variant="h6" align="center" gutterBottom>
                         Password Reset
                     </Typography>
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Password Reset
-                    </Typography>
                     <form onSubmit={handleResetPassword}>
                         <TextField
                             type="password"
@@ -176,6 +173,33 @@ export default function ResetPasswordPage() {
                         message={alert.message}
                         type={alert.type}
                         id={0}
+                        severity="error"
+                    />
+
+                    <CustomSnackbar
+                        open={alert.open}
+                        handleClose={handleCloseAlert}
+                        message={alert.message}
+                        type={alert.type}
+                        id={0}
+                        severity="error"
+                    />
+
+                    <CustomSnackbar
+                        open={alert1.open}
+                        handleClose={handleCloseAlert1}
+                        message={alert1.message}
+                        type={alert1.type}
+                        id={1}
+                        severity="error"
+                    />
+                    <CustomSnackbar
+                        open={alert2.open}
+                        handleClose={handleCloseAlert2}
+                        message={alert2.message}
+                        type={alert2.type}
+                        id={1}
+                        severity="error"
                     />
                 </Paper>
             </Grid>

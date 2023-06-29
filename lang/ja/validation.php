@@ -164,6 +164,7 @@ return [
     'attributes' => [
         'email' => 'メールアドレス',
         'password'=>'パスワード',
+        'password_confirmation'=>'確認用パスワード',
         'profile_img'=>'プロフィール画像',
         'name'=>'名前',
         'currentPassword' => '現在のパスワード',

@@ -37,6 +37,7 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 const userData = response.data.user;
                 localStorage.setItem("user", JSON.stringify(userData));
                 setUser(userData);
+                navigate("/");
                 openSnackbar("ログインしました。", "success");
             })
             .catch((error) => {
@@ -107,6 +108,8 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 setUser(userData);
                 localStorage.setItem("user", JSON.stringify(userData));
                 console.log(response.data);
+                navigate("/");
+                openSnackbar("ユーザー情報を登録しました。", "success");
             })
             .catch((error) => {
                 if (isAxiosError(error)) {
