@@ -29,13 +29,11 @@ function History() {
             const historyData = historyRes.data;
 
             const handleSortModelChange = (model) => {
-                console.log(model);
                 const sortedRows = sortData(rows, model);
                 setRows(sortedRows);
             };
 
             let data = [];
-            console.log(data);
 
             for (let i = 0; i < historyData.length; i++) {
                 let id = historyRes.data[i].id;
@@ -72,15 +70,16 @@ function History() {
     const deleteSelectedRows = async () => {
         for (const id of selectedRows) {
             try {
-                const response = await axios.delete("/api/user/history", {
+                const response = await axios.delete("/api/history", {
                     params: { id: id },
                 });
                 console.log(response.data);
             } catch (error) {
+                console.log("===========================");
                 console.error(error);
             }
         }
-        //refreshPage();
+        refreshPage();
     };
 
     useEffect(() => {
