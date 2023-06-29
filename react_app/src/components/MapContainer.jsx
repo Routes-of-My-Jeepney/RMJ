@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-    GoogleMap,
-    LoadScript,
-    MarkerF,
-    DirectionsRenderer,
-} from "@react-google-maps/api";
+import React, { useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import PlacesAutoComplete from "./PlacesAutoComplete";
-import { Box } from "@mui/material";
 import { useSnackbarContext } from "../contexts/SnackbarContext";
+import LoadingCircle from "./LoadingCircle";
 
 const containerStyle = {
     width: "100%",
@@ -21,7 +17,11 @@ function MapContainer() {
     const [icon, setIcon] = useState(false);
     const { openSnackbar } = useSnackbarContext();
 
+    const loading = useSelector((state) => state.loading);
+    const dispatch = useDispatch();
+
     React.useEffect(() => {
+        dispatch({ type: "SET_LOADING", payload: true });
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -32,6 +32,7 @@ function MapContainer() {
                     setCenter(coords);
                     setMarkerPosition(coords);
                     mapRef.current.panTo(coords);
+                    dispatch({ type: "SET_LOADING", payload: false });
                 },
                 (error) => {
                     openSnackbar(error.message, "error");
@@ -45,32 +46,29 @@ function MapContainer() {
         }
     }, []);
 
-    // useEffect(() => {
-    //   console.log('MarkerPosition updated:', MarkerPosition);
-    // }, [MarkerPosition])
-
     const onLoad = React.useCallback((map) => (mapRef.current = map), []);
     const MarkaerPosition = (newValue) => {
         setText(newValue);
     };
+
     return (
         <>
-            <Box sx={{ position: "relative", height: "500px" }}>
-                <GoogleMap
-                    id="map"
-                    ref={mapRef}
-                    mapContainerStyle={containerStyle}
-                    center={center}
-                    zoom={20}
-                    onLoad={onLoad}
-                >
-                    <PlacesAutoComplete
-                        mapRef={mapRef}
-                        setIcon={setIcon}
-                        setCenter={setCenter}
-                        setMarkerPosition={setMarkerPosition}
-                    />
-                    {/* {directions && (
+            <GoogleMap
+                id="map"
+                ref={mapRef}
+                mapContainerStyle={containerStyle}
+                center={center}
+                zoom={20}
+                onLoad={onLoad}
+            >
+                {loading && <LoadingCircle />}
+                <PlacesAutoComplete
+                    mapRef={mapRef}
+                    setIcon={setIcon}
+                    setCenter={setCenter}
+                    setMarkerPosition={setMarkerPosition}
+                />
+                {/* {directions && (
                         <DirectionsRenderer
                             directions={directions}
                             options={{
@@ -82,17 +80,16 @@ function MapContainer() {
                             }}
                         />
                     )} */}
-                    {!icon && <MarkerF position={MarkerPosition} />}
-                    {icon && (
-                        <MarkerF
-                            position={MarkerPosition}
-                            icon={
-                                "https://maps.google.com/mapfiles/ms/micons/bus.png"
-                            }
-                        />
-                    )}
-                </GoogleMap>
-            </Box>
+                {!icon && <MarkerF position={MarkerPosition} />}
+                {icon && (
+                    <MarkerF
+                        position={MarkerPosition}
+                        icon={
+                            "https://maps.google.com/mapfiles/ms/micons/bus.png"
+                        }
+                    />
+                )}
+            </GoogleMap>
         </>
     );
 }

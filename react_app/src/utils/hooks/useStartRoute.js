@@ -7,10 +7,12 @@ export const useStartRoute = ({
     setMarkerPosition,
     setIcon,
     state,
+    setState,
 }) => {
     const startRoute = () => {
         setShowRoute(false);
         setResearchRoute(false);
+        setState({ type: "SET_LOADING", payload: true });
         const placeDestination = state.destination.place;
         if (navigator.geolocation) {
             let watchId = navigator.geolocation.watchPosition(
@@ -35,6 +37,7 @@ export const useStartRoute = ({
                         );
                     console.log(placeDestination);
                     console.log(distanceToDestination);
+                    setState({ type: "SET_LOADING", payload: false });
                     if (distanceToDestination <= 100) {
                         setFinishRoute(true);
                     } else {
@@ -42,6 +45,7 @@ export const useStartRoute = ({
                     }
                 },
                 (error) => {
+                    setState({ type: "SET_LOADING", payload: false });
                     console.log("Geolocation error", error);
                 },
                 {
@@ -50,6 +54,7 @@ export const useStartRoute = ({
                 }
             );
         } else {
+            setState({ type: "SET_LOADING", payload: false });
             console.log("Geolocation is not supported by this browser.");
         }
     };

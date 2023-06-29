@@ -5,7 +5,7 @@ import React, {
     useContext,
     useReducer,
 } from "react";
-import UserContext from "../contexts/UserContext";
+import { useSelector, useDispatch } from "react-redux";
 import {
     Box,
     Stack,
@@ -15,8 +15,6 @@ import {
     Grid,
     Typography,
 } from "@mui/material";
-import CustomSnackbar from "../components/CustomSnackbar";
-import { postHistory } from "../utils/axios";
 import "../styles/MapPage.scss";
 import { useGoogleAutocomplete } from "../utils/hooks/GoogleMapApi";
 import { useDrawRoute } from "../utils/hooks/useDrawRoute";
@@ -28,6 +26,7 @@ import getCSRFToken from "../utils/getCSRFToken";
 import axios from "../axios";
 import ClickAwayListener from "@mui/base/ClickAwayListener";
 import { useSnackbarContext } from "../contexts/SnackbarContext";
+import LoadingCircle from "./LoadingCircle";
 
 const SwapButton = styled(ChangeCircleIcon)({
     color: "#2196f3",
@@ -121,6 +120,8 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
     const [finishRoute, setFinishRoute] = useState(false);
     const [researchRoute, setResearchRoute] = useState(false);
     const { openSnackbar } = useSnackbarContext();
+    const loading = useSelector((state) => state.loading);
+    const setState = useDispatch();
 
     //ルート入れ替え
     const handleSwapPlaces = () => {
@@ -166,6 +167,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
         setMarkerPosition,
         setIcon,
         state,
+        setState,
     });
 
     const clearRoute = (watchId) => {
@@ -264,6 +266,7 @@ function PlacesAutoComplete({ mapRef, setIcon, setCenter, setMarkerPosition }) {
 
     return (
         <>
+            {loading && <LoadingCircle />}
             {showSearchBar && (
                 <Stack className="search-box">
                     <Slide

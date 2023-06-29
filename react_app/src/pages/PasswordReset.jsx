@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import getCSRFToken from "../utils/getCSRFToken";
 import { useNavigate } from "react-router-dom";
-
-axios.defaults.withCredentials = true;
+import axios from "../axios";
 
 export default function ResetPasswordPage() {
     const [currentPassword, setCurrentPassword] = useState("");

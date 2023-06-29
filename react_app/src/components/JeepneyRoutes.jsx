@@ -107,12 +107,7 @@ function JeepneyRoutes() {
                     </Grid>
                 </Grid>
             ) : (
-                <Grid
-                    container
-                    paddingTop={"70px"}
-                    paddingBottom={"70px"}
-                    style={{ height: "calc(100vh - 70px)" }}
-                >
+                <Grid container paddingTop={"64px"} style={{ height: "100vh" }}>
                     <Grid item xs={2}>
                         <Box>
                             <JeepneyList />
