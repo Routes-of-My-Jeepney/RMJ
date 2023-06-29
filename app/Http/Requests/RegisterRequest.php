@@ -31,11 +31,11 @@ class RegisterRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => [
                 'required',
-                'confirmed',
                 Password::min(8)
                     ->letters()
                     ->symbols(),
-            ]
+            ],
+            'password_confirmation' => 'required_with:password|same:password'
         ];
     }
 
@@ -47,12 +47,13 @@ class RegisterRequest extends FormRequest
             'name.max' => '文字数をオーバーしています。',
             'email.required' => 'メールアドレスを入力してください。',
             'email.email' => '正しい形式でメールアドレスを入力してください',
-            'email.unique' => '登録済みのユーザーです',
+            'email.unique' => 'このメールアドレスはすでに登録されています',
             'password.required' => 'パスワードを入力してください',
-            'password.confirmed' => 'パスワードが一致しません。',
             'password.min' => 'パスワードは8文字以上で入力してください。',
             'password.letters' => 'パスワードにアルファベットを含めてください。',
-            'password.symbols' => 'パスワードに記号を含めてください。'
+            'password.symbols' => 'パスワードに記号を含めてください。',
+            'password.required_with' => '確認用パスワードを入力してください。',
+            'password.same' => 'パスワードが一致しません。',
         ];
     }
 

@@ -17,15 +17,14 @@ class AuthController extends Controller
         // validate request data
         $request->validate([
             'name' => 'required|string|max:55',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email:filter,dns|unique:users,email',
             'password' => [
                 'required',
-                'confirmed',
                 Password::min(8)
                     ->letters()
                     ->symbols(),
-            ]
-
+            ],
+            'password_confirmation' => 'required_with:password|same:password'
         ]);
 
         // create a new user
@@ -50,7 +49,7 @@ class AuthController extends Controller
     {
         // validate request data
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => 'required|email:filter,dns|',
             'password' => ['required'],
         ]);
 
