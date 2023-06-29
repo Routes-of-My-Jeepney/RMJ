@@ -1,13 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    GoogleMap,
-    LoadScript,
-    MarkerF,
-    DirectionsRenderer,
-} from "@react-google-maps/api";
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import PlacesAutoComplete from "./PlacesAutoComplete";
-import { Box } from "@mui/material";
 import { useSnackbarContext } from "../contexts/SnackbarContext";
 import LoadingCircle from "./LoadingCircle";
 
@@ -51,10 +45,6 @@ function MapContainer() {
             );
         }
     }, []);
-
-    // useEffect(() => {
-    //   console.log('MarkerPosition updated:', MarkerPosition);
-    // }, [MarkerPosition])
 
     const onLoad = React.useCallback((map) => (mapRef.current = map), []);
     const MarkaerPosition = (newValue) => {

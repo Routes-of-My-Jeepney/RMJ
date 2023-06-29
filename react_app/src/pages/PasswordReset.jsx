@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
 import { Grid, Paper, TextField, Typography, Button } from "@mui/material";
 import UserContext from "../contexts/UserContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import getCSRFToken from "../utils/getCSRFToken";
 import { useNavigate } from "react-router-dom";
-
-axios.defaults.withCredentials = true;
+import axios from "../axios";
 
 export default function ResetPasswordPage() {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -178,29 +176,6 @@ export default function ResetPasswordPage() {
                         message={alert.message}
                         type={alert.type}
                         id={0}
-                    />
-
-                    <CustomSnackbar
-                        open={alert.open}
-                        handleClose={handleCloseAlert}
-                        message={alert.message}
-                        type={alert.type}
-                        id={0}
-                    />
-
-                    <CustomSnackbar
-                        open={alert1.open}
-                        handleClose={handleCloseAlert1}
-                        message={alert1.message}
-                        type={alert1.type}
-                        id={1}
-                    />
-                    <CustomSnackbar
-                        open={alert2.open}
-                        handleClose={handleCloseAlert2}
-                        message={alert2.message}
-                        type={alert2.type}
-                        id={1}
                     />
                 </Paper>
             </Grid>

@@ -33,12 +33,12 @@ const JeepneyList = () => {
                 bgcolor: "background.paper",
             }}
             component="nav"
-            aria-labelledby="nested-list-subheader"
-            subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
-                    Nested List Items
-                </ListSubheader>
-            }
+            // aria-labelledby="nested-list-subheader"
+            // subheader={
+            //     <ListSubheader component="div" id="nested-list-subheader">
+            //         Nested List Items
+            //     </ListSubheader>
+            // }
         >
             <FormControlLabel
                 sx={{ color: "text.primary" }}
@@ -50,14 +50,14 @@ const JeepneyList = () => {
                 }
                 label="Show favorites"
             />
-            <ListItemButton onClick={handleClick}>
+            {/* <ListItemButton onClick={handleClick}>
                 <ListItemIcon>
                     <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary="Inbox" />
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit></Collapse>
+            <Collapse in={open} timeout="auto" unmountOnExit></Collapse> */}
 
             {jeepneys
                 .filter((jeepney) => !showOnlyFavorites || jeepney.isLiked)
