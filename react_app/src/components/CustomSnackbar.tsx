@@ -23,12 +23,15 @@ const CustomSnackbar: FC<CustomSnackbarProps> = ({
             open={open}
             autoHideDuration={6000}
             onClose={handleClose}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            style={style}
+            anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+            }}
+            style={{ marginTop: "50px", ...style }}
         >
             <Alert
                 open={open}
-                // onClose={handleClose}
+                //onClose={handleClose}
                 severity={severity}
                 sx={{ width: "100%" }}
                 style={style}

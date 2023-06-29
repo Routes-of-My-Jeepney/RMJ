@@ -13,10 +13,13 @@ import {
 import { Link } from "react-router-dom";
 import UserContext from "../contexts/UserContext";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 
 const pages = ["Home", "HowtoRide", "Routes"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
+function ChangePage() {
+    window.location.href = "/";
+}
 function Navbar() {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const open = Boolean(anchorElUser);
@@ -56,7 +59,8 @@ function Navbar() {
                         justifyContent: "space-between",
                     }}
                 >
-                    <Typography variant="h6">RMJ</Typography>
+                    <DirectionsBusIcon fontSize="large" onClick={ChangePage} />
+
                     {user && (
                         <Avatar
                             src={profileImgURL}
