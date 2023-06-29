@@ -28,8 +28,11 @@ function LikeButton({ jeepney }) {
                 }
             )
             .then((response) => {
-                setJeepneys(response.data.jeepneys);
-                openSnackbar("Liked jeepney", "success");
+                const updatedJeepney = response.data.jeepney;
+                const updatedJeepneys = jeepneys.map((j) =>
+                    j.id === updatedJeepney.id ? updatedJeepney : j
+                );
+                setJeepneys(updatedJeepneys);
             })
             .catch((error) => {
                 openSnackbar(error.message, "error");
@@ -43,26 +46,20 @@ function LikeButton({ jeepney }) {
                 jeepney_id: jeepney.id,
             })
             .then((response) => {
-                console.log(response.data);
-                setJeepneys(response.data.jeepneys);
+                const updatedJeepney = response.data.jeepney;
+
+                // Create a new array with the updated jeepney replacing the old one
+                const updatedJeepneys = jeepneys.map((j) =>
+                    j.id === updatedJeepney.id ? updatedJeepney : j
+                );
+
+                // Update the state with the new array
+                setJeepneys(updatedJeepneys);
             })
             .catch((error) => {
                 console.error(error);
             });
     };
-
-    // useEffect(() => {
-    //     // fetch the favorite status from the API when the component mounts
-    //     axios
-    //         .get(`/user/liked-jeepneys`)
-
-    //         .then((response) => {
-    //             setIsFavorite(response.data.isFavorite);
-    //         })
-    //         .catch((error) => {
-    //             console.error(error);
-    //         });
-    // }, [jeepney]);
 
     return (
         <IconButton

@@ -6,7 +6,7 @@ import {
 } from "@react-google-maps/api";
 import { useJeepneyContext } from "../contexts/JeepneyContext";
 
-function JeepneyMap() {
+function JeepneyMap({ setDrawerOpen }) {
     const [origin, setOrigin] = useState({ lat: null, lng: null });
     const [destination, setDestination] = useState({ lat: null, lng: null });
     const [directions, setDirections] = useState(null);
@@ -34,11 +34,12 @@ function JeepneyMap() {
                 {
                     origin: origin,
                     destination: destination,
-                    travelMode: google.maps.TravelMode.TRANSIT,
+                    travelMode: google.maps.TravelMode.DRIVING,
                 },
                 (result, status) => {
                     if (status === google.maps.DirectionsStatus.OK) {
                         setDirections(result);
+                        setDrawerOpen(false);
                     } else {
                         console.error(`Error fetching directions ${result}`);
                     }
@@ -54,7 +55,7 @@ function JeepneyMap() {
                 height: "100%",
                 width: "100%",
             }}
-            zoom={8}
+            zoom={15}
             center={{
                 lat: 10.3157,
                 lng: 123.8854, // These are coordinates for Cebu. Adjust as needed.

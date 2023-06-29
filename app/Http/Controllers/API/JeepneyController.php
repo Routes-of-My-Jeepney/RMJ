@@ -10,7 +10,9 @@ class JeepneyController extends Controller
 {
     public function index()
     {
-        $jeepneys = Jeepney::with(['likedByUsers' => function($query){$query->withPivot('custom_name');}])->get()->append('isLiked');
+        $jeepneys = Jeepney::with(['likedByUsers' => function ($query) {
+            $query->withPivot('custom_name');
+        }])->get()->append('isLiked');
 
         return response()->json($jeepneys);
     }
@@ -35,49 +37,55 @@ class JeepneyController extends Controller
     {
         $user = $request->user();
         $user->likedJeepneys()->attach($jeepney);
-        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        // Load likedByUsers relationship for the liked jeepney
+        $jeepney->load(['likedByUsers' => function ($query) {
+            $query->withPivot('custom_name');
+        }]);
+
+        // Append isLiked attribute
+        $jeepney->append('isLiked');
 
         return response()->json([
             'message' => 'Jeepney added to favorites',
-            'jeepneys' => $jeepneys,
+            'jeepney' => $jeepney,
         ], 200);
     }
-    
+
     public function dislikeJeepney(Request $request, Jeepney $jeepney)
     {
         $user = $request->user();
         $user->likedJeepneys()->detach($jeepney);
-        $jeepneys = Jeepney::with('likedByUsers')->get()->append('isLiked');
+
+        // Load likedByUsers relationship for the disliked jeepney
+        $jeepney->load(['likedByUsers' => function ($query) {
+            $query->withPivot('custom_name');
+        }]);
+
+        // Append isLiked attribute
+        $jeepney->append('isLiked');
 
         return response()->json([
             'message' => 'Jeepney removed from favorites',
-            'jeepneys' => $jeepneys,
+            'jeepney' => $jeepney,
         ], 200);
     }
 
-    public function showLikedJeepneys(Request $request)
-{
-    $user = $request->user(); // Get the currently authenticated user
-
-    $likedJeepneys = $user->likedJeepneys; // Get the liked jeepneys
-
-    // Return a view or JSON response with the liked jeepneys...
-    return response()->json([
-        'message' => 'Liked jeepneys fetched successfully',
-        'data' => $likedJeepneys,
-    ], 200);
-}
 
     public function updateLikedJeepneyName(Request $request, $jeepneyId)
     {
         $user = $request->user();
         $jeepney = Jeepney::find($jeepneyId);
         $user->likedJeepneys()->updateExistingPivot($jeepneyId, ['custom_name' => $request->custom_name]);
-        $jeepneys = Jeepney::with(['likedByUsers' => function($query){$query->withPivot('custom_name');}])->get()->append('isLiked');
+        $jeepneys = Jeepney::with(['likedByUsers' => function ($query) {
+            $query->withPivot('custom_name');
+        }])->get()->append('isLiked');
 
         return response()->json([
             'message' => 'Jeepney name updated successfully',
             'jeepneys' => $jeepneys,
+            'user_id' => $user->id,
         ], 200);
+        dd($jeepneys);
     }
 }

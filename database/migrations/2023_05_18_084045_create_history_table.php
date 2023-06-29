@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('histories', function (Blueprint $table) {
             $table->increments('id');
-            $table->string("origin",255);
-            $table->string("destination",255);
-            $table->unsignedBigInteger("user_id");
+            $table->string("origin", 255);
+            $table->string("destination", 255);
+            $table->unsignedBigInteger("user_id")->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });

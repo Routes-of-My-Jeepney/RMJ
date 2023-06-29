@@ -51,7 +51,7 @@ function JeepneyRoutes() {
     return (
         <>
             {isMobile ? (
-                <Grid container style={{ height: "calc(100vh - 70px)" }}>
+                <Grid container style={{ height: "100vh" }}>
                     <Grid item xs={12}>
                         {isMobile && (
                             <Box>
@@ -71,8 +71,15 @@ function JeepneyRoutes() {
                                 </SwipeableDrawer>
                             </Box>
                         )}
-                        <Box position="relative" width="100%" height="100%">
-                            {drawerOpen && (
+                        <Box
+                            display="flex"
+                            position="relative"
+                            width="100%"
+                            paddingTop="19px"
+                            height="90%"
+                            alignContent="center"
+                        >
+                            {/* {drawerOpen && (
                                 <Box
                                     position="absolute"
                                     top={0}
@@ -81,11 +88,11 @@ function JeepneyRoutes() {
                                     height="100%"
                                     zIndex={1}
                                 />
-                            )}
-                            <JeepneyMap />
+                            )} */}
+                            <JeepneyMap setDrawerOpen={setDrawerOpen} />
                             <Box
                                 position="absolute"
-                                top={50}
+                                top={75}
                                 left="2.5%"
                                 transform="translateX(-50%)"
                             >

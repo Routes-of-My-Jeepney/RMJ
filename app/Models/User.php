@@ -23,6 +23,15 @@ class User extends Authenticatable
         return $this->belongsToMany(Jeepney::class, 'jeepney_user')->wherePivot('user_id', $this->id)->exists();
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            $user->histories()->update(['user_id' => null]);
+        });
+    }
+
     public function histories()
     {
         return $this->hasMany(History::class);
