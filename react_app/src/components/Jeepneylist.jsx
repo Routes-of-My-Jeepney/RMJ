@@ -9,20 +9,38 @@ import {
     Switch,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import InboxIcon from "@mui/icons-material/Inbox";
 import EditIconField from "./EditIconField";
 import { useJeepneyContext } from "../contexts/JeepneyContext";
 import LikeButton from "./LikeButton";
+import UserContext from "../contexts/UserContext";
 
 const JeepneyList = () => {
+    const { user } = useContext(UserContext);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
     const toggleFavorites = () => {
         setShowOnlyFavorites(!showOnlyFavorites);
     };
     const handleClick = () => {
         setOpen(!open);
     };
+
+    // This is a helper function to get the custom name of a jeepney for a user
+    function getCustomName(jeepney, user_id) {
+        // Find the user in the jeepney's liked_by_users array
+        let user = jeepney.liked_by_users.find((user) => user.id === user_id);
+
+        // If the user was found and they have a custom_name in their pivot data, return it
+        if (showOnlyFavorites && user && user.pivot && user.pivot.custom_name) {
+            return user.pivot.custom_name;
+        }
+
+        // If the user wasn't found, or they don't have a custom_name, return the jeepney's name
+        return jeepney.name;
+    }
+
     const { jeepneys, handleJeepneyClick } = useJeepneyContext();
 
     return (
@@ -31,14 +49,9 @@ const JeepneyList = () => {
                 width: "100%",
                 maxWidth: 360,
                 bgcolor: "background.paper",
+                paddingTop: "63px",
             }}
             component="nav"
-            // aria-labelledby="nested-list-subheader"
-            // subheader={
-            //     <ListSubheader component="div" id="nested-list-subheader">
-            //         Nested List Items
-            //     </ListSubheader>
-            // }
         >
             <FormControlLabel
                 sx={{ color: "text.primary" }}
@@ -50,14 +63,6 @@ const JeepneyList = () => {
                 }
                 label="Show favorites"
             />
-            {/* <ListItemButton onClick={handleClick}>
-                <ListItemIcon>
-                    <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Inbox" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit></Collapse> */}
 
             {jeepneys
                 .filter((jeepney) => !showOnlyFavorites || jeepney.isLiked)
@@ -75,12 +80,7 @@ const JeepneyList = () => {
                             key={jeepney.id}
                             onClick={() => handleJeepneyClick(jeepney)}
                         >
-                            {showOnlyFavorites &&
-                            jeepney.liked_by_users.length > 0 &&
-                            jeepney.liked_by_users[0].pivot &&
-                            jeepney.liked_by_users[0].pivot.custom_name
-                                ? jeepney.liked_by_users[0].pivot.custom_name
-                                : jeepney.name}
+                            {getCustomName(jeepney, user.id)}
                         </ListItemButton>
                         <LikeButton
                             jeepney={jeepney}
@@ -91,14 +91,7 @@ const JeepneyList = () => {
                         />
                         {showOnlyFavorites && (
                             <EditIconField
-                                initialText={
-                                    jeepney.liked_by_users.length > 0 &&
-                                    jeepney.liked_by_users[0].pivot &&
-                                    jeepney.liked_by_users[0].pivot.custom_name
-                                        ? jeepney.liked_by_users[0].pivot
-                                              .custom_name
-                                        : jeepney.name
-                                }
+                                initialText={getCustomName(jeepney, user.id)}
                                 jeepney={jeepney}
                             />
                         )}

@@ -57,7 +57,11 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                                 }
                             );
                         } else {
-                            throw new Error(serverError.response.data.message);
+                            // throw new Error(serverError.response.data.message);
+                            openSnackbar(
+                                serverError.response.data.message,
+                                "error"
+                            );
                         }
                     }
                 } else {
@@ -128,11 +132,15 @@ const UserProvider: FC<React.PropsWithChildren<{}>> = ({ children }) => {
                                 }
                             );
                         } else {
-                            throw new Error(serverError.response.data.message);
+                            // throw new Error(serverError.response.data.message);
+                            openSnackbar(
+                                serverError.response.data.message,
+                                "error"
+                            );
                         }
                     }
                 }
-                openSnackbar(error.message, "error");
+                // openSnackbar(error.message, "error");
             });
     };
 

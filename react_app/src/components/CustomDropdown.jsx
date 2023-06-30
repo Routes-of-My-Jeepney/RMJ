@@ -10,7 +10,7 @@ const CustomDropdown = ({ anchorEl, options, open, handleSelect }) => {
         <Popper open={open} anchorEl={anchorEl} className="custom-dropdown">
             <Paper>
                 <List>
-                    {options.map((option, index) => (
+                    {options.slice(0, 3).map((option, index) => (
                         <ListItem
                             button
                             key={index}

@@ -29,7 +29,6 @@ function EditIconField({ initialText, jeepney }) {
                 }
             );
             setJeepneys(response.data.jeepneys);
-            console.log(response);
         } catch (error) {
             console.error(error);
         }

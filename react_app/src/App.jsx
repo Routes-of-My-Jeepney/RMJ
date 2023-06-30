@@ -25,7 +25,7 @@ function App() {
         <>
             <div className="App">
                 <Navbar />
-                <LoadingCircle />
+                {/* <LoadingCircle /> */}
                 <div>
                     {snackbars.map((snackbar, i) => (
                         <CustomSnackbar
